@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -20,6 +20,14 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { PrivilegesModule } from './privileges/privileges.module';
 import { TiersModule } from './tiers/tiers.module';
 import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.module';
+import { APP_PIPE } from '@nestjs/core';
+import { ZodValidationPipe } from './ZodValidationPipe';
+import { DelegatesModule } from './delegates/delegates.module';
+import { RapportsModule } from './rapports/rapports.module';
+import { TrackModule } from './track/track.module';
+import { RolesModule } from './roles/roles.module';
+import { TierTypesModule } from './tier-types/tier-types.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 
 @Module({
   imports: [
@@ -56,6 +64,23 @@ import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.mo
     PrivilegesModule,
     TiersModule,
     ProspectiveTiersModule,
+    DelegatesModule,
+    RapportsModule,
+    TrackModule,
+    RolesModule,
+    TierTypesModule,
+    PaymentMethodsModule,
+  ],
+
+  providers: [
+    // {
+    //   provide: APP_PIPE,
+    //   useClass: ValidationPipe,
+    // },
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
   ],
 })
 export class AppModule {}

@@ -1,7 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderItem } from 'src/common-entities/order-item.common.entity';
+import { Entity } from 'typeorm';
 
 @Entity()
-export class CartItem {
-  @PrimaryGeneratedColumn()
-  id: number;
-}
+export class CartItem extends OrderItem {}
