@@ -16,6 +16,9 @@ export abstract class OrderItem {
   @Column()
   reference: string;
 
+  @Column({ ...defaultDecimal, default: 0 })
+  quantity: number;
+
   @Column({ nullable: true })
   label: string;
 
@@ -30,8 +33,6 @@ export abstract class OrderItem {
 
   @Column({ ...defaultDecimal, name: 'unite_price_ht' })
   unitePriceHt: number;
-
-
 
   @Column({ name: 'is_out_stock', default: false })
   isOutStock: boolean;

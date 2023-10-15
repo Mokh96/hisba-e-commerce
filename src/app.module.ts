@@ -14,10 +14,7 @@ import { OrderItemsModule } from './order-items/order-items.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderStatusModule } from './order-status/order-status.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
-import { CartsModule } from './carts/carts.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
-import { ProfilesModule } from './profiles/profiles.module';
-import { PrivilegesModule } from './privileges/privileges.module';
 import { TiersModule } from './tiers/tiers.module';
 import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.module';
 import { APP_PIPE } from '@nestjs/core';
@@ -28,6 +25,7 @@ import { TrackModule } from './track/track.module';
 import { RolesModule } from './roles/roles.module';
 import { TierTypesModule } from './tier-types/tier-types.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
   imports: [
@@ -58,10 +56,8 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
     OrdersModule,
     OrderStatusModule,
     OrderHistoryModule,
-    CartsModule,
     CartItemsModule,
-    ProfilesModule,
-    PrivilegesModule,
+
     TiersModule,
     ProspectiveTiersModule,
     DelegatesModule,
@@ -70,6 +66,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
     RolesModule,
     TierTypesModule,
     PaymentMethodsModule,
+    ArticlesModule,
   ],
 
   providers: [

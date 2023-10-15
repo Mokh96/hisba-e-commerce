@@ -10,8 +10,6 @@ export abstract class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  
-
   @Column({ ...defaultDecimal, name: 'amount_ht' })
   amountHt: number;
 

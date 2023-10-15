@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Order as OrderShape } from '../../common-entities/order.common.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { OrderItem } from 'src/order-items/entities/order-item.entity';
 
 @Entity()
 export class Order extends OrderShape {
@@ -27,4 +28,7 @@ export class Order extends OrderShape {
 
   @Column({ ...defaultDecimal, name: 'stamp_duty', default: 0 })
   stampDuty: number;
+
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order, )
+  orderItems: OrderItem[];
 }

@@ -1,40 +1,20 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Tier as TierShape } from 'src/common-entities/tier.common.entity';
 
 @Entity()
-export class Tier {
+export class Tier extends TierShape {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   code: string;
 
-  @Column()
+  @Column({ nullable: true })
   reference: string;
-
-  @Column()
-  full_name: string;
-
-  @Column()
-  address: string;
-
-  @Column()
-  birth_date: string;
-
-  @Column()
-  note: string;
-
-  @Column()
-  phone: string;
-
-  @Column({ nullable: true })
-  fax: string;
-
-  @Column()
-  mobile: string;
-
-  @Column({ nullable: true })
-  email: string;
 
   @Column({ name: 'web_page', nullable: true })
   webPage: string;
+
+  @Column({ name: 'img_path', nullable: true })
+  imgPath: string;
 }

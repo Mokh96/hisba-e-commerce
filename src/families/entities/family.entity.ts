@@ -1,7 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { LabelPath } from 'src/common-entities/labelPath.common.entity';
+import { Entity } from 'typeorm';
 
 @Entity()
-export class Family {
-  @PrimaryGeneratedColumn()
-  id: number;
-}
+export class Family extends LabelPath {}

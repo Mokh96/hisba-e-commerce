@@ -1,7 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Tier } from 'src/common-entities/tier.common.entity';
+import { Entity } from 'typeorm';
 
 @Entity()
-export class ProspectiveTier {
-  @PrimaryGeneratedColumn()
-  id: number;
-}
+export class ProspectiveTier extends Tier {}

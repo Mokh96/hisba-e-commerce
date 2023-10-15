@@ -4,4 +4,25 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export class Delegate {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  fullName: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column()
+  mobile: string;
+
+  @Column()
+  email: string;
+
+  @Column({ name: 'img_path', nullable: true })
+  imgPath: string;
+
+  @Column()
+  address: string;
+
+  @Column({ nullable: true })
+  note: string;
 }

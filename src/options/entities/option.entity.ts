@@ -1,7 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Label } from 'src/common-entities/label.common.entity';
+import { OptionsValue } from 'src/options-values/entities/options-value.entity';
+import { Entity, OneToMany } from 'typeorm';
 
 @Entity()
-export class Option {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Option extends Label {
+  @OneToMany(() => OptionsValue, (value: OptionsValue) => value.option)
+  values: OptionsValue[];
 }

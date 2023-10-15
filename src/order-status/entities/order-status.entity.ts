@@ -1,7 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Label } from 'src/common-entities/label.common.entity';
+import { Entity } from 'typeorm';
 
 @Entity()
-export class OrderStatus {
-  @PrimaryGeneratedColumn()
-  id: number;
-}
+export class OrderStatus extends Label {}
