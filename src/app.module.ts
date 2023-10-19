@@ -17,8 +17,7 @@ import { OrderHistoryModule } from './order-history/order-history.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
 import { TiersModule } from './tiers/tiers.module';
 import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.module';
-import { APP_PIPE } from '@nestjs/core';
-import { ZodValidationPipe } from './ZodValidationPipe';
+import { APP_PIPE, APP_FILTER } from '@nestjs/core';
 import { DelegatesModule } from './delegates/delegates.module';
 import { RapportsModule } from './rapports/rapports.module';
 import { TrackModule } from './track/track.module';
@@ -26,6 +25,10 @@ import { RolesModule } from './roles/roles.module';
 import { TierTypesModule } from './tier-types/tier-types.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { ArticlesModule } from './articles/articles.module';
+import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
+import { SystemDataModule } from './system-data/system-data.module';
+import { GlobalExceptionFilter } from './error-handlers/global-handler';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -40,6 +43,7 @@ import { ArticlesModule } from './articles/articles.module';
       //entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
       synchronize: true,
+      dropSchema: false,
     }),
     //DatabaseModule,
     UsersModule,
@@ -67,17 +71,24 @@ import { ArticlesModule } from './articles/articles.module';
     TierTypesModule,
     PaymentMethodsModule,
     ArticlesModule,
+    ShippingAddressesModule,
+    SystemDataModule,
+    AuthModule,
   ],
 
   providers: [
-    // {
-    //   provide: APP_PIPE,
-    //   useClass: ValidationPipe,
-    // },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
     {
       provide: APP_PIPE,
-      useClass: ZodValidationPipe,
+      useClass: ValidationPipe,
     },
+    // {
+    //   provide: APP_PIPE,
+    //   useClass: ZodValidationPipe,
+    // },
   ],
 })
 export class AppModule {}

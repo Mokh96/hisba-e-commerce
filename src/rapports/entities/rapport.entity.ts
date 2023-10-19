@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Delegate } from 'src/delegates/entities/delegate.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Rapport {
@@ -10,4 +11,9 @@ export class Rapport {
 
   @Column({ length: 1000 })
   description: string;
+
+  @ManyToOne(() => Delegate, (delegate: Delegate) => delegate.rapports, {
+    nullable: false,
+  })
+  delegate: Delegate;
 }

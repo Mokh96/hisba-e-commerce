@@ -1,8 +1,12 @@
 import { ArticleGallery } from 'src/article-galleries/entities/article-gallery.entity';
+import { Lot } from 'src/lots/entities/lot.entity';
+import { OptionsValue } from 'src/options-values/entities/options-value.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -20,7 +24,7 @@ export class Article {
   imgPath: string;
 
   @Column()
-  reference: string;
+  ref: string;
 
   @Column({ length: 500, nullable: true })
   note: string;
@@ -34,21 +38,19 @@ export class Article {
   @Column({ name: 'is_multi_lot', default: false })
   isMultiLot: boolean;
 
-  @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];
+
+  @OneToMany(() => Lot, (lot: Lot) => lot.article)
+  lots: Lot[];
+
+  @ManyToMany(() => OptionsValue, (value: OptionsValue) => value.articles)
+  @JoinTable()
+  optionValues: OptionsValue[];
 }

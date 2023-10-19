@@ -1,5 +1,9 @@
 import { Label } from 'src/common-entities/label.common.entity';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, OneToMany } from 'typeorm';
 
 @Entity()
-export class Role extends Label {}
+export class Role extends Label {
+  @OneToMany(() => User, (user: User) => user.role)
+  users: User[];
+}

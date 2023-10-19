@@ -1,4 +1,5 @@
 import { LabelPath } from 'src/common-entities/labelPath.common.entity';
+import { Product } from 'src/products/entities/product.entity';
 import { Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
@@ -13,5 +14,6 @@ export class Brand extends LabelPath {
   })
   parent: Brand;
 
-  
+  @OneToMany(() => Product, (product: Product) => product.brand)
+  products: Product[];
 }

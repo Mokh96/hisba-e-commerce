@@ -1,5 +1,14 @@
+import { Article } from 'src/articles/entities/article.entity';
+import { CartItem } from 'src/cart-items/entities/cart-item.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderItem } from 'src/order-items/entities/order-item.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 
 @Entity()
 export class Lot {
@@ -16,7 +25,7 @@ export class Lot {
   code: string;
 
   @Column()
-  reference: string;
+  ref: string;
 
   @Column({ name: 'n_series' })
   nSeries: string;
@@ -35,4 +44,17 @@ export class Lot {
 
   @Column({ name: 'date_exp', type: 'datetime', nullable: true })
   dateExp: Date;
+
+  @ManyToOne(() => Article, (article: Article) => article.lots, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  article: Article;
+
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.lot)
+  orderItems: OrderItem[];
+
+  @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.lot)
+  cartItems: CartItem[];
 }

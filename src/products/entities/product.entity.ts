@@ -1,4 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Brand } from 'src/brands/entities/brand.entity';
+import { Category } from 'src/categories/entities/category.entity';
+import { Family } from 'src/families/entities/family.entity';
+import { ProductGallery } from 'src/product-galleries/entities/product-gallery.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -15,7 +25,7 @@ export class Product {
   code: string;
 
   @Column()
-  reference: string;
+  ref: string;
 
   @Column()
   label: string;
@@ -29,6 +39,12 @@ export class Product {
   @Column()
   description: string;
 
+  @Column({ name: 'min_price' })
+  minPrice: string;
+
+  @Column({ name: 'max_price' })
+  maxPrice: string;
+
   @Column({ name: 'is_out_stock', default: false })
   isOutStock: boolean;
 
@@ -37,4 +53,28 @@ export class Product {
 
   @Column({ name: 'is_multi_article', default: false })
   isMultiArticle: boolean;
+
+  @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  brand: Brand;
+
+  @ManyToOne(() => Category, (category: Category) => category.products, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  category: Category;
+
+  @ManyToOne(() => Family, (family: Family) => family.products, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  family: Family;
+
+  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
+  gallery: ProductGallery[];
 }

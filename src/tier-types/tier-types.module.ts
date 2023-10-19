@@ -7,7 +7,7 @@ import { TierType } from './entities/tier-type.entity';
 @Module({
   controllers: [TierTypesController],
   imports: [TypeOrmModule.forFeature([TierType])],
-
   providers: [TierTypesService],
+  exports: [TypeOrmModule],
 })
 export class TierTypesModule {}

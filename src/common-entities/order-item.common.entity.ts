@@ -14,7 +14,7 @@ export abstract class OrderItem {
   code: string;
 
   @Column()
-  reference: string;
+  ref: string;
 
   @Column({ ...defaultDecimal, default: 0 })
   quantity: number;

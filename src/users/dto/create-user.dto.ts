@@ -1,25 +1,25 @@
-// import { IsString, Length, IsNumber } from 'class-validator';
+import {
+  IsString,
+  Length,
+  IsNumber,
+  Allow,
+  Equals,
+  IsIn,
+} from 'class-validator';
+import _ from 'lodash';
 
-// export class CreateUserDto {
-//   @IsString()
-//   @Length(2)
-//   username: string;
+import { roles } from 'src/enums/roles.enum';
 
-//   @IsString()
-//   password: string;
+export class CreateUserDto {
+  @IsString()
+  @Length(2, 255)
+  username: string;
 
-//   @IsNumber()
-//   role: number;
-// }
+  @IsString()
+  @Length(4, 255)
+  password: string;
 
-import { z } from 'zod';
-
-export const createUserSchema = z
-  .object({
-    name: z.string(),
-    age: z.number(),
-    breed: z.string(),
-  })
-  .required();
-
-export type CreateUserDto = z.infer<typeof createUserSchema>;
+  @IsNumber()
+  @IsIn([roles.ADMIN])
+  roleId: roles;
+}
