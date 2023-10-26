@@ -1,12 +1,15 @@
 import { ArticleGallery } from 'src/article-galleries/entities/article-gallery.entity';
 import { Lot } from 'src/lots/entities/lot.entity';
 import { OptionsValue } from 'src/options-values/entities/options-value.entity';
+import { Product } from 'src/products/entities/product.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,15 +18,15 @@ import {
 @Entity()
 export class Article {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
-  @Column()
+  @Column({ nullable: true })
   label: string;
 
   @Column({ name: 'img_path', nullable: true })
   imgPath: string;
 
-  @Column()
+  @Column({ nullable: true })
   ref: string;
 
   @Column({ length: 500, nullable: true })
@@ -35,7 +38,7 @@ export class Article {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({ name: 'is_multi_lot', default: false })
+  @Column({ name: 'is_multi_lot', default: true })
   isMultiLot: boolean;
 
   @CreateDateColumn()
@@ -43,6 +46,13 @@ export class Article {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Product, (product: Product) => product.articles)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
+
+  @Column({ name: 'product_id' })
+  productId: number;
 
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];

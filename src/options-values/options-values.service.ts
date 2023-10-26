@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOptionsValueDto } from './dto/create-options-value.dto';
 import { UpdateOptionsValueDto } from './dto/update-options-value.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { OptionsValue } from './entities/options-value.entity';
 
 @Injectable()
 export class OptionsValuesService {
-  create(createOptionsValueDto: CreateOptionsValueDto) {
-    return 'This action adds a new optionsValue';
+  constructor(
+    @InjectRepository(OptionsValue)
+    private optionsValueRepository: Repository<OptionsValue>,
+  ) {}
+
+  async create(createOptionsValueDto: CreateOptionsValueDto) {
+    const optionsValue = this.optionsValueRepository.create(
+      createOptionsValueDto,
+    );
+    await this.optionsValueRepository.save(optionsValue);
+    return optionsValue;
   }
 
-  findAll() {
-    return `This action returns all optionsValues`;
+  async findAll() {
+    const optionsValues = await this.optionsValueRepository.find();
+    return optionsValues;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} optionsValue`;
+  async findOne(id: number) {
+    const optionsValue = await this.optionsValueRepository.findOneBy({ id });
+    if (!optionsValue) throw new NotFoundException('optionsValue not found');
+    return optionsValue;
   }
 
-  update(id: number, updateOptionsValueDto: UpdateOptionsValueDto) {
-    return `This action updates a #${id} optionsValue`;
+  async update(id: number, updateOptionsValueDto: UpdateOptionsValueDto) {
+    const optionsValue = await this.findOne(id);
+    const updatedOptionsValue = this.optionsValueRepository.merge(
+      optionsValue,
+      updateOptionsValueDto,
+    );
+    await this.optionsValueRepository.save(updatedOptionsValue);
+    return updatedOptionsValue;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} optionsValue`;
+  async remove(id: number) {
+    const optionsValue = await this.findOne(id);
+    await this.optionsValueRepository.remove(optionsValue);
+    return true;
   }
 }

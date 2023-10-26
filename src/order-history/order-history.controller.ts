@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { OrderHistoryService } from './order-history.service';
 import { CreateOrderHistoryDto } from './dto/create-order-history.dto';
 import { UpdateOrderHistoryDto } from './dto/update-order-history.dto';
@@ -18,17 +27,20 @@ export class OrderHistoryController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.orderHistoryService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderHistoryDto: UpdateOrderHistoryDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderHistoryDto: UpdateOrderHistoryDto,
+  ) {
     return this.orderHistoryService.update(+id, updateOrderHistoryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.orderHistoryService.remove(+id);
   }
 }

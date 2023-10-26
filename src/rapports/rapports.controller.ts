@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { RapportsService } from './rapports.service';
 import { CreateRapportDto } from './dto/create-rapport.dto';
 import { UpdateRapportDto } from './dto/update-rapport.dto';
@@ -18,17 +27,20 @@ export class RapportsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.rapportsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRapportDto: UpdateRapportDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRapportDto: UpdateRapportDto,
+  ) {
     return this.rapportsService.update(+id, updateRapportDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.rapportsService.remove(+id);
   }
 }

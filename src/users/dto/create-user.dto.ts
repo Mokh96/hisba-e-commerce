@@ -1,12 +1,4 @@
-import {
-  IsString,
-  Length,
-  IsNumber,
-  Allow,
-  Equals,
-  IsIn,
-} from 'class-validator';
-import _ from 'lodash';
+import { IsString, Length, IsNumber, IsIn } from 'class-validator';
 
 import { roles } from 'src/enums/roles.enum';
 

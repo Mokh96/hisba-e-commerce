@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { TierTypesService } from './tier-types.service';
 import { CreateTierTypeDto } from './dto/create-tier-type.dto';
 import { UpdateTierTypeDto } from './dto/update-tier-type.dto';
@@ -18,17 +27,20 @@ export class TierTypesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tierTypesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTierTypeDto: UpdateTierTypeDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTierTypeDto: UpdateTierTypeDto,
+  ) {
     return this.tierTypesService.update(+id, updateTierTypeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.tierTypesService.remove(+id);
   }
 }

@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ShippingAddressesService } from './shipping-addresses.service';
 import { CreateShippingAddressDto } from './dto/create-shipping-address.dto';
 import { UpdateShippingAddressDto } from './dto/update-shipping-address.dto';
 
 @Controller('shipping-addresses')
 export class ShippingAddressesController {
-  constructor(private readonly shippingAddressesService: ShippingAddressesService) {}
+  constructor(
+    private readonly shippingAddressesService: ShippingAddressesService,
+  ) {}
 
   @Post()
   create(@Body() createShippingAddressDto: CreateShippingAddressDto) {
@@ -18,17 +29,20 @@ export class ShippingAddressesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.shippingAddressesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShippingAddressDto: UpdateShippingAddressDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateShippingAddressDto: UpdateShippingAddressDto,
+  ) {
     return this.shippingAddressesService.update(+id, updateShippingAddressDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.shippingAddressesService.remove(+id);
   }
 }

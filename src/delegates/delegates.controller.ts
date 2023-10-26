@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { DelegatesService } from './delegates.service';
 import { CreateDelegateDto } from './dto/create-delegate.dto';
 import { UpdateDelegateDto } from './dto/update-delegate.dto';
@@ -18,17 +27,20 @@ export class DelegatesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.delegatesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDelegateDto: UpdateDelegateDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDelegateDto: UpdateDelegateDto,
+  ) {
     return this.delegatesService.update(+id, updateDelegateDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.delegatesService.remove(+id);
   }
 }

@@ -1,3 +1,4 @@
+import { Article } from 'src/articles/entities/article.entity';
 import { Brand } from 'src/brands/entities/brand.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Family } from 'src/families/entities/family.entity';
@@ -8,6 +9,9 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,16 +19,13 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'is_active', default: true })
-  isActive: boolean;
-
   @Column({ name: 'img_path', nullable: true })
   imgPath: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   code: string;
 
-  @Column()
+  @Column({ nullable: true })
   ref: string;
 
   @Column()
@@ -33,10 +34,10 @@ export class Product {
   @Column({ nullable: true })
   label2: string;
 
-  @Column()
+  @Column({ nullable: true })
   note: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @Column({ name: 'min_price' })
@@ -54,26 +55,50 @@ export class Product {
   @Column({ name: 'is_multi_article', default: false })
   isMultiArticle: boolean;
 
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => Article, (article: Article) => article.product)
+  articles: Article[];
+
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,
   })
+  @JoinColumn({ name: 'brand_id' })
   brand: Brand;
+
+  @Column({ name: 'brand_id', nullable: true })
+  brandId: number;
 
   @ManyToOne(() => Category, (category: Category) => category.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,
   })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
+
+  @Column({ name: 'category_id', nullable: true })
+  categoryId: number;
 
   @ManyToOne(() => Family, (family: Family) => family.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,
   })
+  @JoinColumn({ name: 'family_id' })
   family: Family;
+
+  @Column({ name: 'family_id', nullable: true })
+  familyId: number;
 
   @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
   gallery: ProductGallery[];

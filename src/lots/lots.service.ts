@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { UpdateLotDto } from './dto/update-lot.dto';
+import { Lot } from './entities/lot.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class LotsService {
-  create(createLotDto: CreateLotDto) {
-    return 'This action adds a new lot';
+  constructor(
+    @InjectRepository(Lot)
+    private lotRepository: Repository<Lot>,
+  ) {}
+
+  async create(createLotDto: CreateLotDto) {
+    const lot = this.lotRepository.create(createLotDto);
+    await this.lotRepository.save(lot);
+    return lot;
   }
 
-  findAll() {
-    return `This action returns all lots`;
+  async findAll() {
+    const lots = await this.lotRepository.find();
+    return lots;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} lot`;
+  async findOne(id: number) {
+    const lot = await this.lotRepository.findOneBy({ id });
+    if (!lot) throw new NotFoundException('Lot not found');
+    return lot;
   }
 
-  update(id: number, updateLotDto: UpdateLotDto) {
-    return `This action updates a #${id} lot`;
+  async update(id: number, updateLotDto: UpdateLotDto) {
+    let lot = await this.findOne(id);
+    const updatedLot = this.lotRepository.merge(lot, updateLotDto);
+    await this.lotRepository.save(updatedLot);
+    return updatedLot;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} lot`;
+  async remove(id: number) {
+    const lot = await this.findOne(id);
+    await this.lotRepository.remove(lot);
+    return true;
   }
 }

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { LotsService } from './lots.service';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { UpdateLotDto } from './dto/update-lot.dto';
@@ -18,17 +27,20 @@ export class LotsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.lotsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLotDto: UpdateLotDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateLotDto: UpdateLotDto,
+  ) {
     return this.lotsService.update(+id, updateLotDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.lotsService.remove(+id);
   }
 }

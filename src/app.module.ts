@@ -17,7 +17,6 @@ import { OrderHistoryModule } from './order-history/order-history.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
 import { TiersModule } from './tiers/tiers.module';
 import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.module';
-import { APP_PIPE, APP_FILTER } from '@nestjs/core';
 import { DelegatesModule } from './delegates/delegates.module';
 import { RapportsModule } from './rapports/rapports.module';
 import { TrackModule } from './track/track.module';
@@ -29,6 +28,8 @@ import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses
 import { SystemDataModule } from './system-data/system-data.module';
 import { GlobalExceptionFilter } from './error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from './auth/auth.guard';
+import { APP_PIPE, APP_FILTER, APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -39,13 +40,10 @@ import { AuthModule } from './auth/auth.module';
       username: 'root',
       password: '123456789',
       database: 'hisba_e_commerce_dev',
-      //entities: [User],
-      //entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: false,
     }),
-    //DatabaseModule,
     UsersModule,
     CategoriesModule,
     BrandsModule,
@@ -61,7 +59,6 @@ import { AuthModule } from './auth/auth.module';
     OrderStatusModule,
     OrderHistoryModule,
     CartItemsModule,
-
     TiersModule,
     ProspectiveTiersModule,
     DelegatesModule,
@@ -81,14 +78,14 @@ import { AuthModule } from './auth/auth.module';
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
     },
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-    },
     // {
     //   provide: APP_PIPE,
-    //   useClass: ZodValidationPipe,
+    //   useClass: ValidationPipe,
     // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 })
 export class AppModule {}

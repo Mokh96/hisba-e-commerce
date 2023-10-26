@@ -1,6 +1,6 @@
 import { LabelPath } from 'src/common-entities/labelPath.common.entity';
 import { Product } from 'src/products/entities/product.entity';
-import { Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Category extends LabelPath {
@@ -12,8 +12,12 @@ export class Category extends LabelPath {
     onUpdate: 'CASCADE',
     nullable: true,
   })
+  @JoinColumn({ name: 'parent_id' })
   parent: Category;
 
   @OneToMany(() => Product, (product: Product) => product.category)
   products: Product[];
+
+  @Column({ name: 'parent_id', nullable: true })
+  parentId: number;
 }
