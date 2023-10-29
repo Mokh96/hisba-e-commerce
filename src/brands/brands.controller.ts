@@ -22,7 +22,7 @@ export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('img'))
+  //@UseInterceptors(FileInterceptor('img'))
   create(
     // @UploadedFile(
     //   new ParseFilePipeBuilder()

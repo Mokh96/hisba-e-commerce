@@ -1,11 +1,14 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
-  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
+  IsArray,
+  ArrayMinSize,
 } from 'class-validator';
+import { CreateLotDto } from 'src/lots/dto/create-lot.dto';
 
 export class CreateArticleDto {
   @IsOptional()
@@ -32,7 +35,14 @@ export class CreateArticleDto {
   @IsBoolean()
   isMultiLot: boolean;
 
-  @IsInt()
+  @Type(() => Number)
   @IsPositive()
+  @IsInt()
   productId: number;
+
+  @IsOptional()
+  @Type(() => CreateLotDto)
+  @IsArray()
+  @ArrayMinSize(1)
+  lots: CreateLotDto[];
 }

@@ -14,7 +14,8 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto) {
     const product = this.productRepository.create(createProductDto);
-
+    product.minPrice = '0';
+    product.maxPrice = '1';
     await this.productRepository.save(product);
     return product;
   }
@@ -32,7 +33,10 @@ export class ProductsService {
 
   async update(id: number, updateProductDto: UpdateProductDto) {
     let product = await this.findOne(id);
-    const updatedProduct = this.productRepository.merge(product, updateProductDto);
+    const updatedProduct = this.productRepository.merge(
+      product,
+      updateProductDto,
+    );
     await this.productRepository.save(updatedProduct);
     return updatedProduct;
   }

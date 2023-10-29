@@ -1,4 +1,4 @@
-import { IsString, Length, IsNumber, IsIn } from 'class-validator';
+import { IsString, Length, IsNumber, IsIn, IsOptional } from 'class-validator';
 
 import { roles } from 'src/enums/roles.enum';
 
