@@ -1,7 +1,10 @@
-import { IsString, Min } from 'class-validator';
+import { IsString, Min, IsInt, IsPositive } from 'class-validator';
 
 export class CreateOptionsValueDto {
   @IsString()
-  @Min(1)
   value: string;
+
+  @IsPositive()
+  @IsInt()
+  optionId: number;
 }

@@ -6,7 +6,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   ManyToMany,
-  JoinTable,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 
 @Entity()
@@ -15,6 +16,7 @@ export class OptionsValue {
   id: number;
 
   @Column()
+  @Index('value', { unique: true })
   value: string;
 
   @ManyToOne(() => Option, (option: Option) => option.values, {
@@ -22,7 +24,11 @@ export class OptionsValue {
     onDelete: 'CASCADE',
     nullable: false,
   })
+  @JoinColumn({ name: 'option_id' })
   option: Option;
+
+  @Column({ name: 'option_id' })
+  optionId: number;
 
   @ManyToMany(() => Article, (article: Article) => article.optionValues)
   articles: Article[];

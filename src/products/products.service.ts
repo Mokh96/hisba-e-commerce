@@ -14,8 +14,7 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto) {
     const product = this.productRepository.create(createProductDto);
-    product.minPrice = '0';
-    product.maxPrice = '1';
+
     await this.productRepository.save(product);
     return product;
   }

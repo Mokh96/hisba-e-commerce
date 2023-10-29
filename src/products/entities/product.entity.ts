@@ -40,10 +40,10 @@ export class Product {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ name: 'min_price' })
+  @Column({ name: 'min_price', default: 0 })
   minPrice: string;
 
-  @Column({ name: 'max_price' })
+  @Column({ name: 'max_price', default: 0 })
   maxPrice: string;
 
   @Column({ name: 'is_out_stock', default: false })
