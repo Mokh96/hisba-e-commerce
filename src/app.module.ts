@@ -30,6 +30,7 @@ import { GlobalExceptionFilter } from './error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -38,12 +39,13 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '123456789',
+      password: process.env.passwordDB ?? '',
       database: 'hisba_e_commerce_dev',
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: false,
     }),
+    UploadModule,
     UsersModule,
     CategoriesModule,
     BrandsModule,

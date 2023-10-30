@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import { Module } from '@nestjs/common';
 import { SystemDataService } from './system-data.service';
 import { SystemDataController } from './system-data.controller';
@@ -17,7 +9,14 @@ import { PaymentMethodsModule } from 'src/payment-methods/payment-methods.module
 
 @Module({
   controllers: [SystemDataController],
-  imports: [UsersModule, RolesModule, OrderStatusModule, TierTypesModule , OrderStatusModule ,PaymentMethodsModule],
+  imports: [
+    UsersModule,
+    RolesModule,
+    OrderStatusModule,
+    TierTypesModule,
+    OrderStatusModule,
+    PaymentMethodsModule,
+  ],
   providers: [SystemDataService],
 })
 export class SystemDataModule {}

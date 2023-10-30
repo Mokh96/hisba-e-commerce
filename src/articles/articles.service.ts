@@ -32,7 +32,7 @@ export class ArticlesService {
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {
-    let article = await this.findOne(id);
+    const article = await this.findOne(id);
     const updatedLot = this.articleRepository.merge(article, updateArticleDto);
     await this.articleRepository.save(updatedLot);
     return updatedLot;

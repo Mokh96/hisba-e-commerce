@@ -22,15 +22,15 @@ export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  //@UseInterceptors(FileInterceptor('img'))
+  @UseInterceptors(FileInterceptor('img'))
   create(
-    // @UploadedFile(
-    //   new ParseFilePipeBuilder()
-    //     .addFileTypeValidator({ fileType: 'jpeg' })
-    //     .addMaxSizeValidator({ maxSize: 1000 })
-    //     .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
-    // )
-    // file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: 'jpeg' })
+        .addMaxSizeValidator({ maxSize: 1000 })
+        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+    )
+    file: Express.Multer.File,
     @Body() createBrandDto: CreateBrandDto,
   ) {
     return this.brandsService.create(createBrandDto);

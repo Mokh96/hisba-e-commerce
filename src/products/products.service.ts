@@ -31,7 +31,7 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    let product = await this.findOne(id);
+    const product = await this.findOne(id);
     const updatedProduct = this.productRepository.merge(
       product,
       updateProductDto,

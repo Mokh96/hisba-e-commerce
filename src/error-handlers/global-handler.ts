@@ -13,7 +13,6 @@ import { QueryFailedError } from 'typeorm';
 @Catch(QueryFailedError)
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: QueryFailedError, host: ArgumentsHost) {
-
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
