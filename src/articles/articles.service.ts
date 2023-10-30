@@ -4,8 +4,6 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
-import { ArticleGallery } from 'src/article-galleries/entities/article-gallery.entity';
-import { OptionsValue } from 'src/options-values/entities/options-value.entity';
 
 @Injectable()
 export class ArticlesService {
@@ -26,7 +24,10 @@ export class ArticlesService {
   }
 
   async findOne(id: number) {
-    const article = await this.articleRepository.findOneBy({ id: id });
+    const article = await this.articleRepository.findOne({
+      where: { id: id },
+      relations: ['lots', 'gallery'],
+    });
     if (!article) throw new NotFoundException('Article not found');
     return article;
   }

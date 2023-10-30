@@ -1,3 +1,5 @@
+import { OmitType } from '@nestjs/mapped-types';
+
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -6,7 +8,6 @@ import {
   IsPositive,
   IsString,
   IsArray,
- 
   ValidateNested,
 } from 'class-validator';
 import { Id } from 'src/common-dtos/id.common.dto';
@@ -43,10 +44,10 @@ export class CreateArticleDto {
   productId: number;
 
   @IsOptional()
-  @Type(() => CreateLotDto)
+  @Type(() => createLotDtoArray)
   @IsArray()
   @ValidateNested({ each: true })
-  lots: CreateLotDto[];
+  lots: createLotDtoArray[];
 
   @IsOptional()
   @Type(() => Id)
@@ -54,3 +55,7 @@ export class CreateArticleDto {
   @ValidateNested({ each: true })
   optionValues: Id[];
 }
+
+class createLotDtoArray extends OmitType(CreateLotDto, [
+  'articleId',
+] as const) {}

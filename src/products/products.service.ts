@@ -24,14 +24,24 @@ export class ProductsService {
     return products;
   }
 
-  async findOne(id: number) {
+  async findById(id: number) {
     const product = await this.productRepository.findOneBy({ id });
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
+  async findOne(id: number) {
+    await this.findById(id);
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: { articles: { optionValues: true } },
+    });
+
+    return product;
+  }
+
   async update(id: number, updateProductDto: UpdateProductDto) {
-    let product = await this.findOne(id);
+    let product = await this.findById(id);
     const updatedProduct = this.productRepository.merge(
       product,
       updateProductDto,
@@ -41,7 +51,7 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    const product = await this.findOne(id);
+    const product = await this.findById(id);
     await this.productRepository.remove(product);
     return true;
   }

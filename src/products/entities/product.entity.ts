@@ -3,6 +3,8 @@ import { Brand } from 'src/brands/entities/brand.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { ProductGallery } from 'src/product-galleries/entities/product-gallery.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+
 import {
   Entity,
   Column,
@@ -40,11 +42,11 @@ export class Product {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ name: 'min_price', default: 0 })
-  minPrice: string;
+  @Column({ ...defaultDecimal, name: 'min_price', default: 0 })
+  minPrice: number;
 
-  @Column({ name: 'max_price', default: 0 })
-  maxPrice: string;
+  @Column({ ...defaultDecimal, name: 'max_price', default: 0 })
+  maxPrice: number;
 
   @Column({ name: 'is_out_stock', default: false })
   isOutStock: boolean;
