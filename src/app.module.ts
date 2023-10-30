@@ -29,7 +29,7 @@ import { SystemDataModule } from './system-data/system-data.module';
 import { GlobalExceptionFilter } from './error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
-import { APP_PIPE, APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [

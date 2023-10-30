@@ -1,11 +1,14 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBooleanString,
   IsInt,
   IsOptional,
   IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+import { CreateArticleDto } from 'src/articles/dto/create-article.dto';
 
 export class CreateProductDto {
   @IsOptional()
@@ -64,4 +67,10 @@ export class CreateProductDto {
   @IsPositive()
   @IsInt()
   familyId: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateArticleDto)
+  articles: CreateArticleDto[];
 }

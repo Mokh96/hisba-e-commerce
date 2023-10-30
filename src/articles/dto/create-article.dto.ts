@@ -6,8 +6,10 @@ import {
   IsPositive,
   IsString,
   IsArray,
-  ArrayMinSize,
+ 
+  ValidateNested,
 } from 'class-validator';
+import { Id } from 'src/common-dtos/id.common.dto';
 import { CreateLotDto } from 'src/lots/dto/create-lot.dto';
 
 export class CreateArticleDto {
@@ -43,6 +45,12 @@ export class CreateArticleDto {
   @IsOptional()
   @Type(() => CreateLotDto)
   @IsArray()
-  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
   lots: CreateLotDto[];
+
+  @IsOptional()
+  @Type(() => Id)
+  @IsArray()
+  @ValidateNested({ each: true })
+  optionValues: Id[];
 }

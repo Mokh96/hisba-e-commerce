@@ -57,7 +57,7 @@ export class Article {
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];
 
-  @OneToMany(() => Lot, (lot: Lot) => lot.article)
+  @OneToMany(() => Lot, (lot: Lot) => lot.article, { cascade: true })
   lots: Lot[];
 
   @ManyToMany(() => OptionsValue, (value: OptionsValue) => value.articles)

@@ -4,6 +4,8 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
+import { ArticleGallery } from 'src/article-galleries/entities/article-gallery.entity';
+import { OptionsValue } from 'src/options-values/entities/options-value.entity';
 
 @Injectable()
 export class ArticlesService {
