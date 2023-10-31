@@ -31,10 +31,7 @@ export class OptionsService {
 
   async update(id: number, updateOptionDto: UpdateOptionDto) {
     const option = await this.findOne(id);
-    const updatedOption = this.optionRepository.merge(
-      option,
-      updateOptionDto,
-    );
+    const updatedOption = this.optionRepository.merge(option, updateOptionDto);
     await this.optionRepository.save(updatedOption);
     return updatedOption;
   }

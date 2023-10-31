@@ -6,7 +6,6 @@ import {
   IsPositive,
   IsString,
   IsArray,
- 
   ValidateNested,
 } from 'class-validator';
 import { Id } from 'src/common-dtos/id.common.dto';

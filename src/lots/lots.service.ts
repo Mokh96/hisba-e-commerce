@@ -30,7 +30,7 @@ export class LotsService {
   }
 
   async update(id: number, updateLotDto: UpdateLotDto) {
-    let lot = await this.findOne(id);
+    const lot = await this.findOne(id);
     const updatedLot = this.lotRepository.merge(lot, updateLotDto);
     await this.lotRepository.save(updatedLot);
     return updatedLot;
