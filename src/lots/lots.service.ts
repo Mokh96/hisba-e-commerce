@@ -20,19 +20,7 @@ export class LotsService {
 
   async create(createLotDto: CreateLotDto) {
     const lot = this.lotRepository.create(createLotDto);
-    let product = await this.productRepository.findOneOrFail({
-      where: { articles: { id: createLotDto.articleId } },
-    });
-
-    product = this.productsService.maxMin(product, [lot.price]);
-
-    this.dataSource.transaction(async (manger) => {
-      await manger.getRepository(Product).save(product);
-      await manger.getRepository(Lot).save(lot);
-    });
-
-    // await this.lotRepository.save(lot);
-
+    await this.saveLot(lot);
     return lot;
   }
 
@@ -48,9 +36,10 @@ export class LotsService {
   }
 
   async update(id: number, updateLotDto: UpdateLotDto) {
-    let lot = await this.findOne(id);
+    const lot = await this.findOne(id);
     const updatedLot = this.lotRepository.merge(lot, updateLotDto);
-    await this.lotRepository.save(updatedLot);
+
+    await this.saveLot(lot);
     return updatedLot;
   }
 
@@ -58,5 +47,18 @@ export class LotsService {
     const lot = await this.findOne(id);
     await this.lotRepository.remove(lot);
     return true;
+  }
+
+  private async saveLot(lot: Lot) {
+    let product = await this.productRepository.findOneOrFail({
+      where: { articles: { id: lot.articleId } },
+    });
+
+    product = this.productsService.maxMin(product, [lot.price]);
+
+    this.dataSource.transaction(async (manger) => {
+      await manger.getRepository(Product).save(product);
+      await manger.getRepository(Lot).save(lot);
+    });
   }
 }
