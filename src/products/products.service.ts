@@ -55,4 +55,17 @@ export class ProductsService {
     await this.productRepository.remove(product);
     return true;
   }
+
+  maxMin(product: Product, prices: number[]) {
+    if (prices.length === 1 && (product.minPrice && product.maxPrice) == 0) {
+      product.maxPrice = prices[0];
+      product.minPrice = prices[0];
+    } else
+      prices.forEach((price) => {
+        if (price < product.minPrice) product.minPrice = price;
+        else if (price > product.maxPrice) product.maxPrice = price;
+      });
+
+    return product;
+  }
 }

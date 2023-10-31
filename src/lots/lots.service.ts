@@ -4,8 +4,8 @@ import { UpdateLotDto } from './dto/update-lot.dto';
 import { Lot } from './entities/lot.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductsService } from 'src/products/products.service';
 import { Product } from 'src/products/entities/product.entity';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class LotsService {
@@ -15,30 +15,22 @@ export class LotsService {
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
     private dataSource: DataSource,
+    private productsService: ProductsService,
   ) {}
 
   async create(createLotDto: CreateLotDto) {
     const lot = this.lotRepository.create(createLotDto);
-    const product = await this.productRepository.findOneOrFail({
+    let product = await this.productRepository.findOneOrFail({
       where: { articles: { id: createLotDto.articleId } },
-      //relations: ['articles'],
     });
 
-    console.log(product.minPrice);
-
-    if (product.minPrice === 0) {
-      product.minPrice = lot.price;
-      product.maxPrice = lot.price;
-    } else if (product.minPrice < lot.price) product.minPrice = lot.price;
-    else if (product.maxPrice > lot.price) product.maxPrice = lot.price;
-
-    console.log({ after: { min: product.minPrice, max: product.maxPrice } });
+    product = this.productsService.maxMin(product, [lot.price]);
 
     this.dataSource.transaction(async (manger) => {
       await manger.getRepository(Product).save(product);
       await manger.getRepository(Lot).save(lot);
     });
-    // await this.productRepository.save(product);
+
     // await this.lotRepository.save(lot);
 
     return lot;
