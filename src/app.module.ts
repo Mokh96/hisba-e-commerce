@@ -30,7 +30,6 @@ import { GlobalExceptionFilter } from './error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { UploadModule } from './upload/upload.module';
       synchronize: true,
       dropSchema: false,
     }),
-    UploadModule,
     UsersModule,
     CategoriesModule,
     BrandsModule,

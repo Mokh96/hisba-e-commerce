@@ -8,32 +8,34 @@ import {
   Delete,
   ParseIntPipe,
   UseInterceptors,
-  UploadedFile,
-  ParseFilePipeBuilder,
-  HttpStatus,
+  UploadedFiles,
 } from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { Upload } from 'src/helpers/upload/upload.global';
+import { Image, ImageFile } from './type';
+interface Test {
+  file: Express.Multer.File;
+}
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('img'))
+  @UseInterceptors(
+    new UploadInterceptor({ type: '1' }),
+    Upload([{ name: 'img', maxCount: 1 }]),
+  )
   create(
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: 'jpeg' })
-        .addMaxSizeValidator({ maxSize: 1000 })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
-    )
-    file: Express.Multer.File,
     @Body() createBrandDto: CreateBrandDto,
+    @UploadedFiles() file: Express.Multer.File[],
   ) {
-    return this.brandsService.create(createBrandDto);
+    console.log('file controller', file);
+
+    return this.brandsService.create(createBrandDto, file);
   }
 
   @Get()
