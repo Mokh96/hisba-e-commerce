@@ -1,6 +1,6 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateLotDto } from './create-lot.dto';
 
 export class UpdateLotDto extends PartialType(
-  PickType(CreateLotDto, ['price', 'isActive', 'isDisponible'] as const),
+  OmitType(CreateLotDto, ['articleId'] as const),
 ) {}
