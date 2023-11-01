@@ -7,18 +7,30 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { FamiliesService } from './families.service';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { Upload } from 'src/helpers/upload/upload.global';
+import { Image } from 'src/types/types.global';
 
 @Controller('families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
   @Post()
-  create(@Body() createFamilyDto: CreateFamilyDto) {
-    return this.familiesService.create(createFamilyDto);
+  @UseInterceptors(
+    new UploadInterceptor({ type: '1' }),
+    Upload([{ name: 'img', maxCount: 1 }]),
+  )
+  create(
+    @Body() createFamilyDto: CreateFamilyDto,
+    @UploadedFiles() file: Image,
+  ) {
+    return this.familiesService.create(createFamilyDto, file);
   }
 
   @Get()
@@ -32,11 +44,16 @@ export class FamiliesController {
   }
 
   @Patch(':id')
+  @UseInterceptors(
+    new UploadInterceptor({ type: '1' }),
+    Upload([{ name: 'img', maxCount: 1 }]),
+  )
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFamilyDto: UpdateFamilyDto,
+    @UploadedFiles() file: Image,
   ) {
-    return this.familiesService.update(+id, updateFamilyDto);
+    return this.familiesService.update(+id, updateFamilyDto, file);
   }
 
   @Delete(':id')
