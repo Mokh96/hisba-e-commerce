@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 interface GalleryType {
   files: {
     img: Express.Multer.File[];
@@ -15,4 +16,16 @@ export const pathToFile = (file: Express.Multer.File): string => {
   return returnedPath;
 };
 
-// module.exports = { gallery, pathToFile };
+export const removeFileIfExist = (path: string) => {
+  console.log(`uploads/${path}`);
+
+  if (fs.existsSync(`uploads/${path}`)) {
+    try {
+      fs.unlinkSync(path);
+    } catch (error) {
+      console.error(`Error removing file '${path}': ${error}`);
+    }
+  } else {
+    console.log(`File '${path}' does not exist.`);
+  }
+};

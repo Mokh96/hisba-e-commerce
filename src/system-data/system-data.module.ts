@@ -6,9 +6,10 @@ import { RolesModule } from 'src/roles/roles.module';
 import { OrderStatusModule } from 'src/order-status/order-status.module';
 import { TierTypesModule } from 'src/tier-types/tier-types.module';
 import { PaymentMethodsModule } from 'src/payment-methods/payment-methods.module';
+import { ImageController } from 'src/serve-images/image.controller';
 
 @Module({
-  controllers: [SystemDataController],
+  controllers: [SystemDataController, ImageController],
   imports: [
     UsersModule,
     RolesModule,
