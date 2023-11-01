@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/mapped-types';
 
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -9,7 +9,12 @@ import {
   IsString,
   IsArray,
   ValidateNested,
+  NotEquals,
+  ValidateIf,
+  ValidationOptions,
+  IsNotIn,
 } from 'class-validator';
+import { IsBooleanDontAcceptNull } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 import { Id } from 'src/common-dtos/id.common.dto';
 import { CreateLotDto } from 'src/lots/dto/create-lot.dto';
 
@@ -30,12 +35,10 @@ export class CreateArticleDto {
   @IsString()
   description: string;
 
-  @IsOptional()
-  @IsBoolean()
+  @IsBooleanDontAcceptNull()
   isActive: boolean;
 
-  @IsOptional()
-  @IsBoolean()
+  @IsBooleanDontAcceptNull()
   isMultiLot: boolean;
 
   @Type(() => Number)

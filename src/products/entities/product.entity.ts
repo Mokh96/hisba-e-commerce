@@ -66,7 +66,9 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Article, (article: Article) => article.product)
+  @OneToMany(() => Article, (article: Article) => article.product, {
+    cascade: true,
+  })
   articles: Article[];
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {

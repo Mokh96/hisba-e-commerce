@@ -13,7 +13,12 @@ export class ProductsService {
   ) {}
 
   async create(createProductDto: CreateProductDto) {
-    const product = this.productRepository.create(createProductDto);
+    let product = this.productRepository.create(createProductDto);
+    const priceList = product.articles
+      ?.map(({ lots }) => lots?.map(({ price }) => price))
+      .flat();
+
+    if (priceList) product = this.maxMin(product, priceList);
 
     await this.productRepository.save(product);
     return product;
