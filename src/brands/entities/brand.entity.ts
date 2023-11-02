@@ -6,7 +6,8 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 export class Brand extends LabelPath {
   // @Index('label', { unique: true })
   // label: string;
-
+  @Column()
+  syncId: number;
   @OneToMany(() => Brand, (brand: Brand) => brand.parent)
   children: Brand[];
 

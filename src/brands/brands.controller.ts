@@ -13,13 +13,9 @@ import {
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-interface Test {
-  file: Express.Multer.File;
-}
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
