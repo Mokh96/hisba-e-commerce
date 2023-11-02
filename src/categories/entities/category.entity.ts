@@ -1,9 +1,9 @@
-import { LabelPath } from 'src/common-entities/labelPath.common.entity';
+import { LabelPathSync } from 'src/common-entities/labelPath.common.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
-export class Category extends LabelPath {
+export class Category extends LabelPathSync {
   @OneToMany(() => Category, (category: Category) => category.parent)
   children: Category[];
 

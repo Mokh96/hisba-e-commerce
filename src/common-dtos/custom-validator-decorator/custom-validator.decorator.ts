@@ -1,7 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
-  IsOptional,
   NotEquals,
   ValidateIf,
   ValidationOptions,
@@ -19,17 +18,7 @@ export function IsBooleanDontAcceptNull(): PropertyDecorator {
   };
 }
 
-// export function IsBooleanStringDontAcceptNull(): PropertyDecorator {
-//   return (target: Object, propertyKey: string | symbol) => {
-//     Transform(convertBoolean);
-//     ValidateIf((_object, value) => value !== undefined)(target, propertyKey);
-//     IsBoolean()(target, propertyKey);
-//     NotEquals(null)(target, propertyKey);
-//   };
-// }
-
 export function convertBoolean() {
-  //return Transform(convertBoolean);
   return Transform(({ value }) => {
     switch (value) {
       case 'true' || true:

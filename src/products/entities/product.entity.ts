@@ -8,19 +8,16 @@ import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SyncEntity } from 'src/common-entities/sync.entity';
 
 @Entity()
-export class Product {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Product extends SyncEntity {
   @Column({ name: 'img_path', nullable: true })
   imgPath: boolean;
 

@@ -2,6 +2,7 @@ import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import {
   Column,
   CreateDateColumn,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,4 +37,10 @@ export abstract class Order {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt: Date;
+}
+
+export abstract class OrderSync extends Order {
+  @Column({ name: 'sync_id', nullable: true })
+  @Index('sync_id', { unique: true })
+  syncId: number;
 }

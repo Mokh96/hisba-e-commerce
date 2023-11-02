@@ -6,6 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/products/entities/product.entity';
 import { ProductsService } from 'src/products/products.service';
+import { CreateLotSyncDto } from './dto/create-lot-sync.dto';
 
 @Injectable()
 export class LotsService {
@@ -22,6 +23,29 @@ export class LotsService {
     const lot = this.lotRepository.create(createLotDto);
     await this.saveLot(lot);
     return lot;
+  }
+
+  async createSync(createLotSyncDto: CreateLotSyncDto) {
+    const lot = this.lotRepository.create(createLotSyncDto);
+    await this.saveLot(lot);
+    return lot;
+  }
+
+  async bulk(createLotSyncDtos: CreateLotSyncDto[]) {
+    const lots = this.lotRepository.create(createLotSyncDtos);
+
+    const listOfErrors = [];
+    for (const lot of lots) {
+      try {
+        await this.saveLot(lot);
+      } catch (error) {
+        listOfErrors.push(error);
+      }
+    }
+
+    if (listOfErrors.length > 0) return listOfErrors;
+
+    return lots;
   }
 
   async findAll() {

@@ -23,7 +23,6 @@ export class ProductsController {
   @UseInterceptors(FileInterceptor('img'))
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
-    
   }
 
   @Get()

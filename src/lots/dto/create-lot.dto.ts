@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsDateString,
   IsDecimal,
   IsInt,
@@ -8,6 +7,10 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
+import {
+  IsBooleanDontAcceptNull,
+  convertBoolean,
+} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 
 export class CreateLotDto {
   @IsOptional()
@@ -40,12 +43,12 @@ export class CreateLotDto {
   @IsDateString()
   dateExp: Date;
 
-  @IsOptional()
-  @IsBoolean()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isDisponible: boolean;
 
-  @IsOptional()
-  @IsBoolean()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isActive: boolean;
 
   @IsInt()

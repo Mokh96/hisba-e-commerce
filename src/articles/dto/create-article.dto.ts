@@ -14,7 +14,10 @@ import {
   ValidationOptions,
   IsNotIn,
 } from 'class-validator';
-import { IsBooleanDontAcceptNull } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
+import {
+  IsBooleanDontAcceptNull,
+  convertBoolean,
+} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 import { Id } from 'src/common-dtos/id.common.dto';
 import { CreateLotDto } from 'src/lots/dto/create-lot.dto';
 
@@ -35,9 +38,11 @@ export class CreateArticleDto {
   @IsString()
   description: string;
 
+  @convertBoolean()
   @IsBooleanDontAcceptNull()
   isActive: boolean;
 
+  @convertBoolean()
   @IsBooleanDontAcceptNull()
   isMultiLot: boolean;
 

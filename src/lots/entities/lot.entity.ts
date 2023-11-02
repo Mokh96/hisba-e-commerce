@@ -1,11 +1,11 @@
 import { Article } from 'src/articles/entities/article.entity';
 import { CartItem } from 'src/cart-items/entities/cart-item.entity';
+import { SyncEntity } from 'src/common-entities/sync.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
   JoinColumn,
@@ -14,10 +14,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Lot {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Lot extends SyncEntity {
   @Column({ nullable: true })
   code: string;
 

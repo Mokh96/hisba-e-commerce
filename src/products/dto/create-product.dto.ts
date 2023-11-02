@@ -39,12 +39,15 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
+  @convertBoolean()
   @IsBooleanDontAcceptNull()
   isOutStock: boolean;
 
+  @convertBoolean()
   @IsBooleanDontAcceptNull()
   isExpired: boolean;
 
+  @convertBoolean()
   @IsBooleanDontAcceptNull()
   isMultiArticle: boolean;
 
