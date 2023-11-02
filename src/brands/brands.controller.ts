@@ -8,9 +8,7 @@ import {
   Delete,
   ParseIntPipe,
   UseInterceptors,
-
   UploadedFiles,
-
 } from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
@@ -18,19 +16,18 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
+import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-
   @UseInterceptors(
     new UploadInterceptor({ type: '1' }),
     Upload([{ name: 'img', maxCount: 1 }]),
   )
   create(@Body() createBrandDto: CreateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.create(createBrandDto, file);
-
+    return this.brandsService.create(createBrandDto as CreatSyncBrandDto, file);
   }
 
   @Get()

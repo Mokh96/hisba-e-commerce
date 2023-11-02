@@ -21,21 +21,17 @@ export class BrandsService {
     private brandRepository: Repository<Brand>,
   ) {}
   async createSync(createSyncBrandDto: CreatSyncBrandDto) {
-    const brand = this.brandRepository.create({
-      label: createSyncBrandDto.label,
-      syncId: createSyncBrandDto.syncId,
-      parentId: createSyncBrandDto.parentId,
-    });
+    const brand = this.brandRepository.create(createSyncBrandDto);
 
     await this.brandRepository.save(brand);
-
     return brand;
   }
-  async create(createBrandDto: CreateBrandDto, file: Image) {
+  async create(createBrandDto: CreatSyncBrandDto, file: Image) {
     const brand = this.brandRepository.create(createBrandDto);
 
     const newBrand = this.brandRepository.merge(brand, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
+      syncId: createBrandDto.syncId,
     });
     await this.brandRepository.save(newBrand);
 
@@ -61,23 +57,32 @@ export class BrandsService {
         );
       // TODO: edit message of this error
       if (
-        checkChildrenRecursive(
+        !checkChildrenRecursive(
           id,
           await this.findAll(),
           updateBrandDto.parentId,
-        ) === false
+        )
       )
         throw new BadRequestException(
           'parent Id must be not children of this brand',
         );
     }
+
+    const { isDelete } = updateBrandDto;
     const brand = await this.findOne(id);
-    const oldPath = file.img ? brand.imgPath : null;
+    const oldPath = brand.imgPath;
+    const imgPath = isDelete
+      ? null
+      : file?.img
+      ? pathToFile(file.img[0])
+      : oldPath;
+
     const updatedBrand = this.brandRepository.merge(brand, updateBrandDto, {
-      imgPath: file.img ? pathToFile(file.img[0]) : brand.imgPath,
+      imgPath,
     });
+
     await this.brandRepository.save(updatedBrand);
-    if (file.img) removeFileIfExist(oldPath);
+    if (isDelete || file?.img) removeFileIfExist(oldPath);
 
     return updatedBrand;
   }
