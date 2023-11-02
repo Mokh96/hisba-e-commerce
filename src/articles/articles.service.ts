@@ -40,6 +40,7 @@ export class ArticlesService {
   }
 
   async update(id: number, updateArticleDto: UpdateArticleDto) {
+
     let article = await this.findById(id);
     const updatedArticle = this.articleRepository.merge(
       article,
@@ -48,6 +49,7 @@ export class ArticlesService {
 
     await this.articleRepository.save(updatedArticle);
     return updatedArticle;
+
   }
 
   async remove(id: number) {

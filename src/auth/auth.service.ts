@@ -22,10 +22,13 @@ export class AuthService {
       select: ['id', 'username', 'password', 'roleId'],
       where: { username: authDto.username },
     });
+    // console.log(user);
 
     if (!user) throw new NotFoundException('User not found');
+    console.log(authDto.password, user.password);
 
     const isMatch = await bcrypt.compare(authDto.password, user.password);
+    console.log('isMatch', isMatch);
 
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 

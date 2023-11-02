@@ -38,7 +38,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '123456789',
+      password: process.env.passwordDB ?? '',
       database: 'hisba_e_commerce_dev',
       autoLoadEntities: true,
       synchronize: true,

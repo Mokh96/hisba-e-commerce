@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Family } from './entities/family.entity';
+import { Image } from 'src/types/types.global';
+import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
+import { checkChildrenRecursive } from 'src/helpers/function.globa';
 
 @Injectable()
 export class FamiliesService {
@@ -12,10 +19,13 @@ export class FamiliesService {
     private familyRepository: Repository<Family>,
   ) {}
 
-  async create(createFamilyDto: CreateFamilyDto) {
+  async create(createFamilyDto: CreateFamilyDto, file: Image) {
     const family = this.familyRepository.create(createFamilyDto);
-    await this.familyRepository.save(family);
-    return family;
+    const newFamily = this.familyRepository.merge(family, {
+      imgPath: file.img ? pathToFile(file.img[0]) : null,
+    });
+    await this.familyRepository.save(newFamily);
+    return newFamily;
   }
 
   async findAll() {
@@ -29,10 +39,33 @@ export class FamiliesService {
     return family;
   }
 
-  async update(id: number, updateFamilyDto: UpdateFamilyDto) {
+  async update(id: number, updateFamilyDto: UpdateFamilyDto, file: Image) {
+    if (updateFamilyDto.parentId) {
+      if (updateFamilyDto.parentId === id)
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+      // TODO: edit message of this error
+      if (
+        checkChildrenRecursive(
+          id,
+          await this.findAll(),
+          updateFamilyDto.parentId,
+        ) === false
+      )
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+    }
     const family = await this.findOne(id);
-    const updatedFamily = this.familyRepository.merge(family, updateFamilyDto);
+    const oldPath = file.img ? family.imgPath : null;
+
+    const updatedFamily = this.familyRepository.merge(family, updateFamilyDto, {
+      imgPath: file.img ? pathToFile(file.img[0]) : family.imgPath,
+    });
     await this.familyRepository.save(updatedFamily);
+    if (file.img) removeFileIfExist(oldPath);
+
     return updatedFamily;
   }
 

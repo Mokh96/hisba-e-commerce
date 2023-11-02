@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
+import { Image } from 'src/types/types.global';
+import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
+import { checkChildrenRecursive } from 'src/helpers/function.globa';
 
 @Injectable()
 export class CategoriesService {
@@ -12,10 +19,13 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto, file: Image) {
     const category = this.categoryRepository.create(createCategoryDto);
-    await this.categoryRepository.save(category);
-    return category;
+    const newCategoty = this.categoryRepository.merge(category, {
+      imgPath: file.img ? pathToFile(file.img[0]) : null,
+    });
+    await this.categoryRepository.save(newCategoty);
+    return newCategoty;
   }
 
   async findAll() {
@@ -29,13 +39,37 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(id: number, updateCategoryDto: UpdateCategoryDto, file: Image) {
+    if (updateCategoryDto.parentId) {
+      if (updateCategoryDto.parentId === id)
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+      // TODO: edit message of this error
+      if (
+        checkChildrenRecursive(
+          id,
+          await this.findAll(),
+          updateCategoryDto.parentId,
+        ) === false
+      )
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+    }
     const category = await this.findOne(id);
+    const oldPath = file.img ? category.imgPath : null;
+
     const updatedCategory = this.categoryRepository.merge(
       category,
       updateCategoryDto,
+      {
+        imgPath: file.img ? pathToFile(file.img[0]) : category.imgPath,
+      },
     );
     await this.categoryRepository.save(updatedCategory);
+    if (file.img) removeFileIfExist(oldPath);
+
     return updatedCategory;
   }
 

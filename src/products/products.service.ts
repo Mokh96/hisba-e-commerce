@@ -46,7 +46,9 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+
     let product = await this.findById(id);
+
     const updatedProduct = this.productRepository.merge(
       product,
       updateProductDto,

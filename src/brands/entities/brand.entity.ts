@@ -3,7 +3,9 @@ import { Product } from 'src/products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
+
 export class Brand extends LabelPathSync {
+
   @OneToMany(() => Brand, (brand: Brand) => brand.parent)
   children: Brand[];
 
