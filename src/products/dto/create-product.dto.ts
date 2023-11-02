@@ -1,3 +1,4 @@
+import { OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -9,6 +10,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateArticleDto } from 'src/articles/dto/create-article.dto';
+import {
+  IsBooleanDontAcceptNull,
+  convertBoolean,
+} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 
 export class CreateProductDto {
   @IsOptional()
@@ -34,20 +39,20 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
-  @IsOptional()
-  @IsBooleanString()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isOutStock: boolean;
 
-  @IsOptional()
-  @IsBooleanString()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isExpired: boolean;
 
-  @IsOptional()
-  @IsBooleanString()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isMultiArticle: boolean;
 
-  @IsOptional()
-  @IsBooleanString()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isActive: boolean;
 
   @Type(() => Number)
@@ -71,6 +76,10 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateArticleDto)
-  articles: CreateArticleDto[];
+  @Type(() => createLotDtoArray)
+  articles: createLotDtoArray[];
 }
+
+class createLotDtoArray extends OmitType(CreateArticleDto, [
+  'productId',
+] as const) {}

@@ -1,11 +1,12 @@
 import {
   Column,
   CreateDateColumn,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class Tier {
+export class Tier {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -65,4 +66,10 @@ export abstract class Tier {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt: Date;
+}
+
+export class TierSync extends Tier {
+  @Column({ name: 'sync_id', nullable: true })
+  @Index('sync_id', { unique: true })
+  syncId: number;
 }

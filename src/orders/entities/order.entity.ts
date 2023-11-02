@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Order as OrderShape } from '../../common-entities/order.common.entity';
+import { OrderSync } from '../../common-entities/order.common.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { PaymentMethod } from 'src/payment-methods/entities/payment-method.entity';
@@ -9,7 +9,7 @@ import { Tier } from 'src/tiers/entities/tier.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity()
-export class Order extends OrderShape {
+export class Order extends OrderSync {
   @Column({ nullable: true })
   note: string;
 

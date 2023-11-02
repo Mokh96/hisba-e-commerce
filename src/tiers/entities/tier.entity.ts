@@ -1,13 +1,12 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   OneToMany,
   OneToOne,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { Tier as TierShape } from 'src/common-entities/tier.common.entity';
+import { TierSync } from 'src/common-entities/tier.common.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { CartItem } from 'src/cart-items/entities/cart-item.entity';
 import { ShippingAddress } from 'src/shipping-addresses/entities/shipping-address.entity';
@@ -16,10 +15,7 @@ import { TierType } from 'src/tier-types/entities/tier-type.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Entity()
-export class Tier extends TierShape {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Tier extends TierSync {
   @Column({ nullable: true })
   code: string;
 

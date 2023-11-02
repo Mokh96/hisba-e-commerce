@@ -1,4 +1,5 @@
 import { ArticleGallery } from 'src/article-galleries/entities/article-gallery.entity';
+import { SyncEntity } from 'src/common-entities/sync.entity';
 import { Lot } from 'src/lots/entities/lot.entity';
 import { OptionsValue } from 'src/options-values/entities/options-value.entity';
 import { Product } from 'src/products/entities/product.entity';
@@ -11,15 +12,11 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Article {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Article extends SyncEntity {
   @Column({ nullable: true })
   label: string;
 

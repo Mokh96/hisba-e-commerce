@@ -1,4 +1,6 @@
-import { Type } from 'class-transformer';
+import { OmitType } from '@nestjs/mapped-types';
+
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -7,7 +9,15 @@ import {
   IsString,
   IsArray,
   ValidateNested,
+  NotEquals,
+  ValidateIf,
+  ValidationOptions,
+  IsNotIn,
 } from 'class-validator';
+import {
+  IsBooleanDontAcceptNull,
+  convertBoolean,
+} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 import { Id } from 'src/common-dtos/id.common.dto';
 import { CreateLotDto } from 'src/lots/dto/create-lot.dto';
 
@@ -28,12 +38,12 @@ export class CreateArticleDto {
   @IsString()
   description: string;
 
-  @IsOptional()
-  @IsBoolean()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isActive: boolean;
 
-  @IsOptional()
-  @IsBoolean()
+  @convertBoolean()
+  @IsBooleanDontAcceptNull()
   isMultiLot: boolean;
 
   @Type(() => Number)
@@ -42,10 +52,10 @@ export class CreateArticleDto {
   productId: number;
 
   @IsOptional()
-  @Type(() => CreateLotDto)
+  @Type(() => createLotDtoArray)
   @IsArray()
   @ValidateNested({ each: true })
-  lots: CreateLotDto[];
+  lots: createLotDtoArray[];
 
   @IsOptional()
   @Type(() => Id)
@@ -53,3 +63,7 @@ export class CreateArticleDto {
   @ValidateNested({ each: true })
   optionValues: Id[];
 }
+
+class createLotDtoArray extends OmitType(CreateLotDto, [
+  'articleId',
+] as const) {}

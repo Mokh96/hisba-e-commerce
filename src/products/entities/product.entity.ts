@@ -3,22 +3,21 @@ import { Brand } from 'src/brands/entities/brand.entity';
 import { Category } from 'src/categories/entities/category.entity';
 import { Family } from 'src/families/entities/family.entity';
 import { ProductGallery } from 'src/product-galleries/entities/product-gallery.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SyncEntity } from 'src/common-entities/sync.entity';
 
 @Entity()
-export class Product {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Product extends SyncEntity {
   @Column({ name: 'img_path', nullable: true })
   imgPath: boolean;
 
@@ -40,11 +39,11 @@ export class Product {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ name: 'min_price', default: 0 })
-  minPrice: string;
+  @Column({ ...defaultDecimal, name: 'min_price', default: 0 })
+  minPrice: number;
 
-  @Column({ name: 'max_price', default: 0 })
-  maxPrice: string;
+  @Column({ ...defaultDecimal, name: 'max_price', default: 0 })
+  maxPrice: number;
 
   @Column({ name: 'is_out_stock', default: false })
   isOutStock: boolean;
@@ -64,7 +63,9 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Article, (article: Article) => article.product)
+  @OneToMany(() => Article, (article: Article) => article.product, {
+    cascade: true,
+  })
   articles: Article[];
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
