@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +10,7 @@ import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
+import { checkChildrenRecursive } from 'src/helpers/function.globa';
 
 @Injectable()
 export class CategoriesService {
@@ -35,6 +40,23 @@ export class CategoriesService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto, file: Image) {
+    if (updateCategoryDto.parentId) {
+      if (updateCategoryDto.parentId === id)
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+      // TODO: edit message of this error
+      if (
+        checkChildrenRecursive(
+          id,
+          await this.findAll(),
+          updateCategoryDto.parentId,
+        ) === false
+      )
+        throw new BadRequestException(
+          'parent Id must be not children of this brand',
+        );
+    }
     const category = await this.findOne(id);
     const oldPath = file.img ? category.imgPath : null;
 
