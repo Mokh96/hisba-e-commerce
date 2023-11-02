@@ -1,13 +1,31 @@
-import { Controller, Get, Post, Body, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  UseInterceptors,
+  UploadedFiles,
+} from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { Upload } from 'src/helpers/upload/upload.global';
+import { Image } from 'src/types/types.global';
 @Controller('brands/sync')
 export class SyncBrandController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  createSync(@Body() createSyncBrandDto: CreatSyncBrandDto) {
-    return this.brandsService.createSync(createSyncBrandDto);
+  @UseInterceptors(
+    new UploadInterceptor({ type: '1' }),
+    Upload([{ name: 'img', maxCount: 1 }]),
+  )
+  createSync(
+    @Body() createSyncBrandDto: CreatSyncBrandDto,
+    @UploadedFiles() file: Image,
+  ) {
+    return this.brandsService.create(createSyncBrandDto, file);
   }
   @Post('/bulk')
   createSyncBulk() {
