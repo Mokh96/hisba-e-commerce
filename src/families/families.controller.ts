@@ -16,6 +16,7 @@ import { UpdateFamilyDto } from './dto/update-family.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
+import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
 
 @Controller('families')
 export class FamiliesController {
@@ -30,7 +31,10 @@ export class FamiliesController {
     @Body() createFamilyDto: CreateFamilyDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.familiesService.create(createFamilyDto, file);
+    return this.familiesService.create(
+      createFamilyDto as CreateSyncFamilyDto,
+      file,
+    );
   }
 
   @Get()

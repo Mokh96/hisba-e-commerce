@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,6 +10,8 @@ import { Category } from './entities/category.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.globa';
+import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
+import { validateBulkInsert } from 'src/helpers/validation/global';
 
 @Injectable()
 export class CategoriesService {
@@ -19,13 +20,42 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto, file: Image) {
+  async create(createCategoryDto: CreateSyncCategoryDto, file: Image) {
     const category = this.categoryRepository.create(createCategoryDto);
-    const newCategoty = this.categoryRepository.merge(category, {
+    const newCategory = this.categoryRepository.merge(category, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
     });
-    await this.categoryRepository.save(newCategoty);
-    return newCategoty;
+    await this.categoryRepository.save(newCategory);
+    return newCategory;
+  }
+
+  async createSyncBulk(createCategoryDto: CreateSyncCategoryDto[]) {
+    const { validatedData, failureData } = await validateBulkInsert<
+      CreateSyncCategoryDto[]
+    >(createCategoryDto, 'category');
+
+    const successData: CreateSyncCategoryDto[] = [];
+
+    if (failureData.length === createCategoryDto.length)
+      // TODO: change validation failure message
+      throw new BadRequestException(' your body not valide ');
+
+    for (let i = 0; i < validatedData.length; i++) {
+      try {
+        const category = this.categoryRepository.create(validatedData[i]);
+        await this.categoryRepository.save(category);
+
+        successData.push(category);
+      } catch (error) {
+        failureData.push({
+          index: createCategoryDto.findIndex(
+            (item) => item.syncId === validatedData[i].syncId,
+          ),
+          message: 'insert error',
+        });
+      }
+    }
+    return { successData, failureData };
   }
 
   async findAll() {
@@ -47,28 +77,34 @@ export class CategoriesService {
         );
       // TODO: edit message of this error
       if (
-        checkChildrenRecursive(
+        !checkChildrenRecursive(
           id,
           await this.findAll(),
           updateCategoryDto.parentId,
-        ) === false
+        )
       )
         throw new BadRequestException(
           'parent Id must be not children of this brand',
         );
     }
-    const category = await this.findOne(id);
-    const oldPath = file.img ? category.imgPath : null;
+    const { isDelete } = updateCategoryDto;
 
+    const category = await this.findOne(id);
+    const oldPath = category.imgPath;
+    const imgPath = isDelete
+      ? null
+      : file?.img
+      ? pathToFile(file.img[0])
+      : oldPath;
     const updatedCategory = this.categoryRepository.merge(
       category,
       updateCategoryDto,
       {
-        imgPath: file.img ? pathToFile(file.img[0]) : category.imgPath,
+        imgPath,
       },
     );
     await this.categoryRepository.save(updatedCategory);
-    if (file.img) removeFileIfExist(oldPath);
+    if (isDelete || file?.img) removeFileIfExist(oldPath);
 
     return updatedCategory;
   }
@@ -76,6 +112,8 @@ export class CategoriesService {
   async remove(id: number) {
     const category = await this.findOne(id);
     await this.categoryRepository.remove(category);
+    if (category.imgPath) removeFileIfExist(category.imgPath);
+
     return true;
   }
 }

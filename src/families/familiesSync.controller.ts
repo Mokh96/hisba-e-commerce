@@ -11,21 +11,18 @@ import {
   UsePipes,
   Delete,
 } from '@nestjs/common';
-import { BrandsService } from './brands.service';
-import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-import { UpdateBrandDto } from './dto/update-brand.dto';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
-import { Type } from 'class-transformer';
-import { CreateBrandDto } from './dto/create-brand.dto';
-import { ValidateNested } from 'class-validator';
-import { log } from 'util';
 
-@Controller('brands/sync')
-export class SyncBrandController {
-  constructor(private readonly brandsService: BrandsService) {}
+import { FamiliesService } from './families.service';
+import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
+import { UpdateFamilyDto } from './dto/update-family.dto';
+
+@Controller('families/sync')
+export class SyncFamilyController {
+  constructor(private readonly familiesService: FamiliesService) {}
 
   @Post()
   @UseInterceptors(
@@ -33,15 +30,15 @@ export class SyncBrandController {
     Upload([{ name: 'img', maxCount: 1 }]),
   )
   createSync(
-    @Body() createSyncBrandDto: CreatSyncBrandDto,
+    @Body() createSyncCategotyDto: CreateSyncFamilyDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.brandsService.create(createSyncBrandDto, file);
+    return this.familiesService.create(createSyncCategotyDto, file);
   }
   @Post('/bulk')
   @UsePipes(new IsArrayPipe())
-  createSyncBulk(@Body() createSyncBrandBulkDto: CreatSyncBrandDto[]) {
-    return this.brandsService.createSyncBulk(createSyncBrandBulkDto);
+  createSyncBulk(@Body() createSyncCategoryBulkDto: CreateSyncFamilyDto[]) {
+    return this.familiesService.createSyncBulk(createSyncCategoryBulkDto);
   }
 
   @Patch()
@@ -51,13 +48,13 @@ export class SyncBrandController {
   )
   updateSync(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateBrandDto: UpdateBrandDto,
+    @Body() updateBrandDto: UpdateFamilyDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.brandsService.update(+id, updateBrandDto, file);
+    return this.familiesService.update(+id, updateBrandDto, file);
   }
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.brandsService.remove(+id);
+    return this.familiesService.remove(+id);
   }
 }
