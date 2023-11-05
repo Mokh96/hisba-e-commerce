@@ -16,6 +16,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
+import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -30,7 +31,10 @@ export class CategoriesController {
     @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.categoriesService.create(createCategoryDto, file);
+    return this.categoriesService.create(
+      createCategoryDto as CreateSyncCategoryDto,
+      file,
+    );
   }
 
   @Get()

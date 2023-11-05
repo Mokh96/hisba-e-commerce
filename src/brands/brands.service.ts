@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brand } from './entities/brand.entity';
@@ -13,6 +12,7 @@ import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
 import { checkChildrenRecursive } from 'src/helpers/function.globa';
 import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
+import { validateBulkInsert } from 'src/helpers/validation/global';
 
 @Injectable()
 export class BrandsService {
@@ -20,22 +20,42 @@ export class BrandsService {
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
   ) {}
-  async createSync(createSyncBrandDto: CreatSyncBrandDto) {
-    const brand = this.brandRepository.create(createSyncBrandDto);
-
-    await this.brandRepository.save(brand);
-    return brand;
-  }
   async create(createBrandDto: CreatSyncBrandDto, file: Image) {
     const brand = this.brandRepository.create(createBrandDto);
-
     const newBrand = this.brandRepository.merge(brand, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
-      syncId: createBrandDto.syncId,
     });
     await this.brandRepository.save(newBrand);
-
     return newBrand;
+  }
+
+  async createSyncBulk(createBrandDto: CreatSyncBrandDto[]) {
+    const { validatedData, failureData } = await validateBulkInsert<
+      CreatSyncBrandDto[]
+    >(createBrandDto, 'brand');
+
+    const successData: CreatSyncBrandDto[] = [];
+
+    if (failureData.length === createBrandDto.length)
+      // TODO: change validation failure message
+      throw new BadRequestException(' your body not valide ');
+
+    for (let i = 0; i < validatedData.length; i++) {
+      try {
+        const brand = this.brandRepository.create(validatedData[i]);
+        await this.brandRepository.save(brand);
+
+        successData.push(brand);
+      } catch (error) {
+        failureData.push({
+          index: createBrandDto.findIndex(
+            (item) => item.syncId === validatedData[i].syncId,
+          ),
+          message: 'insert error',
+        });
+      }
+    }
+    return { successData, failureData };
   }
 
   async findAll() {
@@ -90,6 +110,7 @@ export class BrandsService {
   async remove(id: number) {
     const brand = await this.findOne(id);
     await this.brandRepository.remove(brand);
+    if (brand.imgPath) removeFileIfExist(brand.imgPath);
     return true;
   }
 }

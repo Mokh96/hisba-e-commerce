@@ -11,6 +11,8 @@ import { Family } from './entities/family.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.globa';
+import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
+import { validateBulkInsert } from 'src/helpers/validation/global';
 
 @Injectable()
 export class FamiliesService {
@@ -19,13 +21,42 @@ export class FamiliesService {
     private familyRepository: Repository<Family>,
   ) {}
 
-  async create(createFamilyDto: CreateFamilyDto, file: Image) {
+  async create(createFamilyDto: CreateSyncFamilyDto, file: Image) {
     const family = this.familyRepository.create(createFamilyDto);
     const newFamily = this.familyRepository.merge(family, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
     });
     await this.familyRepository.save(newFamily);
     return newFamily;
+  }
+
+  async createSyncBulk(createFamilyDto: CreateSyncFamilyDto[]) {
+    const { validatedData, failureData } = await validateBulkInsert<
+      CreateSyncFamilyDto[]
+    >(createFamilyDto, 'family');
+
+    const successData: CreateSyncFamilyDto[] = [];
+
+    if (failureData.length === createFamilyDto.length)
+      // TODO: change validation failure message
+      throw new BadRequestException(' your body not valide ');
+
+    for (let i = 0; i < validatedData.length; i++) {
+      try {
+        const category = this.familyRepository.create(validatedData[i]);
+        await this.familyRepository.save(category);
+
+        successData.push(category);
+      } catch (error) {
+        failureData.push({
+          index: createFamilyDto.findIndex(
+            (item) => item.syncId === validatedData[i].syncId,
+          ),
+          message: 'insert error',
+        });
+      }
+    }
+    return { successData, failureData };
   }
 
   async findAll() {
@@ -57,14 +88,20 @@ export class FamiliesService {
           'parent Id must be not children of this brand',
         );
     }
-    const family = await this.findOne(id);
-    const oldPath = file.img ? family.imgPath : null;
+    const { isDelete } = updateFamilyDto;
 
+    const family = await this.findOne(id);
+    const oldPath = family.imgPath;
+    const imgPath = isDelete
+      ? null
+      : file?.img
+      ? pathToFile(file.img[0])
+      : oldPath;
     const updatedFamily = this.familyRepository.merge(family, updateFamilyDto, {
-      imgPath: file.img ? pathToFile(file.img[0]) : family.imgPath,
+      imgPath,
     });
     await this.familyRepository.save(updatedFamily);
-    if (file.img) removeFileIfExist(oldPath);
+    if (isDelete || file?.img) removeFileIfExist(oldPath);
 
     return updatedFamily;
   }
@@ -72,6 +109,8 @@ export class FamiliesService {
   async remove(id: number) {
     const family = await this.findOne(id);
     await this.familyRepository.remove(family);
+    if (family.imgPath) removeFileIfExist(family.imgPath);
+
     return true;
   }
 }
