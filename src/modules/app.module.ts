@@ -26,7 +26,10 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
 import { SystemDataModule } from './system-data/system-data.module';
-import { GlobalExceptionFilter } from 'src/error-handlers/global-handler';
+import {
+  GlobalExceptionFilter,
+  NotFoundExceptionFilter,
+} from 'src/error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
@@ -77,18 +80,9 @@ import { ConfigModule } from '@nestjs/config';
   ],
 
   providers: [
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
-    // {
-    //   provide: APP_PIPE,
-    //   useClass: ValidationPipe,
-    // },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
+    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
+    { provide: APP_GUARD, useClass: AuthGuard },
   ],
 })
 export class AppModule {}

@@ -3,13 +3,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    private dataSource: DataSource,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -20,7 +21,13 @@ export class ProductsService {
 
     if (priceList) product = this.maxMin(product, priceList);
 
+    //return product;
+  
     await this.productRepository.save(product);
+    // await this.dataSource.transaction(async (manger) => {
+    //   await manger.getRepository(Product).save(product);
+    // });
+
     return product;
   }
 

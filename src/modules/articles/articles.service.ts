@@ -66,7 +66,7 @@ export class ArticlesService {
       article.lots.map(({ price }) => price),
     );
 
-    this.dataSource.transaction(async (manger) => {
+    await this.dataSource.transaction(async (manger) => {
       await manger.getRepository(Product).save(product);
       await manger.getRepository(Article).save(article);
     });

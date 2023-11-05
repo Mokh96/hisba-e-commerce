@@ -19,12 +19,12 @@ export class LotsController {
 
   @Post()
   create(@Body() createLotDto: CreateLotDto) {
-    return this.lotsService.create(createLotDto);
+    return this.lotsService.create(createLotDto as CreateLotSyncDto);
   }
 
   @Post('sync')
   createSync(@Body() createLotSyncDto: CreateLotSyncDto) {
-    return this.lotsService.createSync(createLotSyncDto);
+    return this.lotsService.create(createLotSyncDto);
   }
 
   @Get()

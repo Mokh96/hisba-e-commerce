@@ -19,14 +19,8 @@ export class LotsService {
     private productsService: ProductsService,
   ) {}
 
-  async create(createLotDto: CreateLotDto) {
+  async create(createLotDto: CreateLotSyncDto) {
     const lot = this.lotRepository.create(createLotDto);
-    await this.saveLot(lot);
-    return lot;
-  }
-
-  async createSync(createLotSyncDto: CreateLotSyncDto) {
-    const lot = this.lotRepository.create(createLotSyncDto);
     await this.saveLot(lot);
     return lot;
   }
@@ -80,7 +74,7 @@ export class LotsService {
 
     product = this.productsService.maxMin(product, [lot.price]);
 
-    this.dataSource.transaction(async (manger) => {
+    await this.dataSource.transaction(async (manger) => {
       await manger.getRepository(Product).save(product);
       await manger.getRepository(Lot).save(lot);
     });
