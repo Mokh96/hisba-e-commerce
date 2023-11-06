@@ -76,10 +76,10 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => createLotDtoArray)
-  articles: createLotDtoArray[];
+  @Type(() => createArticleDtoArray)
+  articles: createArticleDtoArray[];
 }
 
-class createLotDtoArray extends OmitType(CreateArticleDto, [
+class createArticleDtoArray extends OmitType(CreateArticleDto, [
   'productId',
 ] as const) {}
