@@ -1,8 +1,8 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CreatSyncBrandDto } from 'src/brands/dto/createSync-brand.dto';
-import { CreateSyncCategoryDto } from 'src/categories/dto/createSync-brand.dto';
-import { CreateSyncFamilyDto } from 'src/families/dto/createSync-familt.dto';
+import { CreatSyncBrandDto } from 'src/modules/brands/dto/createSync-brand.dto';
+import { CreateSyncCategoryDto } from 'src/modules/categories/dto/createSync-brand.dto';
+import { CreateSyncFamilyDto } from 'src/modules/families/dto/createSync-familt.dto';
 
 class ValidationFailuresType {
   index: number;

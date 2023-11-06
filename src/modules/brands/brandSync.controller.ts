@@ -18,10 +18,6 @@ import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
-import { Type } from 'class-transformer';
-import { CreateBrandDto } from './dto/create-brand.dto';
-import { ValidateNested } from 'class-validator';
-import { log } from 'util';
 
 @Controller('brands/sync')
 export class SyncBrandController {
