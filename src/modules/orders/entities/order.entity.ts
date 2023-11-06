@@ -1,0 +1,66 @@
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { OrderSync } from 'src/common-entities/order.common.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
+import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
+import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
+import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
+import { Tier } from 'src/modules/tiers/entities/tier.entity';
+import { User } from 'src/modules/users/entities/user.entity';
+
+@Entity()
+export class Order extends OrderSync {
+  @Column({ nullable: true })
+  note: string;
+
+  @Column({ name: 'tier_name' })
+  tierName: string;
+
+  @Column({ name: 'delivery_address' })
+  deliveryAddress: string;
+
+  @Column({ name: 'tier_phone', length: 13 })
+  tierPhone: string;
+
+  @Column({ name: 'tier_info', type: 'text' })
+  tierInfo: string;
+
+  @Column({ ...defaultDecimal, default: 0 })
+  discount?: number;
+
+  @Column({ name: 'discount_percentage', default: 0, type: 'double' })
+  discountPercentage?: number;
+
+  @Column({ ...defaultDecimal, name: 'stamp_duty', default: 0 })
+  stampDuty: number;
+
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order)
+  orderItems: OrderItem[];
+
+  @ManyToOne(
+    () => PaymentMethod,
+    (paymentMethod: PaymentMethod) => paymentMethod.orders,
+    {
+      nullable: false,
+    },
+  )
+  paymentMethod: PaymentMethod;
+
+  @ManyToOne(() => OrderStatus, (status: OrderStatus) => status.orders, {
+    nullable: false,
+  })
+  status: OrderStatus;
+
+  @OneToMany(() => OrderHistory, (history: OrderHistory) => history.order, {
+    nullable: false,
+  })
+  history: OrderHistory[];
+
+  @ManyToOne(() => Tier, (tier: Tier) => tier.orders, { nullable: false })
+  tier: Tier;
+
+  @ManyToOne(() => User, (user: User) => user.createdOrders, {
+    nullable: false,
+  })
+  creator: User;
+}
