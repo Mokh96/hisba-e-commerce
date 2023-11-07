@@ -48,6 +48,7 @@ import { ConfigModule } from '@nestjs/config';
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: false,
+      logging: true,
     }),
 
     UsersModule,

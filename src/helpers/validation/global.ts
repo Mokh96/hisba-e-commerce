@@ -8,10 +8,12 @@ class ValidationFailuresType {
   index: number;
   message: string;
 }
+
 type CommonInterface =
   | CreatSyncBrandDto[]
   | CreateSyncCategoryDto[]
   | CreateSyncFamilyDto[];
+
 export const validateBulkInsert = async <T extends CommonInterface>(
   data: any[],
   type: 'category' | 'brand' | 'family',
@@ -19,15 +21,19 @@ export const validateBulkInsert = async <T extends CommonInterface>(
   validatedData: CommonInterface;
   failureData: ValidationFailuresType[];
 }> => {
+
   const validatedData: CommonInterface = [];
   const failureData: ValidationFailuresType[] = [];
+
   const plainToInstanceClass =
     type === 'category'
       ? CreateSyncCategoryDto
       : type === 'brand'
       ? CreatSyncBrandDto
       : CreateSyncFamilyDto;
+
   let i: number = 0;
+  
   for (const item of data) {
     const validatedItem = plainToInstance(plainToInstanceClass, item); // Enable strict transformation
 

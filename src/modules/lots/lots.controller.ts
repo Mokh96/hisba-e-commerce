@@ -11,7 +11,7 @@ import {
 import { LotsService } from './lots.service';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { UpdateLotDto } from './dto/update-lot.dto';
-import { CreateLotSyncDto } from './dto/create-lot-sync.dto';
+import { CreateSyncLotDto } from './dto/create-lot.dto';
 
 @Controller('lots')
 export class LotsController {
@@ -19,12 +19,12 @@ export class LotsController {
 
   @Post()
   create(@Body() createLotDto: CreateLotDto) {
-    return this.lotsService.create(createLotDto as CreateLotSyncDto);
+    return this.lotsService.create(createLotDto as CreateSyncLotDto);
   }
 
   @Post('sync')
-  createSync(@Body() createLotSyncDto: CreateLotSyncDto) {
-    return this.lotsService.create(createLotSyncDto);
+  createSync(@Body() createSyncLotDto: CreateSyncLotDto) {
+    return this.lotsService.create(createSyncLotDto);
   }
 
   @Get()

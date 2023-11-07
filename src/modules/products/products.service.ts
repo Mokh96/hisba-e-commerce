@@ -1,34 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
+import {
+  CreateProductDto,
+  CreateSyncProductDto,
+} from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
+import { Article } from '../articles/entities/article.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(Product)
+    private articleRepository: Repository<Article>,
+
     private dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateSyncProductDto) {
+    const articlesDto = createProductDto.articles;
+    const articles = this.articleRepository.create(articlesDto);
+
     let product = this.productRepository.create(createProductDto);
-    const priceList = product.articles
+    product.articles = articles;
+
+    const priceList = articles
       ?.map(({ lots }) => lots?.map(({ price }) => price))
       .flat();
 
     if (priceList) product = this.maxMin(product, priceList);
 
     //return product;
-  
-    await this.productRepository.save(product);
-    // await this.dataSource.transaction(async (manger) => {
-    //   await manger.getRepository(Product).save(product);
-    // });
+
+    await this.productRepository.save(createProductDto);
 
     return product;
+  }
+
+  async createBulk(createSyncProductDto: CreateSyncProductDto[]) {
+    // let product = this.productRepository.create(createProductDto);
+    // const priceList = product.articles
+    //   ?.map(({ lots }) => lots?.map(({ price }) => price))
+    //   .flat();
+
+    // if (priceList) product = this.maxMin(product, priceList);
+
+    // //return product;
+
+    // await this.productRepository.save(product);
+    // // await this.dataSource.transaction(async (manger) => {
+    // //   await manger.getRepository(Product).save(product);
+    // // });
+
+    return 'need to implement';
   }
 
   async findAll() {

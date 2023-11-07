@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
+import {
+  CreateArticleDto,
+  CreateSyncArticleDto,
+} from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -12,6 +15,7 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
+
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
 
@@ -21,8 +25,16 @@ export class ArticlesService {
 
   async create(createArticleDto: CreateArticleDto) {
     const article = this.articleRepository.create(createArticleDto);
+
     await this.saveArticle(article);
     return article;
+  }
+
+  async createBulk(createSyncArticleDtoArray: CreateSyncArticleDto[]) {
+    // const article = this.articleRepository.create(createArticleDto);
+
+    // await this.saveArticle(article);
+    return 'implement bulk';
   }
 
   async findAll() {
@@ -57,6 +69,8 @@ export class ArticlesService {
   }
 
   private async saveArticle(article: Article) {
+    if (!article.lots) return await this.articleRepository.save(article);
+
     let product = await this.productRepository.findOneByOrFail({
       id: article.productId,
     });
