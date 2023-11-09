@@ -8,34 +8,47 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Article } from '../articles/entities/article.entity';
+import { Lot } from '../lots/entities/lot.entity';
+import { CreateArticleDto } from '../articles/dto/create-article.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @InjectRepository(Product)
-    private articleRepository: Repository<Article>,
+
+    // @InjectRepository(Article)
+    // private articleRepository: Repository<Article>,
 
     private dataSource: DataSource,
   ) {}
 
   async create(createProductDto: CreateSyncProductDto) {
-    const articlesDto = createProductDto.articles;
-    const articles = this.articleRepository.create(articlesDto);
+    //   const articles = createProductDto.articles as any;
+    //   delete createProductDto.articles;
+    //   const product = this.productRepository.create(createProductDto);
+    //   await this.productRepository.save(product);
+    //   const listArticles = articles.map(
+    //     (article) => (article.productId = product.id),
+    //   );
+    //   const _articles = this.articleRepository.create(listArticles);
+    //   this.articleRepository.save(_articles);
+    //   return product;
+  }
+  async creat(createProductDto: CreateSyncProductDto) {
+    const product = this.productRepository.create(createProductDto);
+    await this.productRepository.save(product);
+    return product;
 
-    let product = this.productRepository.create(createProductDto);
-    product.articles = articles;
-
-    const priceList = articles
+    const priceList = product.articles
       ?.map(({ lots }) => lots?.map(({ price }) => price))
       .flat();
 
-    if (priceList) product = this.maxMin(product, priceList);
+    //if (priceList) product = this.maxMin(product, priceList);
 
     //return product;
 
-    await this.productRepository.save(createProductDto);
+    await this.productRepository.save(product);
 
     return product;
   }
