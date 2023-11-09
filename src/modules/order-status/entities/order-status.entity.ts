@@ -1,10 +1,10 @@
-import { Label } from 'src/common-entities/label.common.entity';
+import { LabelCommon } from 'src/common-entities/label.common.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Entity, OneToMany } from 'typeorm';
 
 @Entity()
-export class OrderStatus extends Label {
+export class OrderStatus extends LabelCommon {
   @OneToMany(() => Order, (order: Order) => order.status)
   orders: Order[];
 

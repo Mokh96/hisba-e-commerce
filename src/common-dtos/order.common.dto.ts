@@ -1,6 +1,6 @@
 import { IsNumber, Min } from 'class-validator';
 
-export class Order {
+export class OrderCommonDto {
   @IsNumber()
   @Min(1)
   amountHt: number;

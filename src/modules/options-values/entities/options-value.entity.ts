@@ -1,5 +1,5 @@
 import { Article } from 'src/modules/articles/entities/article.entity';
-import { SyncEntity } from 'src/common-entities/sync.entity';
+import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Option } from 'src/modules/options/entities/option.entity';
 import {
   Entity,
@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class OptionsValue extends SyncEntity {
+export class OptionsValue extends SyncEntityCommon {
   @Column()
   @Index('value', { unique: true })
   value: string;

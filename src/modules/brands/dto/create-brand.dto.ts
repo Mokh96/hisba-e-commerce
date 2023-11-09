@@ -7,9 +7,9 @@ import {
   IsPositive,
   isString,
 } from 'class-validator';
-import { Label } from 'src/common-dtos/label.common.dto';
+import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
 
-export class CreateBrandDto extends Label {
+export class CreateBrandDto extends LabelCommonDto {
   @Type(() => Number)
   @IsOptional()
   @IsPositive()

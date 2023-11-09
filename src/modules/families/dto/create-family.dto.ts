@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
-import { Label } from 'src/common-dtos/label.common.dto';
+import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
 
-export class CreateFamilyDto extends Label {
+export class CreateFamilyDto extends LabelCommonDto {
   @Type(() => Number)
   @IsOptional()
   @IsPositive()

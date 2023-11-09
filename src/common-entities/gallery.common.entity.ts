@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class Gallery {
+export abstract class GalleryCommon {
   @PrimaryGeneratedColumn()
   id: number;
 

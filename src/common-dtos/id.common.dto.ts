@@ -1,6 +1,6 @@
 import { IsInt, IsPositive } from 'class-validator';
 
-export class Id {
+export class IdCommonDto {
   @IsPositive()
   @IsInt()
   id: number;

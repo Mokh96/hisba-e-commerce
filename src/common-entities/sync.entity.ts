@@ -1,6 +1,6 @@
 import { Column, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-export class SyncEntity {
+export class SyncEntityCommon {
   @PrimaryGeneratedColumn()
   id: number;
 

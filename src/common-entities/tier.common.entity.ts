@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export class Tier {
+export abstract class TierCommon {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -68,7 +68,7 @@ export class Tier {
   updatedAt: Date;
 }
 
-export class TierSync extends Tier {
+export class TierSync extends TierCommon {
   @Column({ name: 'sync_id', nullable: true })
   @Index('sync_id', { unique: true })
   syncId: number;

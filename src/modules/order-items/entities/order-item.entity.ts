@@ -1,4 +1,4 @@
-import { OrderItem as OrderItemShape } from 'src/common-entities/order-item.common.entity';
+import { OrderItemCommon as OrderItemShape } from 'src/common-entities/order-item.common.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { Order } from 'src/modules/orders/entities/order.entity';

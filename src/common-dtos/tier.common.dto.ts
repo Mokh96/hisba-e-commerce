@@ -8,7 +8,7 @@ import {
   Length,
 } from 'class-validator';
 
-export class Tier {
+export class TierCommonDto {
   @IsString()
   @Length(2, 255)
   fullName: string;
