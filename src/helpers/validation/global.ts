@@ -1,8 +1,8 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CreateSyncBrandDto } from 'src/modules/brands/dto/createSync-brand.dto';
-import { CreateSyncCategoryDto } from 'src/modules/categories/dto/createSync-brand.dto';
-import { CreateSyncFamilyDto } from 'src/modules/families/dto/createSync-familt.dto';
+import { CreateSyncBrandDto } from 'src/modules/brands/dto/create-brand.dto';
+import { CreateSyncCategoryDto } from 'src/modules/categories/dto/create-category.dto';
+import { CreateSyncFamilyDto } from 'src/modules/families/dto/create-family.dto';
 
 class ValidationFailuresType {
   index: number;
@@ -40,7 +40,7 @@ export const validateBulkInsert = async <T extends CommonInterface>(
         parentId: validatedItem.parentId,
       });
     } else {
-      failureData.push({ index: i, message: 'this item not valide' });
+      failureData.push({ index: i, message: 'this item not valid' });
     }
     i++;
   }

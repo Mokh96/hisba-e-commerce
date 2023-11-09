@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateFamilyDto } from './dto/create-family.dto';
+import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +11,6 @@ import { Family } from './entities/family.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
 import { validateBulkInsert } from 'src/helpers/validation/global';
 
 @Injectable()
@@ -39,7 +38,7 @@ export class FamiliesService {
 
     if (failureData.length === createFamilyDto.length)
       // TODO: change validation failure message
-      throw new BadRequestException(' your body not valide ');
+      throw new BadRequestException(' your body not valid ');
 
     for (let i = 0; i < validatedData.length; i++) {
       try {

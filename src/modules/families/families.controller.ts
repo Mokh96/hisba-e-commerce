@@ -11,12 +11,11 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { FamiliesService } from './families.service';
-import { CreateFamilyDto } from './dto/create-family.dto';
+import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
 
 @Controller('families')
 export class FamiliesController {

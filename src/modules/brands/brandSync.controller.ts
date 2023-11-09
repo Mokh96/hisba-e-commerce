@@ -12,12 +12,12 @@ import {
   Delete,
 } from '@nestjs/common';
 import { BrandsService } from './brands.service';
-import { CreateSyncBrandDto } from './dto/createSync-brand.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
+import { CreateSyncBrandDto } from './dto/create-brand.dto';
 @Controller('brands/sync')
 export class SyncBrandController {
   constructor(private readonly brandsService: BrandsService) {}

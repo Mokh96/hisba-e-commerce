@@ -10,8 +10,8 @@ import { Category } from './entities/category.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
 import { validateBulkInsert } from 'src/helpers/validation/global';
+import { CreateSyncCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
 export class CategoriesService {

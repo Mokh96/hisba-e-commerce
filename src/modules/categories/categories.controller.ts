@@ -11,12 +11,14 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import {
+  CreateCategoryDto,
+  CreateSyncCategoryDto,
+} from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
 
 @Controller('categories')
 export class CategoriesController {

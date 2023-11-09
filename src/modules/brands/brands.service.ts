@@ -11,8 +11,8 @@ import { Repository } from 'typeorm';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { CreateSyncBrandDto } from './dto/createSync-brand.dto';
 import { validateBulkInsert } from 'src/helpers/validation/global';
+import { CreateSyncBrandDto } from './dto/create-brand.dto';
 
 @Injectable()
 export class BrandsService {
@@ -45,7 +45,7 @@ export class BrandsService {
         const brand = this.brandRepository.create(validatedData[i]);
         await this.brandRepository.save(brand);
 
-        successData.push(brand as CreateSyncBrandDto);
+        successData.push(brand);
       } catch (error) {
         failureData.push({
           index: createBrandDto.findIndex(
