@@ -5,10 +5,12 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { LotsService } from './lots.service';
 import { UpdateLotDto } from './dto/update-lot.dto';
 import { CreateSyncLotDto } from './dto/create-lot.dto';
+import { validateBulk } from 'src/helpers/validation/validation';
 
 @Controller('lots/sync')
 export class LotsSyncController {
@@ -20,8 +22,17 @@ export class LotsSyncController {
   }
 
   @Post('/bulk')
-  createBulk(@Body() createSyncLotDtoArray: CreateSyncLotDto[]) {
-    return this.lotsService.createBulk(createSyncLotDtoArray);
+  async createBulk(@Body(ParseArrayPipe) createSyncLotDtoArray) {
+    const { valSuccess, valFailures } = await validateBulk(
+      createSyncLotDtoArray,
+      CreateSyncLotDto,
+    );
+
+    const { success, baseFailures } = await this.lotsService.createBulk(
+      valSuccess,
+    );
+
+    return { success, valFailures, baseFailures };
   }
 
   //TODO : create sync update lot dto

@@ -22,11 +22,6 @@ export class LotsController {
     return this.lotsService.create(createLotDto as CreateSyncLotDto);
   }
 
-  @Post('sync')
-  createSync(@Body() createSyncLotDto: CreateSyncLotDto) {
-    return this.lotsService.create(createSyncLotDto);
-  }
-
   @Get()
   findAll() {
     return this.lotsService.findAll();

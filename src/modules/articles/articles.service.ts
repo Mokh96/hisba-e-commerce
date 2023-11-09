@@ -30,11 +30,25 @@ export class ArticlesService {
     return article;
   }
 
-  async createBulk(createSyncArticleDtoArray: CreateSyncArticleDto[]) {
-    // const article = this.articleRepository.create(createArticleDto);
+  async createBulk(createSyncArticleDtos: CreateSyncArticleDto[]) {
+    const articles = this.articleRepository.create(createSyncArticleDtos);
 
-    // await this.saveArticle(article);
-    return 'implement bulk';
+    const baseFailures = [];
+    const success: Article[] = [];
+
+    for (let i = 0; i < articles.length; i++) {
+      try {
+        const article = await this.saveArticle(articles[i]);
+        success.push(article);
+      } catch (error) {
+        baseFailures.push({
+          syncId: articles[i].syncId,
+          error,
+        });
+      }
+    }
+
+    return { success, baseFailures };
   }
 
   async findAll() {
@@ -43,11 +57,10 @@ export class ArticlesService {
   }
 
   async findOne(id: number) {
-    const article = await this.articleRepository.findOne({
+    const article = await this.articleRepository.findOneOrFail({
       where: { id: id },
       relations: ['lots', 'gallery', 'optionValues'],
     });
-    if (!article) throw new NotFoundException('Article not found');
     return article;
   }
 

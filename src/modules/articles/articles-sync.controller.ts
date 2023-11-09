@@ -5,10 +5,12 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { validateBulk } from 'src/helpers/validation/validation';
 
 @Controller('articles/sync')
 export class ArticlesSyncController {
@@ -20,8 +22,17 @@ export class ArticlesSyncController {
   }
 
   @Post('/bulk')
-  createBulk(@Body() createSyncArticleDto: CreateSyncArticleDto[]) {
-    return this.articlesService.createBulk(createSyncArticleDto);
+  async createBulk(@Body(ParseArrayPipe) createSyncArticleDtoArray) {
+    const { valSuccess, valFailures } = await validateBulk(
+      createSyncArticleDtoArray,
+      CreateSyncArticleDto,
+    );
+
+    const { success, baseFailures } = await this.articlesService.createBulk(
+      valSuccess,
+    );
+
+    return { success, valFailures, baseFailures };
   }
 
   @Patch(':id')

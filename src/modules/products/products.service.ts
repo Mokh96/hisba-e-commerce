@@ -53,22 +53,25 @@ export class ProductsService {
     return product;
   }
 
-  async createBulk(createSyncProductDto: CreateSyncProductDto[]) {
-    // let product = this.productRepository.create(createProductDto);
-    // const priceList = product.articles
-    //   ?.map(({ lots }) => lots?.map(({ price }) => price))
-    //   .flat();
+  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
+    const baseFailures = [];
+    const success: Product[] = [];
 
-    // if (priceList) product = this.maxMin(product, priceList);
+    for (let i = 0; i < createSyncProductDtos.length; i++) {
+      try {
+        const product = await this.productRepository.save(
+          createSyncProductDtos[i],
+        );
+        success.push(product);
+      } catch (error) {
+        baseFailures.push({
+          syncId: createSyncProductDtos[i].syncId,
+          error,
+        });
+      }
+    }
 
-    // //return product;
-
-    // await this.productRepository.save(product);
-    // // await this.dataSource.transaction(async (manger) => {
-    // //   await manger.getRepository(Product).save(product);
-    // // });
-
-    return 'need to implement';
+    return { success, baseFailures };
   }
 
   async findAll() {
