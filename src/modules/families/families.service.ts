@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { Family } from './entities/family.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { checkChildrenRecursive } from 'src/helpers/function.globa';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
 import { validateBulkInsert } from 'src/helpers/validation/global';
 
@@ -43,10 +43,10 @@ export class FamiliesService {
 
     for (let i = 0; i < validatedData.length; i++) {
       try {
-        const category = this.familyRepository.create(validatedData[i]);
-        await this.familyRepository.save(category);
+        const family = this.familyRepository.create(validatedData[i]);
+        await this.familyRepository.save(family);
 
-        successData.push(category);
+        successData.push(family);
       } catch (error) {
         failureData.push({
           index: createFamilyDto.findIndex(

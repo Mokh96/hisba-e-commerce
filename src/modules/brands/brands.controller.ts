@@ -16,7 +16,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
+import { CreateSyncBrandDto } from './dto/createSync-brand.dto';
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
@@ -27,7 +27,10 @@ export class BrandsController {
     Upload([{ name: 'img', maxCount: 1 }]),
   )
   create(@Body() createBrandDto: CreateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.create(createBrandDto as CreatSyncBrandDto, file);
+    return this.brandsService.create(
+      createBrandDto as CreateSyncBrandDto,
+      file,
+    );
   }
 
   @Get()

@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CreatSyncBrandDto } from 'src/modules/brands/dto/createSync-brand.dto';
+import { CreateSyncBrandDto } from 'src/modules/brands/dto/createSync-brand.dto';
 import { CreateSyncCategoryDto } from 'src/modules/categories/dto/createSync-brand.dto';
 import { CreateSyncFamilyDto } from 'src/modules/families/dto/createSync-familt.dto';
 
@@ -9,7 +9,7 @@ class ValidationFailuresType {
   message: string;
 }
 type CommonInterface =
-  | CreatSyncBrandDto[]
+  | CreateSyncBrandDto[]
   | CreateSyncCategoryDto[]
   | CreateSyncFamilyDto[];
 export const validateBulkInsert = async <T extends CommonInterface>(
@@ -25,7 +25,7 @@ export const validateBulkInsert = async <T extends CommonInterface>(
     type === 'category'
       ? CreateSyncCategoryDto
       : type === 'brand'
-      ? CreatSyncBrandDto
+      ? CreateSyncBrandDto
       : CreateSyncFamilyDto;
   let i: number = 0;
   for (const item of data) {
