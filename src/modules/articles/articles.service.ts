@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
+import {
+  CreateArticleDto,
+  CreateSyncArticleDto,
+} from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -12,6 +15,7 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
+
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
 
@@ -21,8 +25,30 @@ export class ArticlesService {
 
   async create(createArticleDto: CreateArticleDto) {
     const article = this.articleRepository.create(createArticleDto);
+
     await this.saveArticle(article);
     return article;
+  }
+
+  async createBulk(createSyncArticleDtos: CreateSyncArticleDto[]) {
+    const articles = this.articleRepository.create(createSyncArticleDtos);
+
+    const baseFailures = [];
+    const success: Article[] = [];
+
+    for (let i = 0; i < articles.length; i++) {
+      try {
+        const article = await this.saveArticle(articles[i]);
+        success.push(article);
+      } catch (error) {
+        baseFailures.push({
+          syncId: articles[i].syncId,
+          error,
+        });
+      }
+    }
+
+    return { success, baseFailures };
   }
 
   async findAll() {
@@ -31,11 +57,10 @@ export class ArticlesService {
   }
 
   async findOne(id: number) {
-    const article = await this.articleRepository.findOne({
+    const article = await this.articleRepository.findOneOrFail({
       where: { id: id },
       relations: ['lots', 'gallery', 'optionValues'],
     });
-    if (!article) throw new NotFoundException('Article not found');
     return article;
   }
 
@@ -57,6 +82,8 @@ export class ArticlesService {
   }
 
   private async saveArticle(article: Article) {
+    if (!article.lots) return await this.articleRepository.save(article);
+
     let product = await this.productRepository.findOneByOrFail({
       id: article.productId,
     });

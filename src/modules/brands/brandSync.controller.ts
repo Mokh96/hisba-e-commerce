@@ -33,6 +33,7 @@ export class SyncBrandController {
   ) {
     return this.brandsService.create(createSyncBrandDto, file);
   }
+  
   @Post('/bulk')
   @UsePipes(new IsArrayPipe())
   createSyncBulk(@Body() createSyncBrandBulkDto: CreateSyncBrandDto[]) {
@@ -51,6 +52,7 @@ export class SyncBrandController {
   ) {
     return this.brandsService.update(+id, updateBrandDto, file);
   }
+
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.brandsService.remove(+id);

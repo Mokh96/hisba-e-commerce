@@ -1,4 +1,4 @@
-import { OmitType } from '@nestjs/mapped-types';
+import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 
 import { Type } from 'class-transformer';
 import {
@@ -14,7 +14,11 @@ import {
   convertBoolean,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 import { Id } from 'src/common-dtos/id.common.dto';
-import { CreateLotDto } from 'src/modules/lots/dto/create-lot.dto';
+import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
+import {
+  CreateLotDto,
+  CreateSyncLotDto,
+} from 'src/modules/lots/dto/create-lot.dto';
 
 export class CreateArticleDto {
   @IsOptional()
@@ -47,10 +51,10 @@ export class CreateArticleDto {
   productId: number;
 
   @IsOptional()
-  @Type(() => createLotDtoArray)
+  @Type(() => CreateLotDtoArray)
   @IsArray()
   @ValidateNested({ each: true })
-  lots: createLotDtoArray[];
+  lots: CreateLotDtoArray[];
 
   @IsOptional()
   @Type(() => Id)
@@ -59,6 +63,22 @@ export class CreateArticleDto {
   optionValues: Id[];
 }
 
-class createLotDtoArray extends OmitType(CreateLotDto, [
+export class CreateLotDtoArray extends OmitType(CreateLotDto, [
   'articleId',
 ] as const) {}
+
+export class CreateSyncLotDtoArray extends OmitType(CreateSyncLotDto, [
+  'articleId',
+] as const) {}
+
+//TODO: find batter implementation , tray to remove redundant
+export class CreateSyncArticleDto extends IntersectionType(
+  OmitType(CreateArticleDto, ['lots'] as const),
+  SyncIdDto,
+) {
+  @IsOptional()
+  @Type(() => CreateSyncLotDtoArray)
+  @IsArray()
+  @ValidateNested({ each: true })
+  lots: CreateSyncLotDtoArray[];
+}

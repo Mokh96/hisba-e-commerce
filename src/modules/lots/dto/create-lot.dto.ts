@@ -1,3 +1,4 @@
+import { IntersectionType } from '@nestjs/mapped-types';
 import {
   IsDateString,
   IsDecimal,
@@ -11,6 +12,7 @@ import {
   IsBooleanDontAcceptNull,
   convertBoolean,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
+import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 
 export class CreateLotDto {
   @IsOptional()
@@ -55,3 +57,8 @@ export class CreateLotDto {
   @IsPositive()
   articleId: number;
 }
+
+export class CreateSyncLotDto extends IntersectionType(
+  CreateLotDto,
+  SyncIdDto,
+) {}
