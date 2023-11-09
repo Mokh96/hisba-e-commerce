@@ -10,9 +10,9 @@ import { Repository } from 'typeorm';
 
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
-import { checkChildrenRecursive } from 'src/helpers/function.globa';
-import { CreatSyncBrandDto } from './dto/createSync-brand.dto';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { validateBulkInsert } from 'src/helpers/validation/global';
+import { CreateSyncBrandDto } from './dto/create-brand.dto';
 
 @Injectable()
 export class BrandsService {
@@ -20,7 +20,7 @@ export class BrandsService {
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
   ) {}
-  async create(createBrandDto: CreatSyncBrandDto, file: Image) {
+  async create(createBrandDto: CreateSyncBrandDto, file: Image) {
     const brand = this.brandRepository.create(createBrandDto);
     const newBrand = this.brandRepository.merge(brand, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
@@ -29,12 +29,12 @@ export class BrandsService {
     return newBrand;
   }
 
-  async createSyncBulk(createBrandDto: CreatSyncBrandDto[]) {
+  async createSyncBulk(createBrandDto: CreateSyncBrandDto[]) {
     const { validatedData, failureData } = await validateBulkInsert<
-      CreatSyncBrandDto[]
+      CreateSyncBrandDto[]
     >(createBrandDto, 'brand');
 
-    const successData: CreatSyncBrandDto[] = [];
+    const successData: CreateSyncBrandDto[] = [];
 
     if (failureData.length === createBrandDto.length)
       // TODO: change validation failure message

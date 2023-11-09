@@ -9,3 +9,10 @@ export class CreateFamilyDto extends Label {
   @IsInt()
   parentId: number;
 }
+
+export class CreateSyncFamilyDto extends CreateFamilyDto {
+  @Type(() => Number)
+  @IsPositive()
+  @IsInt()
+  syncId: number;
+}

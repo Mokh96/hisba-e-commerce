@@ -16,3 +16,10 @@ export class CreateBrandDto extends Label {
   @IsInt()
   parentId: number;
 }
+
+export class CreateSyncBrandDto extends CreateBrandDto {
+  @Type(() => Number)
+  @IsPositive()
+  @IsInt()
+  syncId: number;
+}

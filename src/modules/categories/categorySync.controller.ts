@@ -16,8 +16,9 @@ import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
 import { CategoriesService } from './categories.service';
-import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
+
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateSyncCategoryDto } from './dto/create-category.dto';
 
 @Controller('categories/sync')
 export class SyncCategoryController {

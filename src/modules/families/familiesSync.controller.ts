@@ -17,8 +17,8 @@ import { Image } from 'src/types/types.global';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
 
 import { FamiliesService } from './families.service';
-import { CreateSyncFamilyDto } from './dto/createSync-familt.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
+import { CreateSyncFamilyDto } from './dto/create-family.dto';
 
 @Controller('families/sync')
 export class SyncFamilyController {

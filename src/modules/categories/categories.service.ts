@@ -9,9 +9,9 @@ import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { checkChildrenRecursive } from 'src/helpers/function.globa';
-import { CreateSyncCategoryDto } from './dto/createSync-brand.dto';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { validateBulkInsert } from 'src/helpers/validation/global';
+import { CreateSyncCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -38,11 +38,13 @@ export class CategoriesService {
 
     if (failureData.length === createCategoryDto.length)
       // TODO: change validation failure message
-      throw new BadRequestException(' your body not valide ');
+      throw new BadRequestException(' your body not valid ');
 
     for (let i = 0; i < validatedData.length; i++) {
       try {
-        const category = this.categoryRepository.create(validatedData[i]);
+        const category: CreateSyncCategoryDto = this.categoryRepository.create(
+          validatedData[i],
+        );
         await this.categoryRepository.save(category);
 
         successData.push(category);
