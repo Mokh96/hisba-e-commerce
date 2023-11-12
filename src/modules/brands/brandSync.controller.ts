@@ -34,7 +34,7 @@ export class SyncBrandController {
   ) {
     return this.brandsService.create(createSyncBrandDto, file);
   }
-  
+
   @Post('/bulk')
   @UsePipes(new IsArrayPipe())
   createSyncBulk(@Body() createSyncBrandBulkDto: CreatSyncBrandDto[]) {

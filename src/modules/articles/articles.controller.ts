@@ -9,8 +9,14 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import {
+  CreateArticleDto,
+  CreateSyncArticleDto,
+} from './dto/create-article.dto';
+import {
+  UpdateArticleDto,
+  UpdateSyncArticleDto,
+} from './dto/update-article.dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -18,7 +24,9 @@ export class ArticlesController {
 
   @Post()
   create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(createArticleDto);
+    return this.articlesService.create(
+      createArticleDto as CreateSyncArticleDto,
+    );
   }
 
   @Get()
@@ -36,7 +44,10 @@ export class ArticlesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return this.articlesService.update(+id, updateArticleDto);
+    return this.articlesService.update(
+      +id,
+      updateArticleDto as UpdateSyncArticleDto,
+    );
   }
 
   @Delete(':id')
