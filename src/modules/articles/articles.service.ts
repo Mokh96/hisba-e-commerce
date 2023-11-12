@@ -3,7 +3,10 @@ import {
   CreateArticleDto,
   CreateSyncArticleDto,
 } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import {
+  UpdateArticleDto,
+  UpdateSyncArticleDto,
+} from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
@@ -23,7 +26,7 @@ export class ArticlesService {
     private productsService: ProductsService,
   ) {}
 
-  async create(createArticleDto: CreateArticleDto) {
+  async create(createArticleDto: CreateSyncArticleDto) {
     const article = this.articleRepository.create(createArticleDto);
 
     await this.saveArticle(article);
@@ -64,7 +67,7 @@ export class ArticlesService {
     return article;
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto) {
+  async update(id: number, updateArticleDto: UpdateSyncArticleDto) {
     let article = await this.findById(id);
     const updatedArticle = this.articleRepository.merge(
       article,

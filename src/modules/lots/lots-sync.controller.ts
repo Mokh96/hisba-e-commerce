@@ -8,7 +8,7 @@ import {
   ParseArrayPipe,
 } from '@nestjs/common';
 import { LotsService } from './lots.service';
-import { UpdateLotDto } from './dto/update-lot.dto';
+import { UpdateLotDto, UpdateSyncLotDto } from './dto/update-lot.dto';
 import { CreateSyncLotDto } from './dto/create-lot.dto';
 import { validateBulk } from 'src/helpers/validation/validation';
 
@@ -39,7 +39,7 @@ export class LotsSyncController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateLotDto: UpdateLotDto,
+    @Body() updateLotDto: UpdateSyncLotDto,
   ) {
     return this.lotsService.update(+id, updateLotDto);
   }

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateLotDto } from './dto/update-lot.dto';
+import { UpdateLotDto, UpdateSyncLotDto } from './dto/update-lot.dto';
 import { Lot } from './entities/lot.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -55,7 +55,7 @@ export class LotsService {
     return lot;
   }
 
-  async update(id: number, updateLotDto: UpdateLotDto) {
+  async update(id: number, updateLotDto: UpdateSyncLotDto) {
     const lot = await this.findOne(id);
     const updatedLot = this.lotRepository.merge(lot, updateLotDto);
 

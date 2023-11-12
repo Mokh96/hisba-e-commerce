@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateSyncArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { UpdateSyncArticleDto } from './dto/update-article.dto';
 import { validateBulk } from 'src/helpers/validation/validation';
 
 @Controller('articles/sync')
@@ -38,7 +38,7 @@ export class ArticlesSyncController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateArticleDto: UpdateArticleDto,
+    @Body() updateArticleDto: UpdateSyncArticleDto,
   ) {
     return this.articlesService.update(+id, updateArticleDto);
   }

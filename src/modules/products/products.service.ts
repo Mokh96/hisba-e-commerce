@@ -89,7 +89,10 @@ export class ProductsService {
     await this.findById(id);
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: { articles: { optionValues: true } },
+      relations: {
+        articles: { gallery: true, optionValues: { option: true }, lots: true },
+        gallery: true,
+      },
     });
 
     return product;
