@@ -12,6 +12,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ProductsService } from 'src/modules/products/products.service';
+import { QueryArticleDto } from './dto/query-article.dto';
 
 @Injectable()
 export class ArticlesService {
@@ -54,7 +55,7 @@ export class ArticlesService {
     return { success, baseFailures };
   }
 
-  async findAll() {
+  async findAll(queryArticleDto: QueryArticleDto) {
     const articles = await this.articleRepository.find();
     return articles;
   }

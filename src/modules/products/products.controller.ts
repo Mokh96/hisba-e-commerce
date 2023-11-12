@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';

@@ -1,11 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateLotDto, UpdateSyncLotDto } from './dto/update-lot.dto';
 import { Lot } from './entities/lot.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ProductsService } from 'src/modules/products/products.service';
 import { CreateSyncLotDto } from './dto/create-lot.dto';
+import { QueryLotDto } from './dto/query-lot.dto';
+import { QueryHelper } from 'src/helpers/query.helper';
+import { fromDtoToQuery } from 'src/helpers/function.global';
 
 @Injectable()
 export class LotsService {
@@ -16,6 +19,7 @@ export class LotsService {
     private productRepository: Repository<Product>,
     private dataSource: DataSource,
     private productsService: ProductsService,
+    private queryHelper: QueryHelper,
   ) {}
 
   async create(createLotDto: CreateSyncLotDto) {
@@ -45,8 +49,10 @@ export class LotsService {
     return { success, baseFailures };
   }
 
-  async findAll() {
-    const lots = await this.lotRepository.find();
+  async findAll(queryLotDto: QueryLotDto) {
+    const queryLot = fromDtoToQuery(queryLotDto);
+
+    const lots = await this.lotRepository.findBy(queryLot);
     return lots;
   }
 
@@ -56,7 +62,7 @@ export class LotsService {
   }
 
   async update(id: number, updateLotDto: UpdateSyncLotDto) {
-    const lot = await this.findOne(id);
+    const lot = await this.lotRepository.findOneByOrFail({ id });
     const updatedLot = this.lotRepository.merge(lot, updateLotDto);
 
     await this.saveLot(lot);
@@ -64,8 +70,8 @@ export class LotsService {
   }
 
   async remove(id: number) {
-    const lot = await this.findOne(id);
-    await this.lotRepository.remove(lot);
+    const lot = await this.lotRepository.findOneByOrFail({ id });
+    await this.removeLot(lot);
     return true;
   }
 
@@ -82,5 +88,28 @@ export class LotsService {
     });
 
     return lot;
+  }
+
+  private async removeLot(lot: Lot) {
+    let product = await this.productRepository.findOneOrFail({
+      where: { articles: { id: lot.articleId } },
+    });
+
+    if (product.maxPrice == lot.price || product.maxPrice == lot.price) {
+      const lots = await this.lotRepository.find({
+        where: { article: { productId: product.id }, id: Not(lot.id) },
+        select: ['price'],
+      });
+
+      product = this.productsService.maxMin(
+        product,
+        lots.map(({ price }) => price),
+      );
+    }
+
+    await this.dataSource.transaction(async (manger) => {
+      await manger.getRepository(Product).save(product);
+      return await manger.getRepository(Lot).remove(lot);
+    });
   }
 }

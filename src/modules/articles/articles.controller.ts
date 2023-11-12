@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import {
@@ -17,6 +18,7 @@ import {
   UpdateArticleDto,
   UpdateSyncArticleDto,
 } from './dto/update-article.dto';
+import { QueryArticleDto } from './dto/query-article.dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -30,8 +32,8 @@ export class ArticlesController {
   }
 
   @Get()
-  findAll() {
-    return this.articlesService.findAll();
+  findAll(@Query() queryArticleDto: QueryArticleDto) {
+    return this.articlesService.findAll(queryArticleDto);
   }
 
   @Get(':id')

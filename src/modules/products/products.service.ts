@@ -79,15 +79,8 @@ export class ProductsService {
     return products;
   }
 
-  async findById(id: number) {
-    const product = await this.productRepository.findOneBy({ id });
-    if (!product) throw new NotFoundException('Product not found');
-    return product;
-  }
-
   async findOne(id: number) {
-    await this.findById(id);
-    const product = await this.productRepository.findOne({
+    const product = await this.productRepository.findOneOrFail({
       where: { id },
       relations: {
         articles: { gallery: true, optionValues: { option: true }, lots: true },
@@ -99,7 +92,7 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    let product = await this.findById(id);
+    const product = await this.productRepository.findOneByOrFail({ id });
 
     const updatedProduct = this.productRepository.merge(
       product,
@@ -110,7 +103,8 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    const product = await this.findById(id);
+    const product = await this.productRepository.findOneByOrFail({ id });
+
     await this.productRepository.remove(product);
     return true;
   }
