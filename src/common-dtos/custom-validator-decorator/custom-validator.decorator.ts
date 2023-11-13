@@ -30,3 +30,13 @@ export function convertBoolean() {
     }
   });
 }
+
+export function convertNullNumber() {
+  return Transform(({ value }) => {
+    switch (value) {
+      case 'null' || null:
+        return null;
+    }
+    return value;
+  });
+}

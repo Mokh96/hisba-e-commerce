@@ -13,6 +13,7 @@ import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ProductsService } from 'src/modules/products/products.service';
 import { QueryArticleDto } from './dto/query-article.dto';
+import { fromDtoToQuery } from 'src/helpers/function.global';
 
 @Injectable()
 export class ArticlesService {
@@ -56,7 +57,9 @@ export class ArticlesService {
   }
 
   async findAll(queryArticleDto: QueryArticleDto) {
-    const articles = await this.articleRepository.find();
+    const queryArticle = fromDtoToQuery(queryArticleDto);
+
+    const articles = await this.articleRepository.findBy(queryArticle);
     return articles;
   }
 

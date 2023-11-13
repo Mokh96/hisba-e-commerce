@@ -1,7 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  Allow,
-  IsArray,
   IsDateString,
   IsDecimal,
   IsInt,
@@ -9,11 +7,11 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  ValidateIf,
 } from 'class-validator';
 import {
   IsBooleanDontAcceptNull,
   convertBoolean,
+  convertNullNumber,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 
 export class QueryLotDto {
@@ -57,10 +55,12 @@ export class QueryLotDto {
   @IsBooleanDontAcceptNull()
   isActive: boolean;
 
+  @Type(() => Number)
+  @convertNullNumber()
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  articleId: number;
+  @IsInt({ each: true })
+  @IsPositive({ each: true })
+  articleId: number | number[];
 
   @Type(() => Number)
   @IsOptional()
