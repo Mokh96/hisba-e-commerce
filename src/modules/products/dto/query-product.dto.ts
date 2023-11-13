@@ -1,23 +1,10 @@
-import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import {
-  CreateArticleDto,
-  CreateSyncArticleDto,
-} from 'src/modules/articles/dto/create-article.dto';
+import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
+
 import {
   IsBooleanDontAcceptNull,
   convertBoolean,
-  convertNullNumber,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
-import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 
 export class CreateProductDto {
   @IsOptional()
