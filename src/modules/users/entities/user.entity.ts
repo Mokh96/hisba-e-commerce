@@ -12,8 +12,10 @@ import {
   Index,
   JoinColumn,
   BeforeInsert,
+  OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -24,6 +26,7 @@ export class User {
   @Column()
   @Index('username', { unique: true })
   username: string;
+
 
   @Column({ select: false })
   password: string;
@@ -36,6 +39,9 @@ export class User {
 
   @OneToMany(() => Tier, (tier: Tier) => tier.creator)
   createdTiers: Tier[];
+
+  @OneToOne(() => Tier, (tier: Tier) => tier.user)
+  tier: Tier;
 
   @OneToMany(
     () => ProspectiveTier,

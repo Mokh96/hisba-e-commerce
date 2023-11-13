@@ -1,4 +1,5 @@
-import { IsString, Length, IsNumber, IsIn, IsOptional } from 'class-validator';
+import { Transform, Exclude } from 'class-transformer';
+import { IsString, Length } from 'class-validator';
 
 import { roles } from 'src/enums/roles.enum';
 
@@ -10,8 +11,4 @@ export class CreateUserDto {
   @IsString()
   @Length(4, 255)
   password: string;
-
-  @IsNumber()
-  @IsIn([roles.ADMIN])
-  roleId: roles;
 }

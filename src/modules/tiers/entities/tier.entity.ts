@@ -37,23 +37,44 @@ export class Tier extends TierSync {
   @OneToMany(
     () => ShippingAddress,
     (shippingAddress: ShippingAddress) => shippingAddress.tier,
-    {
-      cascade: ['insert'],
-    },
+    { cascade: true },
   )
   shippingAddresses: ShippingAddress[];
+
+  @OneToOne(() => ShippingAddress, { nullable: true })
+  @JoinColumn({
+    name: 'default_shipping_address_id',
+    referencedColumnName: 'id',
+  })
+  defaultShippingAddress: ShippingAddress;
+
+  @Column({ name: 'default_shipping_address_id', nullable: true })
+  defaultShippingAddressId: number;
 
   @ManyToOne(() => TierType, (tierType: TierType) => tierType.tiers, {
     nullable: false,
   })
+  @JoinColumn({ name: 'tier_type_id' })
   type: TierType;
 
+  @Column({ name: 'tier_type_id' })
+  tierTypeId: number;
+
   @ManyToOne(() => User, (user: User) => user.createdTiers, { nullable: false })
+  @JoinColumn({ name: 'creator_id' })
   creator: User;
 
-  @OneToOne(() => ShippingAddress)
-  @JoinColumn()
-  defaultShippingAddress: ShippingAddress;
+  @Column({ name: 'creator_id' })
+  creatorId: number;
+
+  @OneToOne(() => User, (user: User) => user.tier, {
+    nullable: false,
+    cascade: ['insert'],
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @OneToOne(() => ProspectiveTier)
   @JoinColumn()

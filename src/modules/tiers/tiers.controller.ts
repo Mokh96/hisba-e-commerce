@@ -18,7 +18,7 @@ export class TiersController {
 
   @Post()
   create(@Body() createTierDto: CreateTierDto) {
-    return this.tiersService.create(createTierDto);
+    return this.tiersService.create(createTierDto, { id: 1 });
   }
 
   @Get()
