@@ -14,10 +14,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { SyncEntity } from 'src/common-entities/sync.entity';
+import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 
 @Entity()
-export class Product extends SyncEntity {
+export class Product extends SyncEntityCommon {
   @Column({ name: 'img_path', nullable: true })
   imgPath: boolean;
 

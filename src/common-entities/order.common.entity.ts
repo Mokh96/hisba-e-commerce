@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class Order {
+export abstract class OrderCommon {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -39,7 +39,7 @@ export abstract class Order {
   updatedAt: Date;
 }
 
-export abstract class OrderSync extends Order {
+export abstract class OrderSync extends OrderCommon {
   @Column({ name: 'sync_id', nullable: true })
   @Index('sync_id', { unique: true })
   syncId: number;

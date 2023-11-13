@@ -37,6 +37,9 @@ export class Tier extends TierSync {
   @OneToMany(
     () => ShippingAddress,
     (shippingAddress: ShippingAddress) => shippingAddress.tier,
+    {
+      cascade: ['insert'],
+    },
   )
   shippingAddresses: ShippingAddress[];
 

@@ -7,7 +7,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class OrderItem {
+export class OrderItemCommonDto {
   @IsString()
   @Max(255)
   code: string;

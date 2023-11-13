@@ -1,9 +1,9 @@
-import { Label } from 'src/common-entities/label.common.entity';
+import { LabelCommon } from 'src/common-entities/label.common.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
-export class PaymentMethod extends Label {
+export class PaymentMethod extends LabelCommon {
   @Column({ name: 'is_stamp', default: false })
   isStamp: boolean;
 

@@ -1,10 +1,10 @@
-import { OrderItem } from 'src/common-entities/order-item.common.entity';
+import { OrderItemCommon } from 'src/common-entities/order-item.common.entity';
 import { Lot } from 'src/modules/lots/entities/lot.entity';
 import { Tier } from 'src/modules/tiers/entities/tier.entity';
 import { Entity, ManyToOne } from 'typeorm';
 
 @Entity()
-export class CartItem extends OrderItem {
+export class CartItem extends OrderItemCommon {
   @ManyToOne(() => Lot, (lot: Lot) => lot.cartItems, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',

@@ -1,3 +1,3 @@
-import { Label } from 'src/common-dtos/label.common.dto';
+import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
 
-export class CreateOptionDto extends Label {}
+export class CreateOptionDto extends LabelCommonDto {}

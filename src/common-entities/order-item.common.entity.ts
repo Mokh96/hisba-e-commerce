@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export abstract class OrderItem {
+export abstract class OrderItemCommon {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -1,5 +1,5 @@
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
-import { SyncEntity } from 'src/common-entities/sync.entity';
+import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Lot } from 'src/modules/lots/entities/lot.entity';
 import { OptionsValue } from 'src/modules/options-values/entities/options-value.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -16,7 +16,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Article extends SyncEntity {
+export class Article extends SyncEntityCommon {
   @Column({ nullable: true })
   label: string;
 

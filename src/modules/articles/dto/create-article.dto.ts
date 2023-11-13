@@ -13,12 +13,14 @@ import {
   IsBooleanDontAcceptNull,
   convertBoolean,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
+
 import { Id } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import {
   CreateLotDto,
   CreateSyncLotDto,
 } from 'src/modules/lots/dto/create-lot.dto';
+
 
 export class CreateArticleDto {
   @IsOptional()
@@ -57,10 +59,10 @@ export class CreateArticleDto {
   lots: CreateLotDtoArray[];
 
   @IsOptional()
-  @Type(() => Id)
+  @Type(() => IdCommonDto)
   @IsArray()
   @ValidateNested({ each: true })
-  optionValues: Id[];
+  optionValues: IdCommonDto[];
 }
 
 export class CreateLotDtoArray extends OmitType(CreateLotDto, [
