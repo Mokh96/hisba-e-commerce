@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateSyncProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import {
+  UpdateProductDto,
+  UpdateSyncProductDto,
+} from './dto/update-product.dto';
 import { validateBulk } from 'src/helpers/validation/validation';
 
 @Controller('products/sync')
@@ -38,8 +41,8 @@ export class ProductsSyncController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductDto: UpdateProductDto,
+    @Body() updateSyncProductDto: UpdateSyncProductDto,
   ) {
-    return this.productsService.update(+id, updateProductDto);
+    return this.productsService.update(+id, updateSyncProductDto);
   }
 }

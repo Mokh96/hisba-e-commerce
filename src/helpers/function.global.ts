@@ -1,3 +1,5 @@
+import { In } from 'typeorm';
+
 interface ArrProps {
   id: number;
   parentId: number | null;
@@ -23,3 +25,12 @@ export const checkChildrenRecursive = (
 
   return result;
 };
+
+export function fromDtoToQuery(queryDto: object) {
+  for (const key in queryDto)
+    queryDto[key] = Array.isArray(queryDto[key])
+      ? In(queryDto[key])
+      : queryDto[key];
+
+  return queryDto;
+}

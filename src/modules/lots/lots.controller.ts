@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { LotsService } from './lots.service';
 import { CreateLotDto } from './dto/create-lot.dto';
 import { UpdateLotDto, UpdateSyncLotDto } from './dto/update-lot.dto';
 import { CreateSyncLotDto } from './dto/create-lot.dto';
+import { QueryLotDto } from './dto/query-lot.dto';
 
 @Controller('lots')
 export class LotsController {
@@ -23,8 +25,8 @@ export class LotsController {
   }
 
   @Get()
-  findAll() {
-    return this.lotsService.findAll();
+  findAll(@Query() queryLotDto: QueryLotDto) {
+    return this.lotsService.findAll(queryLotDto);
   }
 
   @Get(':id')

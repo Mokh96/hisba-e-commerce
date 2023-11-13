@@ -1,1 +1,3 @@
 //TODO: catch exception QueryFailedError => When column dont accept value and send to it unaccepted value
+
+//TODO: Null check for query parameters start with lot dto ps null is 'null'
