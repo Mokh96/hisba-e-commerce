@@ -54,7 +54,7 @@ export class Article extends SyncEntityCommon {
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];
 
-  @OneToMany(() => Lot, (lot: Lot) => lot.article, { cascade: true })
+  @OneToMany(() => Lot, (lot: Lot) => lot.article, { cascade: ['insert'] })
   lots: Lot[];
 
   @ManyToMany(() => OptionsValue, (value: OptionsValue) => value.articles)

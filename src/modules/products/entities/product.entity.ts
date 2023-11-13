@@ -64,7 +64,7 @@ export class Product extends SyncEntityCommon {
   updatedAt: Date;
 
   @OneToMany(() => Article, (article: Article) => article.product, {
-    cascade: true,
+    cascade: ['insert'],
   })
   articles: Article[];
 

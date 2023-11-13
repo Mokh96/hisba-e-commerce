@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { LotsService } from './lots.service';
 import { CreateLotDto } from './dto/create-lot.dto';
-import { UpdateLotDto } from './dto/update-lot.dto';
-import { CreateLotSyncDto } from './dto/create-lot-sync.dto';
+import { UpdateLotDto, UpdateSyncLotDto } from './dto/update-lot.dto';
+import { CreateSyncLotDto } from './dto/create-lot.dto';
 
 @Controller('lots')
 export class LotsController {
@@ -19,12 +19,7 @@ export class LotsController {
 
   @Post()
   create(@Body() createLotDto: CreateLotDto) {
-    return this.lotsService.create(createLotDto as CreateLotSyncDto);
-  }
-
-  @Post('sync')
-  createSync(@Body() createLotSyncDto: CreateLotSyncDto) {
-    return this.lotsService.create(createLotSyncDto);
+    return this.lotsService.create(createLotDto as CreateSyncLotDto);
   }
 
   @Get()
@@ -42,7 +37,7 @@ export class LotsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLotDto: UpdateLotDto,
   ) {
-    return this.lotsService.update(+id, updateLotDto);
+    return this.lotsService.update(+id, updateLotDto as UpdateSyncLotDto);
   }
 
   @Delete(':id')

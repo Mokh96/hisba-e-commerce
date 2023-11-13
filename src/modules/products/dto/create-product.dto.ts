@@ -1,19 +1,22 @@
-import { OmitType } from '@nestjs/mapped-types';
+import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBooleanString,
   IsInt,
   IsOptional,
   IsPositive,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CreateArticleDto } from 'src/modules/articles/dto/create-article.dto';
+import {
+  CreateArticleDto,
+  CreateSyncArticleDto,
+} from 'src/modules/articles/dto/create-article.dto';
 import {
   IsBooleanDontAcceptNull,
   convertBoolean,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
+import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 
 export class CreateProductDto {
   @IsOptional()
@@ -76,10 +79,25 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => createArticleDtoArray)
-  articles: createArticleDtoArray[];
+  @Type(() => CreateArticleDtoArray)
+  articles: CreateArticleDtoArray[];
 }
 
-class createArticleDtoArray extends OmitType(CreateArticleDto, [
+export class CreateArticleDtoArray extends OmitType(CreateArticleDto, [
   'productId',
 ] as const) {}
+
+export class CreateSyncArticleDtoArray extends IntersectionType(
+  OmitType(CreateSyncArticleDto, ['productId'] as const),
+) {}
+
+export class CreateSyncProductDto extends IntersectionType(
+  OmitType(CreateProductDto, ['articles'] as const),
+  SyncIdDto,
+) {
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateSyncArticleDtoArray)
+  articles: CreateSyncArticleDtoArray[];
+}
