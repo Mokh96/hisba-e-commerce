@@ -14,13 +14,12 @@ import {
   convertBoolean,
 } from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
 
-import { Id } from 'src/common-dtos/id.common.dto';
+import { IdCommonDto } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import {
   CreateLotDto,
   CreateSyncLotDto,
 } from 'src/modules/lots/dto/create-lot.dto';
-
 
 export class CreateArticleDto {
   @IsOptional()

@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTierDto } from './dto/create-tier.dto';
 import { UpdateTierDto } from './dto/update-tier.dto';
+import { DeepPartial, Repository } from 'typeorm';
+import { Tier } from './entities/tier.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { roles } from 'src/enums/roles.enum';
 
 @Injectable()
 export class TiersService {
-  create(createTierDto: CreateTierDto) {
-    return 'This action adds a new tier';
+  constructor(
+    @InjectRepository(Tier) private tierRepository: Repository<Tier>,
+  ) {}
+  // DeepPartial<Tier>
+  async create(createTierDto: DeepPartial<Tier>, user: any) {
+    const tier = this.tierRepository.create(createTierDto);
+
+    tier.creatorId = user.id;
+    tier.user.roleId = roles.TIER;
+    await this.tierRepository.save(tier);
+
+    delete tier.user.password;
+    return tier;
   }
 
-  findAll() {
-    return `This action returns all tiers`;
+  async findAll() {
+    const tiers = await this.tierRepository.find();
+    return tiers;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tier`;
+  async findOne(id: number) {
+    const tier = await this.tierRepository.findOneByOrFail({ id });
+    return tier;
   }
 
-  update(id: number, updateTierDto: UpdateTierDto) {
-    return `This action updates a #${id} tier`;
+  async update(id: number, updateTierDto: UpdateTierDto) {
+    const tier = await this.tierRepository.findOneByOrFail({ id });
+    this.tierRepository.merge(tier, updateTierDto);
+
+    await this.tierRepository.save(tier);
+    return tier;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tier`;
+  async remove(id: number) {
+    const tier = await this.tierRepository.findOneByOrFail({ id });
+    await this.tierRepository.remove(tier);
+    return true;
   }
 }

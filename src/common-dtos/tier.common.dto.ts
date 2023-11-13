@@ -1,8 +1,10 @@
 import {
   IsAlphanumeric,
   IsDate,
+  IsDateString,
   IsEmail,
   IsMobilePhone,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   Length,
@@ -17,39 +19,51 @@ export class TierCommonDto {
   @Length(2, 255)
   address: string;
 
-  @IsDate()
+  @IsOptional()
+  @IsDateString()
+  //@IsDate()
   birthDate: Date;
 
+  @IsOptional()
   @IsString()
   note: string;
 
   @IsPhoneNumber('DZ')
   phone: string;
 
+  @IsOptional()
   @IsMobilePhone('ar-DZ')
   mobile: string;
 
+  @IsOptional()
   @IsEmail()
   email: string;
 
-  @IsString()
+  @IsOptional()
+  @IsPhoneNumber()
   fax: string;
 
+  @IsOptional()
   @IsAlphanumeric()
   rc: string;
 
+  @IsOptional()
   @IsAlphanumeric()
   agr: string;
 
+  @IsOptional()
   @IsAlphanumeric()
   ai: string;
 
+  @IsOptional()
   @IsAlphanumeric()
   idFiscal: string;
 
+  @IsOptional()
   @IsString()
   activity: string;
 
+  @IsOptional()
   @IsString()
   legalForm: string;
 }

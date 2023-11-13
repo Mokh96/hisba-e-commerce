@@ -15,6 +15,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const user = this.usersRepository.create(createUserDto);
+    user.roleId = roles.ADMIN;
 
     await this.usersRepository.save(user);
     return user;
@@ -26,10 +27,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepository.findOneBy({ id });
-    if (!user) throw new NotFoundException('User not found');
-
-    //if (!user) throw new HttpException('etstatus not found', 400);
+    const user = await this.usersRepository.findOneByOrFail({ id });
     return user;
   }
 
