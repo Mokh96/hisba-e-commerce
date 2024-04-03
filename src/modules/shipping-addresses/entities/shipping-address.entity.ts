@@ -1,13 +1,6 @@
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Tier } from 'src/modules/tiers/entities/tier.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class ShippingAddress extends SyncEntityCommon {
