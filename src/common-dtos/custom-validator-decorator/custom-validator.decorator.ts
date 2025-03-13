@@ -18,25 +18,26 @@ export function IsBooleanDontAcceptNull(): PropertyDecorator {
   };
 }
 
+//TODO: need to check this
 export function convertBoolean() {
   return Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+
     switch (value) {
-      case 'true' || true:
+      case 'true':
         return true;
-      case 'false' || false:
+      case 'false':
         return false;
-      case 'null' || null:
+      case 'null':
         return null;
     }
   });
 }
 
+//TODO: need to check this
 export function convertNullNumber() {
   return Transform(({ value }) => {
-    switch (value) {
-      case 'null' || null:
-        return null;
-    }
+    if (value === 'null' || value === null) return null;
     return value;
   });
 }

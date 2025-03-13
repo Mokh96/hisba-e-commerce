@@ -41,13 +41,6 @@ export class Tier extends TierSync {
   )
   shippingAddresses: ShippingAddress[];
 
-  @OneToOne(() => ShippingAddress, { nullable: true })
-  @JoinColumn({
-    name: 'default_shipping_address_id',
-    referencedColumnName: 'id',
-  })
-  defaultShippingAddress: ShippingAddress;
-
   @Column({ name: 'default_shipping_address_id', nullable: true })
   defaultShippingAddressId: number;
 
