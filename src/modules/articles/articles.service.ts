@@ -89,7 +89,8 @@ export class ArticlesService {
   }
 
   private async saveArticle(article: Article) {
-    if (!article.lots) return await this.articleRepository.save(article);
+    return await this.articleRepository.save(article);
+    /*if (!article.lots) return await this.articleRepository.save(article);
 
     let product = await this.productRepository.findOneByOrFail({
       id: article.productId,
@@ -103,7 +104,7 @@ export class ArticlesService {
     await this.dataSource.transaction(async (manger) => {
       await manger.getRepository(Product).save(product);
       await manger.getRepository(Article).save(article);
-    });
+    });*/
   }
 
   private async findById(id: number) {

@@ -5,7 +5,7 @@ import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
-import { Tier } from 'src/modules/tiers/entities/tier.entity';
+import { Client } from 'src/modules/clients/entities/client.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity()
@@ -13,17 +13,23 @@ export class Order extends OrderSync {
   @Column({ nullable: true })
   note: string;
 
-  @Column({ name: 'tier_name' })
-  tierName: string;
+  @Column({ name: 'client_first_name' })
+  clientFirstName: string;
+
+  @Column({ name: 'client_last_name' })
+  clientLastName: string;
+
+  @Column({ name: 'client_mobile', length: 13 })
+  clientMobile: string;
+
+  @Column({ name: 'client_fax', length: 13 })
+  clientFax: string;
+
+  @Column({ name: 'client_land_line', length: 13 })
+  clientLandLine: string;
 
   @Column({ name: 'delivery_address' })
   deliveryAddress: string;
-
-  @Column({ name: 'tier_phone', length: 13 })
-  tierPhone: string;
-
-  @Column({ name: 'tier_info', type: 'text' })
-  tierInfo: string;
 
   @Column({ ...defaultDecimal, default: 0 })
   discount?: number;
@@ -56,8 +62,8 @@ export class Order extends OrderSync {
   })
   history: OrderHistory[];
 
-  @ManyToOne(() => Tier, (tier: Tier) => tier.orders, { nullable: false })
-  tier: Tier;
+  @ManyToOne(() => Client, (client: Client) => client.orders, { nullable: false })
+  client: Client;
 
   @ManyToOne(() => User, (user: User) => user.createdOrders, {
     nullable: false,

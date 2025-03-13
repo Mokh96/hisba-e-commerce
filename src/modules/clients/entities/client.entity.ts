@@ -6,16 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { TierSync } from 'src/common-entities/tier.common.entity';
+import { ClientSync } from 'src/common-entities/client.common.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
-import { ProspectiveTier } from 'src/modules/prospective-tiers/entities/prospective-tier.entity';
-import { TierType } from 'src/modules/tier-types/entities/tier-type.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity()
-export class Tier extends TierSync {
+export class Client extends ClientSync {
   @Column({ nullable: true })
   code: string;
 
@@ -28,15 +26,15 @@ export class Tier extends TierSync {
   @Column({ name: 'img_path', nullable: true })
   imgPath: string;
 
-  @OneToMany(() => Order, (order: Order) => order.tier)
+  @OneToMany(() => Order, (order: Order) => order.client)
   orders: Order[];
 
-  @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.tier)
+  @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.client)
   cartItems: CartItem[];
 
   @OneToMany(
     () => ShippingAddress,
-    (shippingAddress: ShippingAddress) => shippingAddress.tier,
+    (shippingAddress: ShippingAddress) => shippingAddress.client,
     { cascade: true },
   )
   shippingAddresses: ShippingAddress[];
@@ -44,23 +42,15 @@ export class Tier extends TierSync {
   @Column({ name: 'default_shipping_address_id', nullable: true })
   defaultShippingAddressId: number;
 
-  @ManyToOne(() => TierType, (tierType: TierType) => tierType.tiers, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'tier_type_id' })
-  type: TierType;
 
-  @Column({ name: 'tier_type_id' })
-  tierTypeId: number;
-
-  @ManyToOne(() => User, (user: User) => user.createdTiers, { nullable: false })
+  @ManyToOne(() => User, (user: User) => user.createdClients, { nullable: false })
   @JoinColumn({ name: 'creator_id' })
   creator: User;
 
   @Column({ name: 'creator_id' })
   creatorId: number;
 
-  @OneToOne(() => User, (user: User) => user.tier, {
+  @OneToOne(() => User, (user: User) => user.client, {
     nullable: false,
     cascade: ['insert'],
     onDelete: 'CASCADE',
@@ -69,7 +59,4 @@ export class Tier extends TierSync {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToOne(() => ProspectiveTier)
-  @JoinColumn()
-  prospectiveTier: ProspectiveTier;
 }

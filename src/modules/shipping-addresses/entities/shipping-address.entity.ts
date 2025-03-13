@@ -1,5 +1,5 @@
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
-import { Tier } from 'src/modules/tiers/entities/tier.entity';
+import { Client } from 'src/modules/clients/entities/client.entity';
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
@@ -7,12 +7,12 @@ export class ShippingAddress extends SyncEntityCommon {
   @Column()
   address: string;
 
-  @ManyToOne(() => Tier, (tier: Tier) => tier.shippingAddresses, {
+  @ManyToOne(() => Client, (client: Client) => client.shippingAddresses, {
     nullable: false,
   })
-  @JoinColumn({ name: 'tier_id' })
-  tier: Tier;
+  @JoinColumn({ name: 'client_id' })
+  client: Client;
 
-  @Column({ name: 'tier_id' })
-  tierId: number;
+  @Column({ name: 'client_id' })
+  clientId: number;
 }

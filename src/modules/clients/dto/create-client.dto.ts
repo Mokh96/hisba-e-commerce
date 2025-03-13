@@ -19,7 +19,7 @@ import {
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 
-export class CreateTierDto extends TierCommonDto {
+export class CreateClientDto extends TierCommonDto {
   @IsOptional()
   @IsString()
   code: string;
@@ -52,7 +52,7 @@ export class CreateTierDto extends TierCommonDto {
 }
 
 export class CreateSyncTierDto extends IntersectionType(
-  OmitType(CreateTierDto, ['shippingAddresses']),
+  OmitType(CreateClientDto, ['shippingAddresses']),
   SyncIdDto,
 ) {
   @IsOptional()

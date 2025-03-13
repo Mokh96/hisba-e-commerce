@@ -1,6 +1,5 @@
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
-import { Lot } from 'src/modules/lots/entities/lot.entity';
 import { OptionsValue } from 'src/modules/options-values/entities/options-value.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import {
@@ -14,6 +13,8 @@ import {
   OneToMany,
   UpdateDateColumn,
 } from 'typeorm';
+import { OrderItem } from '../../order-items/entities/order-item.entity';
+import { CartItem } from '../../cart-items/entities/cart-item.entity';
 
 @Entity()
 export class Article extends SyncEntityCommon {
@@ -54,8 +55,11 @@ export class Article extends SyncEntityCommon {
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];
 
-  @OneToMany(() => Lot, (lot: Lot) => lot.article, { cascade: ['insert'] })
-  lots: Lot[];
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, { cascade: ['insert'] })
+  orderItems: OrderItem[];
+
+  @OneToMany(() => CartItem, (item: CartItem) => item.article, { cascade: ['insert'] })
+  cartItems: CartItem[];
 
   @ManyToMany(() => OptionsValue, (value: OptionsValue) => value.articles)
   @JoinTable()

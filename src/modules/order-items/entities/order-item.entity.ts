@@ -2,7 +2,7 @@ import { OrderItemCommon as OrderItemShape } from 'src/common-entities/order-ite
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { Order } from 'src/modules/orders/entities/order.entity';
-import { Lot } from 'src/modules/lots/entities/lot.entity';
+import { Article } from '../../articles/entities/article.entity';
 
 @Entity()
 export class OrderItem extends OrderItemShape {
@@ -19,8 +19,8 @@ export class OrderItem extends OrderItemShape {
   })
   order: Order;
 
-  @ManyToOne(() => Lot, (lot: Lot) => lot.orderItems, {
+  @ManyToOne(() => Article, (article: Article) => article.orderItems, {
     nullable: false,
   })
-  lot: Lot;
+  article: Article;
 }
