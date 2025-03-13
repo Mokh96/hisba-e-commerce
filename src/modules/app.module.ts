@@ -9,19 +9,13 @@ import { ProductGalleriesModule } from './product-galleries/product-galleries.mo
 import { ArticleGalleriesModule } from './article-galleries/article-galleries.module';
 import { OptionsModule } from './options/options.module';
 import { OptionsValuesModule } from './options-values/options-values.module';
-import { LotsModule } from './lots/lots.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderStatusModule } from './order-status/order-status.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
-import { TiersModule } from './tiers/tiers.module';
-import { ProspectiveTiersModule } from './prospective-tiers/prospective-tiers.module';
-import { DelegatesModule } from './delegates/delegates.module';
-import { RapportsModule } from './rapports/rapports.module';
-import { TrackModule } from './track/track.module';
+import { ClientsModule } from './clients/clients.module';
 import { RolesModule } from './roles/roles.module';
-import { TierTypesModule } from './tier-types/tier-types.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
@@ -43,8 +37,8 @@ import { ConfigModule } from '@nestjs/config';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: process.env.passwordDB ?? '',
-      database: 'hisba_e_commerce_dev',
+      password: process.env.DB_PASSWORD ?? '',
+      database: process.env.DB_NAME ?? 'new_ecommerce_db',
       autoLoadEntities: true,
       synchronize: true,
       dropSchema: false,
@@ -60,19 +54,13 @@ import { ConfigModule } from '@nestjs/config';
     ArticleGalleriesModule,
     OptionsModule,
     OptionsValuesModule,
-    LotsModule,
     OrderItemsModule,
     OrdersModule,
     OrderStatusModule,
     OrderHistoryModule,
     CartItemsModule,
-    TiersModule,
-    ProspectiveTiersModule,
-    DelegatesModule,
-    RapportsModule,
-    TrackModule,
+    ClientsModule,
     RolesModule,
-    TierTypesModule,
     PaymentMethodsModule,
     ArticlesModule,
     ShippingAddressesModule,

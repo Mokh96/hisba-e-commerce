@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Article } from '../articles/entities/article.entity';
-import { Lot } from '../lots/entities/lot.entity';
 import { CreateArticleDto } from '../articles/dto/create-article.dto';
 
 @Injectable()
@@ -40,9 +39,9 @@ export class ProductsService {
     await this.productRepository.save(product);
     return product;
 
-    const priceList = product.articles
+   /* const priceList = product.articles
       ?.map(({ lots }) => lots?.map(({ price }) => price))
-      .flat();
+      .flat();*/
 
     //if (priceList) product = this.maxMin(product, priceList);
 
@@ -83,7 +82,7 @@ export class ProductsService {
     const product = await this.productRepository.findOneOrFail({
       where: { id },
       relations: {
-        articles: { gallery: true, optionValues: { option: true }, lots: true },
+        articles: { gallery: true, optionValues: { option: true } },
         gallery: true,
       },
     });

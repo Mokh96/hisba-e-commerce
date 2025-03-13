@@ -8,16 +8,16 @@ import {
   Delete,
   ParseIntPipe,
 } from '@nestjs/common';
-import { TiersService } from './tiers.service';
-import { CreateTierDto } from './dto/create-tier.dto';
-import { UpdateTierDto } from './dto/update-tier.dto';
+import { ClientsService } from './clients.service';
+import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('tiers')
-export class TiersController {
-  constructor(private readonly tiersService: TiersService) {}
+export class ClientsController {
+  constructor(private readonly tiersService: ClientsService) {}
 
   @Post()
-  create(@Body() createTierDto: CreateTierDto) {
+  create(@Body() createTierDto: CreateClientDto) {
     return this.tiersService.create(createTierDto, { id: 1 });
   }
 
@@ -34,7 +34,7 @@ export class TiersController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTierDto: UpdateTierDto,
+    @Body() updateTierDto: UpdateClientDto,
   ) {
     return this.tiersService.update(+id, updateTierDto);
   }
