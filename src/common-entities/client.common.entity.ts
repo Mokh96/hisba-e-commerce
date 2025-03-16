@@ -10,8 +10,11 @@ export abstract class ClientCommon {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'full_name' })
-  fullName: string;
+  @Column({ name: 'first_name' })
+  fistName: string;
+
+  @Column({ name: 'last_name' })
+  lastName: string;
 
   @Column()
   address: string;
@@ -29,10 +32,10 @@ export abstract class ClientCommon {
   mobile: string;
 
   @Column({ nullable: true })
-  email: string;
+  fax: string;
 
   @Column({ nullable: true })
-  fax: string;
+  email: string;
 
   @Column({ nullable: true })
   rc: string;
