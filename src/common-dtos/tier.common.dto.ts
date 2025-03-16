@@ -13,7 +13,11 @@ import {
 export class TierCommonDto {
   @IsString()
   @Length(2, 255)
-  fullName: string;
+  firstName: string;
+
+  @IsString()
+  @Length(2, 255)
+  lastName: string;
 
   @IsString()
   @Length(2, 255)
@@ -21,7 +25,6 @@ export class TierCommonDto {
 
   @IsOptional()
   @IsDateString()
-  //@IsDate()
   birthDate: Date;
 
   @IsOptional()
@@ -36,12 +39,12 @@ export class TierCommonDto {
   mobile: string;
 
   @IsOptional()
-  @IsEmail()
-  email: string;
-
-  @IsOptional()
   @IsPhoneNumber()
   fax: string;
+
+  @IsOptional()
+  @IsEmail()
+  email: string;
 
   @IsOptional()
   @IsAlphanumeric()
