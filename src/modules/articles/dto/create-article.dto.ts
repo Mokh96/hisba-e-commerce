@@ -1,4 +1,3 @@
-
 import { Type } from 'class-transformer';
 import {
   IsInt,
@@ -16,7 +15,6 @@ import {
 import { IdCommonDto } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IntersectionType } from '@nestjs/mapped-types';
-
 
 export class CreateArticleDto {
   @IsOptional()
@@ -39,10 +37,6 @@ export class CreateArticleDto {
   @IsBooleanDontAcceptNull()
   isActive: boolean;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isMultiLot: boolean;
-
   @Type(() => Number)
   @IsPositive()
   @IsInt()
@@ -54,7 +48,6 @@ export class CreateArticleDto {
   @ValidateNested({ each: true })
   optionValues: IdCommonDto[];
 }
-
 
 //TODO: find batter implementation , tray to remove redundant
 export class CreateSyncArticleDto extends IntersectionType(
