@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { DeepPartial, Repository } from 'typeorm';
 import { Client } from './entities/client.entity';
@@ -24,13 +23,11 @@ export class ClientsService {
   }
 
   async findAll() {
-    const clients = await this.clientRepository.find();
-    return clients;
+    return await this.clientRepository.find();
   }
 
   async findOne(id: number) {
-    const client = await this.clientRepository.findOneByOrFail({ id });
-    return client;
+    return await this.clientRepository.findOneByOrFail({ id });
   }
 
   async update(id: number, updateClientDto: UpdateClientDto) {
