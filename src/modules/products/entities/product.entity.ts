@@ -4,39 +4,33 @@ import { Category } from 'src/modules/categories/entities/category.entity';
 import { Family } from 'src/modules/families/entities/family.entity';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
-
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { SyncEntityCommon } from 'src/common-entities/sync.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
+import { WithTimestamp } from '../../../common/entities/timestamp.entity';
+import { WithSyncId } from '../../../common/entities/sync.entity';
+import { BaseEntity } from '../../../common/entities/base-entity.entity';
 
 @Entity()
-export class Product extends SyncEntityCommon {
-  @Column({ name: 'img_path', nullable: true })
-  imgPath: boolean;
-
-  @Column({ nullable: true })
+export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
+  @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.CODE })
   code: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'img_path', nullable: true, length: PRODUCT_FIELD_LENGTHS.IMG_PATH })
+  imgPath: string;
+
+  @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.REF })
   ref: string;
 
-  @Column()
+  @Column({ length: PRODUCT_FIELD_LENGTHS.LABEL })
   label: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.LABEL2 })
   label2: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.NOTE })
   note: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.DESCRIPTION })
   description: string;
 
   @Column({ ...defaultDecimal, name: 'min_price', default: 0 })
@@ -57,15 +51,16 @@ export class Product extends SyncEntityCommon {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ name: 'brand_id', nullable: true })
+  brandId: number;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ name: 'category_id', nullable: true })
+  categoryId: number;
 
-  @OneToMany(() => Article, (article: Article) => article.product, {
-    cascade: ['insert'],
-  })
+  @Column({ name: 'family_id', nullable: true })
+  familyId: number;
+
+  @OneToMany(() => Article, (article: Article) => article.product, { cascade: ['insert'] })
   articles: Article[];
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
@@ -76,9 +71,6 @@ export class Product extends SyncEntityCommon {
   @JoinColumn({ name: 'brand_id' })
   brand: Brand;
 
-  @Column({ name: 'brand_id', nullable: true })
-  brandId: number;
-
   @ManyToOne(() => Category, (category: Category) => category.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
@@ -87,9 +79,6 @@ export class Product extends SyncEntityCommon {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column({ name: 'category_id', nullable: true })
-  categoryId: number;
-
   @ManyToOne(() => Family, (family: Family) => family.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
@@ -97,9 +86,6 @@ export class Product extends SyncEntityCommon {
   })
   @JoinColumn({ name: 'family_id' })
   family: Family;
-
-  @Column({ name: 'family_id', nullable: true })
-  familyId: number;
 
   @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
   gallery: ProductGallery[];
