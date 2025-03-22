@@ -10,10 +10,14 @@ import {
   Length,
 } from 'class-validator';
 
-export class TierCommonDto {
+export class ClientCommonDto {
   @IsString()
-  @Length(2, 255)
-  fullName: string;
+  @Length(2, 60)
+  firstName: string;
+
+  @IsString()
+  @Length(2, 60)
+  lastName: string;
 
   @IsString()
   @Length(2, 255)

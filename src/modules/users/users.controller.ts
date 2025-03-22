@@ -7,10 +7,12 @@ import {
   ParseIntPipe,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from 'src/enums/roles.enum';
 
 @Controller('users')
 export class UsersController {
@@ -18,12 +20,12 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    return this.usersService.create({ ...createUserDto, roleId: Roles.CLIENT });
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query('roleId') roleId?: number) {
+    return this.usersService.findAll(roleId);
   }
 
   @Get(':id')

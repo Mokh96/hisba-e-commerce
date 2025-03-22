@@ -4,38 +4,37 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
-import { Repository } from 'typeorm';
-import { User } from 'src/modules/users/entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
-  async signup(authDto: AuthDto) {
-    const user = await this.userRepository.findOne({
-      select: ['id', 'username', 'password', 'roleId'],
-      where: { username: authDto.username },
-    });
-    // console.log(user);
+  async logIn(authDto: AuthDto) {
+    const { username, password } = authDto;
+    const user = await this.usersService.findUser(username);
 
-    if (!user) throw new NotFoundException('User not found');
-    console.log(authDto.password, user.password);
+    if (!user) {
+      throw new NotFoundException(`User '${username}' not found`);
+    }
 
-    const isMatch = await bcrypt.compare(authDto.password, user.password);
-    console.log('isMatch', isMatch);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) throw new UnauthorizedException('Invalid credentials');
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const { id, roleId } = user;
 
     const payload = {
-      username: user.username,
-      sub: user.id,
-      roleId: user.roleId,
+      username,
+      sub: id,
+      roleId,
     };
 
     return {

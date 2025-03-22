@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { SystemDataService } from './system-data.service';
-import { Public } from 'src/modules/auth/public.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Public()
 @Controller('system-data')

@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
-import { TierCommonDto } from 'src/common-dtos/tier.common.dto';
+import { ClientCommonDto } from 'src/common-dtos/tier.common.dto';
 import { tierType } from 'src/enums/tier-type.enum';
 import {
   CreateShippingAddressDto,
@@ -19,7 +19,7 @@ import {
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 
-export class CreateClientDto extends TierCommonDto {
+export class CreateClientDto extends ClientCommonDto {
   @IsOptional()
   @IsString()
   code: string;
@@ -36,8 +36,8 @@ export class CreateClientDto extends TierCommonDto {
   @IsString()
   webPage: string;
 
-  @IsEnum(tierType)
-  tierTypeId: number;
+  // @IsEnum(tierType)
+  // tierTypeId: number;
 
   @IsOptional()
   @IsArray()

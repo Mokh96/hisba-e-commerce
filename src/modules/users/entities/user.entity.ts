@@ -14,6 +14,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Roles } from 'src/enums/roles.enum';
 
 @Entity()
 export class User {
@@ -24,7 +25,6 @@ export class User {
   @Column()
   @Index('username', { unique: true })
   username: string;
-
 
   @Column({ select: false })
   password: string;
@@ -41,13 +41,12 @@ export class User {
   @OneToOne(() => Client, (client: Client) => client.user)
   client: Client;
 
-
   @ManyToOne(() => Role, (role: Role) => role.users, { nullable: false })
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
   @Column({ name: 'role_id', nullable: false })
-  roleId: number;
+  roleId: Roles;
 
   @BeforeInsert()
   async setPassword() {

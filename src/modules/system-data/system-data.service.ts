@@ -9,12 +9,12 @@ import { roles } from './data/roles';
 import { orderStatus } from './data/order-status';
 import { paymentMethods } from './data/payment-methods';
 import { users } from './data/users';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class SystemDataService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersService: UsersService,
 
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
@@ -24,10 +24,9 @@ export class SystemDataService {
 
     @InjectRepository(PaymentMethod)
     private paymentMethodRepository: Repository<PaymentMethod>,
-
   ) {}
   async create() {
-    const userTest = await this.usersRepository.findOne({ where: { id: 1 } });
+    const userTest = await this.usersService.findOne(1);
     if (!userTest) {
       const _roles = this.roleRepository.create(roles);
       await this.roleRepository.save(_roles);
@@ -39,9 +38,8 @@ export class SystemDataService {
         this.paymentMethodRepository.create(paymentMethods);
       await this.paymentMethodRepository.save(_paymentMethod);
 
-
-      const _users = this.usersRepository.create(users);
-      await this.usersRepository.save(_users);
+      // const _users = this.usersService.create(users);
+      // await this.usersService.save(_users);
     }
 
     return 'donne';

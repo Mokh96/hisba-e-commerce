@@ -23,7 +23,7 @@ export class MainSeeder implements Seeder {
     console.log('Seeding Roles ...');
 
     await roleRepo.save(
-      Object.entries(Roles).map(([key, roleId]) => ({
+      Object.entries(Role).map(([key, roleId]) => ({
         id: roleId,
         label: key,
       })),
@@ -37,7 +37,7 @@ export class MainSeeder implements Seeder {
     const userRepo = dataSource.getRepository(User);
     const salt = await genSalt(10);
     const password = await hash('123456', salt);
-    const admins = await userRepo.save([
+    await userRepo.save([
       {
         username: 'superadmin',
         password,

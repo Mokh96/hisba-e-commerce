@@ -4,7 +4,7 @@ import { UpdateClientDto } from './dto/update-client.dto';
 import { DeepPartial, Repository } from 'typeorm';
 import { Client } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/enums/roles.enum';
 
 @Injectable()
 export class ClientsService {
@@ -16,7 +16,7 @@ export class ClientsService {
     const client = this.clientRepository.create(createClientDto);
 
     client.creatorId = user.id;
-    client.user.roleId = roles.CLIENT;
+    client.user.roleId = Roles.CLIENT;
     await this.clientRepository.save(client);
 
     delete client.user.password;
