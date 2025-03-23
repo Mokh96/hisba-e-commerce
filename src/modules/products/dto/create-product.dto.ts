@@ -16,34 +16,34 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
+  @IsString()
+  @IsOptional()
   code: string;
 
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.REF)
+  @IsString()
+  @IsOptional()
   ref: string;
 
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.LABEL)
+  @IsString()
+  @IsOptional()
   label: string;
 
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.LABEL2)
+  @IsString()
+  @IsOptional()
   label2: string;
 
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.NOTE)
+  @IsString()
+  @IsOptional()
   note: string;
 
-  @IsOptional()
-  @IsString()
   @MaxLength(PRODUCT_FIELD_LENGTHS.DESCRIPTION)
+  @IsString()
+  @IsOptional()
   description: string;
 
   @TransformStringToBoolean({allowNull: false})
