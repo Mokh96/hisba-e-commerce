@@ -16,9 +16,9 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
-  @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
   @IsString()
   @IsOptional()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
   code: string;
 
   @MaxLength(PRODUCT_FIELD_LENGTHS.REF)
