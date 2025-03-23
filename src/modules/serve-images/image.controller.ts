@@ -3,7 +3,7 @@ import { Controller, Get, Param, Res, ValidationPipe } from '@nestjs/common';
 import { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Public } from 'src/modules/auth/public.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 import { ImageParamsDto } from './dtos/image-params.dto';
 
 @Controller() // No prefix here
