@@ -2,61 +2,68 @@ import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsInt,
   IsOptional,
   IsPositive,
   IsString,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
-import {
-  CreateArticleDto,
-  CreateSyncArticleDto,
-} from 'src/modules/articles/dto/create-article.dto';
-import {
-  IsBooleanDontAcceptNull,
-  convertBoolean,
-} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
+import { CreateArticleDto, CreateSyncArticleDto } from 'src/modules/articles/dto/create-article.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
+import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
+import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
   @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
   code: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.REF)
   ref: string;
 
+  @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.LABEL)
   label: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.LABEL2)
   label2: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.NOTE)
   note: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(PRODUCT_FIELD_LENGTHS.DESCRIPTION)
   description: string;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
+  @TransformStringToBoolean({allowNull: false})
+  @IsBoolean()
   isOutStock: boolean;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isExpired: boolean;
+  @TransformStringToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  isExpired: boolean | undefined;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isMultiArticle: boolean;
+  @TransformStringToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  isMultiArticle: boolean | undefined;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isActive: boolean;
+  @TransformStringToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  isActive: boolean | undefined;
 
   @Type(() => Number)
   @IsOptional()
@@ -83,9 +90,7 @@ export class CreateProductDto {
   articles: CreateArticleDtoArray[];
 }
 
-export class CreateArticleDtoArray extends OmitType(CreateArticleDto, [
-  'productId',
-] as const) {}
+export class CreateArticleDtoArray extends OmitType(CreateArticleDto, ['productId'] as const) {}
 
 export class CreateSyncArticleDtoArray extends IntersectionType(
   OmitType(CreateSyncArticleDto, ['productId'] as const),
