@@ -27,6 +27,7 @@ import {
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { FilesModule } from './files/files.module';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Module({
@@ -66,6 +67,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
     ShippingAddressesModule,
     SystemDataModule,
     AuthModule,
+    FilesModule,
   ],
 
   providers: [
