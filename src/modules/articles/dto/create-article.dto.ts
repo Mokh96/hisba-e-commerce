@@ -1,4 +1,3 @@
-
 import { Type } from 'class-transformer';
 import {
   IsInt,
@@ -16,7 +15,6 @@ import {
 import { IdCommonDto } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IntersectionType } from '@nestjs/mapped-types';
-
 
 export class CreateArticleDto {
   @IsOptional()

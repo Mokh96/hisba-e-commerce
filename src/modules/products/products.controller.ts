@@ -24,6 +24,8 @@ export class ProductsController {
   @Post()
   @UseInterceptors(FileInterceptor('img'))
   create(@Body() createProductDto: CreateProductDto) {
+    console.log(createProductDto);
+    return createProductDto
     return this.productsService.create(
       createProductDto as CreateSyncProductDto,
     );
