@@ -26,10 +26,6 @@ export class QueryArticleDto {
   @IsBooleanDontAcceptNull()
   isActive: boolean;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isMultiLot: boolean;
-
   @Type(() => Number)
   @IsOptional()
   @IsPositive({ each: true })

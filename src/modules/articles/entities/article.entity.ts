@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 import { OrderItem } from '../../order-items/entities/order-item.entity';
 import { CartItem } from '../../cart-items/entities/cart-item.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 
 @Entity()
 export class Article extends SyncEntityCommon {
@@ -33,11 +34,11 @@ export class Article extends SyncEntityCommon {
   @Column({ length: 500, nullable: true })
   description: string;
 
+  @Column(defaultDecimal)
+  price: string;
+
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
-
-  @Column({ name: 'is_multi_lot', default: true })
-  isMultiLot: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -55,10 +56,14 @@ export class Article extends SyncEntityCommon {
   @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
   gallery: ArticleGallery[];
 
-  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, { cascade: ['insert'] })
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, {
+    cascade: ['insert'],
+  })
   orderItems: OrderItem[];
 
-  @OneToMany(() => CartItem, (item: CartItem) => item.article, { cascade: ['insert'] })
+  @OneToMany(() => CartItem, (item: CartItem) => item.article, {
+    cascade: ['insert'],
+  })
   cartItems: CartItem[];
 
   @ManyToMany(() => OptionsValue, (value: OptionsValue) => value.articles)

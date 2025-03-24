@@ -32,10 +32,10 @@ export abstract class ClientCommon {
   mobile: string;
 
   @Column({ nullable: true })
-  email: string;
+  fax: string;
 
   @Column({ nullable: true })
-  fax: string;
+  email: string;
 
   @Column({ nullable: true })
   rc: string;

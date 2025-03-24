@@ -37,10 +37,6 @@ export class CreateArticleDto {
   @IsBooleanDontAcceptNull()
   isActive: boolean;
 
-  @convertBoolean()
-  @IsBooleanDontAcceptNull()
-  isMultiLot: boolean;
-
   @Type(() => Number)
   @IsPositive()
   @IsInt()
@@ -52,7 +48,6 @@ export class CreateArticleDto {
   @ValidateNested({ each: true })
   optionValues: IdCommonDto[];
 }
-
 
 //TODO: find batter implementation , tray to remove redundant
 export class CreateSyncArticleDto extends IntersectionType(
