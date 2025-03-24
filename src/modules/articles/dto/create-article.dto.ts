@@ -10,6 +10,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+
 import { IdCommonDto } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IntersectionType } from '@nestjs/mapped-types';
@@ -17,7 +18,6 @@ import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.conf
 import { TransformStringToBoolean } from 'src/common/decorators';
 
 export class CreateArticleDto {
-  @IsString()
   @IsOptional()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)
   label: string;
@@ -45,10 +45,6 @@ export class CreateArticleDto {
   @TransformStringToBoolean()
   @IsBoolean()
   isActive: boolean;
-
-  @TransformStringToBoolean()
-  @IsBoolean()
-  isMultiLot: boolean;
 
   @Type(() => Number)
   @IsPositive()

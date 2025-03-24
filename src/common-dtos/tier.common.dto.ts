@@ -25,7 +25,6 @@ export class ClientCommonDto {
 
   @IsOptional()
   @IsDateString()
-  //@IsDate()
   birthDate: Date;
 
   @IsOptional()

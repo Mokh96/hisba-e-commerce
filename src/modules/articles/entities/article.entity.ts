@@ -4,11 +4,11 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { OrderItem } from '../../order-items/entities/order-item.entity';
 import { CartItem } from '../../cart-items/entities/cart-item.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 
 @Entity()
 export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
@@ -32,9 +32,6 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
-
-  @Column({ name: 'is_multi_lot', default: true })
-  isMultiLot: boolean;
 
   @Column({ name: 'product_id' })
   productId: number;
