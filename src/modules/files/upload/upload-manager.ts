@@ -7,13 +7,12 @@ import { ThumbnailManager } from './thumbnail-manager';
 import { FilesTypesEnum } from '../enums/files-types.enum';
 import { MAX_FILES_PER_FOLDER, UPLOAD_ROOT_DIR } from '../constant/upload.constant';
 
-
 /**
  * Service for managing file uploads including storage, organization, and cleanup.
  * Supports automatic file organization into folders and thumbnail generation.
  */
 @Injectable()
-export class UploadManager3 implements OnModuleInit  {
+export class UploadManager3 implements OnModuleInit {
   /**
    * Base directory for all uploads managed by this instance
    */
@@ -61,7 +60,12 @@ export class UploadManager3 implements OnModuleInit  {
    * @param files - Object containing file arrays mapped by field names
    * @returns Array of metadata for all successfully uploaded files
    */
-  protected async uploadFiles(files: { [fieldName: string]: Express.Multer.File[] }): Promise<UploadFileType[]> {
+  protected async uploadFiles(
+    files: {
+      [fieldName: string]: Express.Multer.File[];
+    },
+    subDir?: string[],
+  ): Promise<UploadFileType[]> {
     const uploadedFiles: UploadFileType[] = [];
 
     // Process each field (e.g., 'image', 'document', etc.)
@@ -70,7 +74,7 @@ export class UploadManager3 implements OnModuleInit  {
       for (const file of files[fieldName]) {
         try {
           // Get the appropriate folder for storage based on current capacity
-          const currentFolder = this.getCurrentUploadFolder();
+          const currentFolder = this.getCurrentUploadFolder(subDir);
           ensureDirectoryExists(currentFolder);
 
           // Generate a unique filename with timestamp and random number
@@ -142,9 +146,10 @@ export class UploadManager3 implements OnModuleInit  {
    *
    * @returns Path to the folder where new files should be stored
    */
-  private getCurrentUploadFolder(): string {
-    let folderIndex = this.getCurrentFolderIndex();
-    return join(this.uploadBaseDir, folderIndex.toString());
+  private getCurrentUploadFolder(subDir?: string[]): string {
+    let folderIndex = this.getCurrentFolderIndex(subDir);
+    //return join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
+    return this.getFolderPath(folderIndex, subDir);
   }
 
   /**
@@ -152,9 +157,10 @@ export class UploadManager3 implements OnModuleInit  {
    *
    * @returns The index of the folder where new files should be stored
    */
-  private getCurrentFolderIndex(): number {
+  private getCurrentFolderIndex(subDir?: string[]): number {
     let folderIndex = 1;
-    let folderPath = join(this.uploadBaseDir, folderIndex.toString());
+    //let folderPath = join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
+    let folderPath = this.getFolderPath(folderIndex, subDir);
 
     // Check existing folders until finding one with available capacity
     while (existsSync(folderPath)) {
@@ -168,11 +174,16 @@ export class UploadManager3 implements OnModuleInit  {
 
       // Otherwise, check the next folder
       folderIndex++;
-      folderPath = join(this.uploadBaseDir, folderIndex.toString());
+      //folderPath = join(this.uploadBaseDir, folderIndex.toString());
+      folderPath = this.getFolderPath(folderIndex, subDir);
     }
 
     // If we get here, we need a new folder
     ensureDirectoryExists(folderPath);
     return folderIndex;
+  }
+
+  private getFolderPath(folderIndex: number, subDir?: string[]): string {
+    return join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
   }
 }

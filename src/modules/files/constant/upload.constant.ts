@@ -6,7 +6,7 @@ export const UPLOAD_ROOT_DIR = 'uploads';
 /**
  * Limit of files per folder. When the limit is exceeded, a new folder will be created.
  */
-export const MAX_FILES_PER_FOLDER = 100;
+export const MAX_FILES_PER_FOLDER = 1;
 
 /**
  * Folder name for thumbnails.
