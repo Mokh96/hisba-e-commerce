@@ -1,19 +1,12 @@
 import { Roles } from 'src/enums/roles.enum';
 import { Role } from 'src/modules/roles/entities/role.entity';
 import { DataSource } from 'typeorm';
-import {
-  Seeder,
-  SeederFactoryManager,
-  useSeederFactory,
-} from 'typeorm-extension';
+import { Seeder, SeederFactoryManager, useSeederFactory } from 'typeorm-extension';
 import { User } from 'src/modules/users/entities/user.entity';
 import { hash, genSalt } from 'bcrypt';
 
 export class MainSeeder implements Seeder {
-  public async run(
-    dataSource: DataSource,
-    factoryManager: SeederFactoryManager,
-  ): Promise<any> {
+  public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
     /**
      * Seed Roles
      */
@@ -23,8 +16,8 @@ export class MainSeeder implements Seeder {
     console.log('Seeding Roles ...');
 
     await roleRepo.save(
-      Object.entries(Role).map(([key, roleId]) => ({
-        id: roleId,
+      Object.entries(Roles).map(([key, roleId]) => ({
+        id: +roleId,
         label: key,
       })),
     );
