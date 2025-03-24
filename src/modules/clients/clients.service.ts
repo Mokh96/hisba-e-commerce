@@ -8,11 +8,9 @@ import { Roles } from 'src/enums/roles.enum';
 
 @Injectable()
 export class ClientsService {
-  constructor(
-    @InjectRepository(Client) private clientRepository: Repository<Client>,
-  ) {}
-  // DeepPartial<Client>
-  async create(createClientDto: DeepPartial<Client>, user: any) {
+  constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
+
+  async create(createClientDto: CreateClientDto, user: any) {
     const client = this.clientRepository.create(createClientDto);
 
     client.creatorId = user.id;
@@ -20,16 +18,41 @@ export class ClientsService {
     await this.clientRepository.save(client);
 
     delete client.user.password;
+    delete client.user.roleId;
+    delete client.creator.roleId;
+
     return client;
   }
 
   async findAll() {
-    const clients = await this.clientRepository.find();
+    const clients = await this.clientRepository.find({
+      relations: {
+        user: true,
+      },
+      select: {
+        user: {
+          id: true,
+          username: true,
+        },
+      },
+    });
+
     return clients;
   }
 
   async findOne(id: number) {
-    const client = await this.clientRepository.findOneByOrFail({ id });
+    const client = await this.clientRepository.findOne({
+      relations: {
+        user: true,
+      },
+      select: {
+        user: {
+          id: true,
+          username: true,
+        },
+      },
+      where: { id },
+    });
     return client;
   }
 

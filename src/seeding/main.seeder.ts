@@ -1,4 +1,4 @@
-import { Roles } from 'src/enums/roles.enum';
+import { Roles, rolesObject } from 'src/enums/roles.enum';
 import { Role } from 'src/modules/roles/entities/role.entity';
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager, useSeederFactory } from 'typeorm-extension';
@@ -16,7 +16,7 @@ export class MainSeeder implements Seeder {
     console.log('Seeding Roles ...');
 
     await roleRepo.save(
-      Object.entries(Roles).map(([key, roleId]) => ({
+      Object.entries(rolesObject).map(([key, roleId]) => ({
         id: +roleId,
         label: key,
       })),

@@ -18,8 +18,7 @@ export class UsersService {
 
     Object.assign(user, createUserDto);
 
-    await this.usersRepository.save(user);
-    return user;
+    return await this.usersRepository.save(user);
   }
 
   async findAll(roleId?: Roles) {

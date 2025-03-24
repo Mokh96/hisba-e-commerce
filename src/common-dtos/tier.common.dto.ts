@@ -3,6 +3,7 @@ import {
   IsDate,
   IsDateString,
   IsEmail,
+  IsISO8601,
   IsMobilePhone,
   IsOptional,
   IsPhoneNumber,
@@ -24,8 +25,7 @@ export class ClientCommonDto {
   address: string;
 
   @IsOptional()
-  @IsDateString()
-  //@IsDate()
+  @IsDate()
   birthDate: Date;
 
   @IsOptional()
