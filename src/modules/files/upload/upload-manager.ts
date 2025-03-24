@@ -58,6 +58,7 @@ export class UploadManager3 implements OnModuleInit {
    * Uploads multiple files to the appropriate folders and generates thumbnails if configured
    *
    * @param files - Object containing file arrays mapped by field names
+   * @param subDir
    * @returns Array of metadata for all successfully uploaded files
    */
   protected async uploadFiles(
