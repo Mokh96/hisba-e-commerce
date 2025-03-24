@@ -22,11 +22,11 @@ export class Order extends OrderSync {
   @Column({ name: 'client_mobile', length: 13 })
   clientMobile: string;
 
+  @Column({ name: 'client_phone', length: 13 })
+  clientPhone: string;
+
   @Column({ name: 'client_fax', length: 13 })
   clientFax: string;
-
-  @Column({ name: 'client_land_line', length: 13 })
-  clientLandLine: string;
 
   @Column({ name: 'delivery_address' })
   deliveryAddress: string;
@@ -62,7 +62,9 @@ export class Order extends OrderSync {
   })
   history: OrderHistory[];
 
-  @ManyToOne(() => Client, (client: Client) => client.orders, { nullable: false })
+  @ManyToOne(() => Client, (client: Client) => client.orders, {
+    nullable: false,
+  })
   client: Client;
 
   @ManyToOne(() => User, (user: User) => user.createdOrders, {

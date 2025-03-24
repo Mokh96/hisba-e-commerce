@@ -59,8 +59,7 @@ export class BrandsService {
   }
 
   async findAll() {
-    const brands = await this.brandRepository.find();
-    return brands;
+    return await this.brandRepository.find();
   }
 
   async findOne(id: number) {

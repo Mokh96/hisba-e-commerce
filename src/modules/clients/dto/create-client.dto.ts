@@ -12,7 +12,6 @@ import {
 } from 'class-validator';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { TierCommonDto } from 'src/common-dtos/tier.common.dto';
-import { tierType } from 'src/enums/tier-type.enum';
 import {
   CreateShippingAddressDto,
   CreateSyncShippingAddressDto,
@@ -36,8 +35,6 @@ export class CreateClientDto extends TierCommonDto {
   @IsString()
   webPage: string;
 
-  @IsEnum(tierType)
-  tierTypeId: number;
 
   @IsOptional()
   @IsArray()
