@@ -1,54 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  CreateProductDto,
-  CreateSyncProductDto,
-} from './dto/create-product.dto';
+import { Injectable } from '@nestjs/common';
+import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
-import { Article } from '../articles/entities/article.entity';
-import { CreateArticleDto } from '../articles/dto/create-article.dto';
+import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-
     // @InjectRepository(Article)
     // private articleRepository: Repository<Article>,
 
     private dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateSyncProductDto) {
-    //   const articles = createProductDto.articles as any;
-    //   delete createProductDto.articles;
-    //   const product = this.productRepository.create(createProductDto);
-    //   await this.productRepository.save(product);
-    //   const listArticles = articles.map(
-    //     (article) => (article.productId = product.id),
-    //   );
-    //   const _articles = this.articleRepository.create(listArticles);
-    //   this.articleRepository.save(_articles);
-    //   return product;
-  }
-  async creat(createProductDto: CreateSyncProductDto) {
-    const product = this.productRepository.create(createProductDto);
+  async create(createProductDto: CreateProductDto) {
+    const { minPrice, maxPrice } = getMaxAndMinPrices(createProductDto.articles);
+    const product = this.productRepository.create({
+      ...createProductDto,
+      minPrice,
+      maxPrice,
+    });
     await this.productRepository.save(product);
-    return product;
-
-   /* const priceList = product.articles
-      ?.map(({ lots }) => lots?.map(({ price }) => price))
-      .flat();*/
-
-    //if (priceList) product = this.maxMin(product, priceList);
-
-    //return product;
-
-    await this.productRepository.save(product);
-
     return product;
   }
 
@@ -58,9 +34,7 @@ export class ProductsService {
 
     for (let i = 0; i < createSyncProductDtos.length; i++) {
       try {
-        const product = await this.productRepository.save(
-          createSyncProductDtos[i],
-        );
+        const product = await this.productRepository.save(createSyncProductDtos[i]);
         success.push(product);
       } catch (error) {
         baseFailures.push({
@@ -74,8 +48,7 @@ export class ProductsService {
   }
 
   async findAll() {
-    const products = await this.productRepository.find();
-    return products;
+    return await this.productRepository.find();
   }
 
   async findOne(id: number) {
@@ -93,10 +66,7 @@ export class ProductsService {
   async update(id: number, updateProductDto: UpdateProductDto) {
     const product = await this.productRepository.findOneByOrFail({ id });
 
-    const updatedProduct = this.productRepository.merge(
-      product,
-      updateProductDto,
-    );
+    const updatedProduct = this.productRepository.merge(product, updateProductDto);
     await this.productRepository.save(updatedProduct);
     return updatedProduct;
   }
@@ -108,16 +78,16 @@ export class ProductsService {
     return true;
   }
 
-  public maxMin(product: Product, prices: number[]) {
-    if (prices.length === 1 && (product.minPrice && product.maxPrice) == 0) {
-      product.maxPrice = prices[0];
-      product.minPrice = prices[0];
-    } else
-      prices.forEach((price) => {
-        if (price < product.minPrice) product.minPrice = price;
-        else if (price > product.maxPrice) product.maxPrice = price;
-      });
-
-    return product;
-  }
+  /* public maxMin(product: Product, prices: number[]) {
+     if (prices.length === 1 && (product.minPrice && product.maxPrice) == 0) {
+       product.maxPrice = prices[0];
+       product.minPrice = prices[0];
+     } else
+       prices.forEach((price) => {
+         if (price < product.minPrice) product.minPrice = price;
+         else if (price > product.maxPrice) product.maxPrice = price;
+       });
+ 
+     return product;
+   }*/
 }

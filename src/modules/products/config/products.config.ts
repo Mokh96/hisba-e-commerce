@@ -1,7 +1,7 @@
 import {
   MAX_FILE_PATH_LENGTH,
   MD_DESCRIPTION_LENGTH,
-} from '../../../common/constants/database-constraints.constant';
+} from 'src/common/constants/database-constraints.constant';
 
 export const PRODUCT_FIELD_LENGTHS = {
   CODE: 255,

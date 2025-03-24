@@ -6,9 +6,9 @@ import { ProductGallery } from 'src/modules/product-galleries/entities/product-g
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
-import { WithTimestamp } from '../../../common/entities/timestamp.entity';
-import { WithSyncId } from '../../../common/entities/sync.entity';
-import { BaseEntity } from '../../../common/entities/base-entity.entity';
+import { WithTimestamp } from 'src/common/entities/timestamp.entity';
+import { WithSyncId } from 'src/common/entities/sync.entity';
+import { BaseEntity } from 'src/common/entities/base-entity.entity';
 
 @Entity()
 export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {

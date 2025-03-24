@@ -16,6 +16,10 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
+ /* @IsPositive()
+  @IsInt()
+  syncId: number;*/
+
   @IsString()
   @IsOptional()
   @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
@@ -46,7 +50,7 @@ export class CreateProductDto {
   @IsOptional()
   description: string;
 
-  @TransformStringToBoolean({allowNull: false})
+  @TransformStringToBoolean({ allowNull: false })
   @IsBoolean()
   isOutStock: boolean;
 
@@ -69,25 +73,25 @@ export class CreateProductDto {
   @IsOptional()
   @IsPositive()
   @IsInt()
-  brandId: number;
+  brandId: number | undefined;
 
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  categoryId: number;
+  categoryId: number | undefined;
 
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  familyId: number;
+  familyId: number | undefined;
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateArticleDtoArray)
-  articles: CreateArticleDtoArray[];
+  articles: CreateArticleDtoArray[] = [];
 }
 
 export class CreateArticleDtoArray extends OmitType(CreateArticleDto, ['productId'] as const) {}

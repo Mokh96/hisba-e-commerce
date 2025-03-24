@@ -1,21 +1,18 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
+  IsBoolean,
   IsInt,
   IsOptional,
   IsPositive,
   IsString,
-  IsArray,
-  ValidateNested, MaxLength, IsBoolean,
+  MaxLength,
+  Min,
+  ValidateNested,
 } from 'class-validator';
-import {
-  IsBooleanDontAcceptNull,
-  convertBoolean,
-} from 'src/common-dtos/custom-validator-decorator/custom-validator.decorator';
-
 import { IdCommonDto } from 'src/common-dtos/id.common.dto';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IntersectionType } from '@nestjs/mapped-types';
-import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { TransformStringToBoolean } from 'src/common/decorators';
 
@@ -40,6 +37,11 @@ export class CreateArticleDto {
   @MaxLength(ARTICLE_FIELD_LENGTHS.DESCRIPTION)
   description: string;
 
+  @Type(() => Number)
+  @Min(0)
+  @IsInt()
+  price: number;
+
   @TransformStringToBoolean()
   @IsBoolean()
   isActive: boolean;
@@ -60,9 +62,5 @@ export class CreateArticleDto {
   optionValues: IdCommonDto[];
 }
 
-
 //TODO: find batter implementation , tray to remove redundant
-export class CreateSyncArticleDto extends IntersectionType(
-  CreateArticleDto,
-  SyncIdDto,
-) {}
+export class CreateSyncArticleDto extends IntersectionType(CreateArticleDto, SyncIdDto) {}

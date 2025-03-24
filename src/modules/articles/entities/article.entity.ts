@@ -8,6 +8,7 @@ import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.conf
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 
 @Entity()
 export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
@@ -25,6 +26,9 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
 
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.DESCRIPTION })
   description: string;
+
+  @Column({ ...defaultDecimal, default: 0 })
+  price: number;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;

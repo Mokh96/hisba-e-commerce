@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileUploadEnum } from '../files/enums/file-upload.enum';
@@ -17,9 +17,7 @@ export class ProductsController {
     new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
   )
   create(@Body() createProductDto: CreateProductDto) {
-    console.log(createProductDto);
-    return createProductDto;
-    return this.productsService.create(createProductDto as CreateSyncProductDto);
+    return this.productsService.create(createProductDto);
   }
 
   @Get()
