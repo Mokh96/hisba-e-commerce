@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { User } from '../users/entities/user.entity';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -10,8 +9,8 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
-  create(@CurrentUser('id') id: User['id'], @Body() createClientDto: CreateClientDto) {
-    return this.clientsService.create(createClientDto, { id });
+  create(@CurrentUser() user, @Body() createClientDto: CreateClientDto) {
+    return this.clientsService.create(createClientDto, user);
   }
 
   @Get()

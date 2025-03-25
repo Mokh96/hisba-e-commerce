@@ -1,20 +1,20 @@
+import * as bcrypt from 'bcrypt';
+import { Roles } from 'src/enums/roles.enum';
+import { Client } from 'src/modules/clients/entities/client.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Role } from 'src/modules/roles/entities/role.entity';
-import { Client } from 'src/modules/clients/entities/client.entity';
 import {
-  Entity,
+  BeforeInsert,
   Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
+  Entity,
   Index,
   JoinColumn,
-  BeforeInsert,
+  ManyToOne,
+  OneToMany,
   OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/enums/roles.enum';
 
 @Entity()
 export class User {

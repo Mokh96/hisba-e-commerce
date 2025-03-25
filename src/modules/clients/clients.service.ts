@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CurrentUserData } from 'src/common/decorators/current-user.decorator';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
-import { CreateClientDto } from './dto/create-client.dto';
+import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
 
@@ -10,10 +12,9 @@ import { Client } from './entities/client.entity';
 export class ClientsService {
   constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
 
-  async create(createClientDto: CreateClientDto, user: any) {
+  async create(createClientDto: CreateClientDto | CreateClientSyncDto, user: CurrentUserData) {
     const client = this.clientRepository.create(createClientDto);
-
-    client.creatorId = user.id;
+    client.creatorId = user.sub;
     client.user.roleId = Roles.CLIENT;
     await this.clientRepository.save(client);
 
@@ -21,6 +22,28 @@ export class ClientsService {
     delete client.user.roleId;
 
     return client;
+  }
+
+  async createBulk(createSyncClientDto: CreateClientSyncDto[], user: CurrentUserData) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (let i = 0; i < createSyncClientDto.length; i++) {
+      try {
+        const product = await this.create(createSyncClientDto[i], user);
+        response.successes.push(product);
+      } catch (err) {
+        response.failures.push({
+          index: i,
+          syncId: createSyncClientDto[i].syncId,
+          errors: [err.sqlMessage],
+        });
+      }
+    }
+
+    return response;
   }
 
   async findAll() {
