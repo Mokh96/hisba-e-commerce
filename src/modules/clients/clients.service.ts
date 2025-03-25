@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateClientDto } from './dto/update-client.dto';
-import { DeepPartial, Repository } from 'typeorm';
-import { Client } from './entities/client.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/enums/roles.enum';
+import { Repository } from 'typeorm';
+import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
+import { Client } from './entities/client.entity';
 
 @Injectable()
 export class ClientsService {
@@ -18,7 +19,6 @@ export class ClientsService {
 
     delete client.user.password;
     delete client.user.roleId;
-    delete client.creator.roleId;
 
     return client;
   }
@@ -43,24 +43,32 @@ export class ClientsService {
     const client = await this.clientRepository.findOne({
       relations: {
         user: true,
+        shippingAddresses: true,
       },
       select: {
         user: {
           id: true,
           username: true,
         },
+        shippingAddresses: {
+          id: true,
+          address: true,
+        },
       },
       where: { id },
     });
+    if (!client) {
+      throw new NotFoundException(`Client '${id}' not found`);
+    }
     return client;
   }
 
   async update(id: number, updateClientDto: UpdateClientDto) {
-    const client = await this.clientRepository.findOneByOrFail({ id });
+    const client = await this.clientRepository.findOneBy({ id });
+
     this.clientRepository.merge(client, updateClientDto);
 
-    await this.clientRepository.save(client);
-    return client;
+    return await this.clientRepository.update(id, client);
   }
 
   async remove(id: number) {

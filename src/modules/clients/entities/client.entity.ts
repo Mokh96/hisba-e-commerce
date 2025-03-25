@@ -1,16 +1,9 @@
-import {
-  Entity,
-  Column,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
 import { ClientSync } from 'src/common-entities/client.common.entity';
-import { Order } from 'src/modules/orders/entities/order.entity';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
+import { Order } from 'src/modules/orders/entities/order.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
 import { User } from 'src/modules/users/entities/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class Client extends ClientSync {
@@ -32,16 +25,10 @@ export class Client extends ClientSync {
   @OneToMany(() => CartItem, (cartItem: CartItem) => cartItem.client)
   cartItems: CartItem[];
 
-  @OneToMany(
-    () => ShippingAddress,
-    (shippingAddress: ShippingAddress) => shippingAddress.client,
-    { cascade: true },
-  )
+  @OneToMany(() => ShippingAddress, (shippingAddress: ShippingAddress) => shippingAddress.client, {
+    cascade: true,
+  })
   shippingAddresses: ShippingAddress[];
-
-  @Column({ name: 'default_shipping_address_id', nullable: true })
-  defaultShippingAddressId: number;
-
 
   @ManyToOne(() => User, (user: User) => user.createdClients, { nullable: false })
   @JoinColumn({ name: 'creator_id' })
@@ -58,5 +45,4 @@ export class Client extends ClientSync {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
-
 }

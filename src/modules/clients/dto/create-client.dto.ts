@@ -1,6 +1,6 @@
 import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsArray, IsDefined, IsEnum, IsInt, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsDefined, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { ClientCommonDto } from 'src/common-dtos/tier.common.dto';
 
@@ -10,7 +10,7 @@ import {
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 
-export class CreateClientDto extends ClientCommonDto {
+export class CreateBaseClientDto extends ClientCommonDto {
   @IsOptional()
   @IsString()
   code: string;
@@ -32,7 +32,9 @@ export class CreateClientDto extends ClientCommonDto {
   @ValidateNested({ each: true })
   @Type(() => CreateShippingAddressDto)
   shippingAddresses: CreateShippingAddressDto[];
+}
 
+export class CreateClientDto extends CreateBaseClientDto {
   @Type(() => CreateUserDto)
   @IsDefined()
   @ValidateNested()
