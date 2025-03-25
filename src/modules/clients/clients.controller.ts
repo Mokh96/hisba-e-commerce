@@ -1,46 +1,35 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
-@Controller('tiers')
+@Controller('clients')
 export class ClientsController {
-  constructor(private readonly tiersService: ClientsService) {}
+  constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
-  create(@Body() createTierDto: CreateClientDto) {
-    return this.tiersService.create(createTierDto, { id: 1 });
+  create(@CurrentUser() user, @Body() createClientDto: CreateClientDto) {
+    return this.clientsService.create(createClientDto, user);
   }
 
   @Get()
   findAll() {
-    return this.tiersService.findAll();
+    return this.clientsService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.tiersService.findOne(+id);
+    return this.clientsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateTierDto: UpdateClientDto,
-  ) {
-    return this.tiersService.update(+id, updateTierDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateClientDto: UpdateClientDto) {
+    return this.clientsService.update(+id, updateClientDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.tiersService.remove(+id);
+    return this.clientsService.remove(+id);
   }
 }

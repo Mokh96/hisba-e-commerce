@@ -37,3 +37,6 @@ lerna-debug.log*
 
 .env
 *.ts~
+src/temp
+
+uploads

@@ -1,19 +1,20 @@
+import * as bcrypt from 'bcrypt';
+import { Roles } from 'src/enums/roles.enum';
+import { Client } from 'src/modules/clients/entities/client.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Role } from 'src/modules/roles/entities/role.entity';
-import { Client } from 'src/modules/clients/entities/client.entity';
 import {
-  Entity,
+  BeforeInsert,
   Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
+  Entity,
   Index,
   JoinColumn,
-  BeforeInsert,
+  ManyToOne,
+  OneToMany,
   OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
@@ -24,7 +25,6 @@ export class User {
   @Column()
   @Index('username', { unique: true })
   username: string;
-
 
   @Column({ select: false })
   password: string;
@@ -41,13 +41,12 @@ export class User {
   @OneToOne(() => Client, (client: Client) => client.user)
   client: Client;
 
-
   @ManyToOne(() => Role, (role: Role) => role.users, { nullable: false })
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
   @Column({ name: 'role_id', nullable: false })
-  roleId: number;
+  roleId: Roles;
 
   @BeforeInsert()
   async setPassword() {

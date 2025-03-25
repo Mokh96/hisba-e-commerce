@@ -1,17 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Index,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class ClientCommon {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ name: 'first_name' })
-  fistName: string;
+  firstName: string;
 
   @Column({ name: 'last_name' })
   lastName: string;
