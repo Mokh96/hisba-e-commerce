@@ -40,12 +40,12 @@ export class ClientCommonDto {
   mobile: string;
 
   @IsOptional()
-  @IsPhoneNumber()
-  fax: string;
-
-  @IsOptional()
   @IsEmail()
   email: string;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  fax: string;
 
   @IsOptional()
   @IsAlphanumeric()

@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { ClientCommonDto } from 'src/common-dtos/tier.common.dto';
-
 import {
   CreateShippingAddressDto,
   CreateSyncShippingAddressDto,

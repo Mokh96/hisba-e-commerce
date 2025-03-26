@@ -12,3 +12,4 @@ export const CurrentUser = createParamDecorator((data: keyof CurrentUserData | u
   const user = request.user;
   return data ? user?.[data] : user;
 });
+

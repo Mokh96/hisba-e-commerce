@@ -1,12 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  CreateArticleDto,
-  CreateSyncArticleDto,
-} from './dto/create-article.dto';
-import {
-  UpdateArticleDto,
-  UpdateSyncArticleDto,
-} from './dto/update-article.dto';
+import { Injectable } from '@nestjs/common';
+import { CreateSyncArticleDto } from './dto/create-article.dto';
+import { UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
@@ -20,10 +14,8 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-
     private dataSource: DataSource,
     private productsService: ProductsService,
   ) {}
@@ -35,19 +27,19 @@ export class ArticlesService {
     return article;
   }
 
-  async createBulk(createSyncArticleDtos: CreateSyncArticleDto[]) {
-    const articles = this.articleRepository.create(createSyncArticleDtos);
+  async createBulk(createSyncArticlesDto: CreateSyncArticleDto[]) {
+    const articles = this.articleRepository.create(createSyncArticlesDto);
 
-    const baseFailures = [];
+    const baseFailures: { syncId: number; error: unknown }[] = [];
     const success: Article[] = [];
 
-    for (let i = 0; i < articles.length; i++) {
+    for (const article of articles) {
       try {
-        const article = await this.saveArticle(articles[i]);
-        success.push(article);
+        const savedArticle = await this.saveArticle(article);
+        success.push(savedArticle);
       } catch (error) {
         baseFailures.push({
-          syncId: articles[i].syncId,
+          syncId: article.syncId,
           error,
         });
       }
@@ -73,10 +65,7 @@ export class ArticlesService {
 
   async update(id: number, updateArticleDto: UpdateSyncArticleDto) {
     let article = await this.findById(id);
-    const updatedArticle = this.articleRepository.merge(
-      article,
-      updateArticleDto,
-    );
+    const updatedArticle = this.articleRepository.merge(article, updateArticleDto);
 
     await this.articleRepository.save(updatedArticle);
     return updatedArticle;

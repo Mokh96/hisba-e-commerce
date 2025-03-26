@@ -29,10 +29,10 @@ export function TransformStringToBoolean(props?: { allowNull?: boolean }) {
   return Transform(
     ({ value, obj, key }) => {
       const target = obj[key];
-      if (target === 'true') return true;
-      if (target === 'false') return false;
-      if (target === 'null') return null;
-
+      
+      if (target === 'true' || target === true) return true;
+      if (target === 'false' || target === false) return false;
+      if (target === 'null' || target === null) return null;
       throw new BadRequestException(`${key} must be '${acceptValues.join(', ')}'.`);
     },
     { toClassOnly: true },

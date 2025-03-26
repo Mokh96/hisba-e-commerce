@@ -12,6 +12,7 @@ import { Client } from './entities/client.entity';
 export class ClientsService {
   constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
 
+
   async create(createClientDto: CreateClientDto | CreateClientSyncDto, user: CurrentUserData) {
     const client = this.clientRepository.create(createClientDto);
     client.creatorId = user.sub;
