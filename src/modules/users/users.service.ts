@@ -1,10 +1,10 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Roles } from 'src/enums/roles.enum';
+import { FindOptionsWhereProperty, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { FindOptionsWhereProperty, Repository } from 'typeorm';
-import { Roles } from 'src/enums/roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +18,7 @@ export class UsersService {
 
     Object.assign(user, createUserDto);
 
-    await this.usersRepository.save(user);
-    return user;
+    return await this.usersRepository.save(user);
   }
 
   async findAll(roleId?: Roles) {

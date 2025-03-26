@@ -1,7 +1,7 @@
+import { Type } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsDate,
-  IsDateString,
   IsEmail,
   IsMobilePhone,
   IsOptional,
@@ -23,8 +23,9 @@ export class ClientCommonDto {
   @Length(2, 255)
   address: string;
 
+  @Type(() => Date)
   @IsOptional()
-  @IsDateString()
+  @IsDate()
   birthDate: Date;
 
   @IsOptional()

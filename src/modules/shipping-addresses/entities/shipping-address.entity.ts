@@ -1,6 +1,6 @@
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class ShippingAddress extends SyncEntityCommon {
@@ -9,6 +9,7 @@ export class ShippingAddress extends SyncEntityCommon {
 
   @ManyToOne(() => Client, (client: Client) => client.shippingAddresses, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'client_id' })
   client: Client;

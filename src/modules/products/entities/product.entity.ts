@@ -10,6 +10,7 @@ import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 
+
 @Entity()
 export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.CODE })
@@ -86,7 +87,6 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   })
   @JoinColumn({ name: 'family_id' })
   family: Family;
-
 /*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
   gallery: ProductGallery[];*/
 }

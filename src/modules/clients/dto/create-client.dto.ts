@@ -9,7 +9,7 @@ import {
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 
-export class CreateClientDto extends ClientCommonDto {
+export class CreateClientBaseDto extends ClientCommonDto {
   @IsOptional()
   @IsString()
   code: string;
@@ -31,17 +31,19 @@ export class CreateClientDto extends ClientCommonDto {
   @ValidateNested({ each: true })
   @Type(() => CreateShippingAddressDto)
   shippingAddresses: CreateShippingAddressDto[];
+}
 
+export class CreateClientDto extends CreateClientBaseDto {
   @Type(() => CreateUserDto)
   @IsDefined()
   @ValidateNested()
   user: CreateUserDto;
 }
 
-export class CreateSyncTierDto extends IntersectionType(OmitType(CreateClientDto, ['shippingAddresses']), SyncIdDto) {
+export class CreateClientSyncDto extends IntersectionType(OmitType(CreateClientDto, ['shippingAddresses']), SyncIdDto) {
+  @Type(() => CreateSyncShippingAddressDto)
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateSyncShippingAddressDto)
   shippingAddresses: CreateSyncShippingAddressDto[];
 }
