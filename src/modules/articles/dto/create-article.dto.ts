@@ -18,6 +18,9 @@ import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.conf
 import { TransformStringToBoolean } from 'src/common/decorators';
 
 export class CreateArticleDto {
+  @IsOptional() //its optional because related image is not required
+  _uid: string | undefined;
+
   @IsOptional()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)
   label: string;

@@ -7,11 +7,9 @@ import { UPLOAD_ROOT_DIR } from 'src/modules/files/constant/upload.constant';
 @Injectable()
 export class FilesService {
   getFile(path: string, res: Response) {
-
     const normalizedPath = path.replace(/,/g, '/');
     const filePath = join(UPLOAD_ROOT_DIR, normalizedPath);
 
-    console.log('two' , filePath);
     if (!existsSync(filePath)) {
       throw new NotFoundException('File not found');//todo use i 18n
     }

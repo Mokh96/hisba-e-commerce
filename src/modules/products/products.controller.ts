@@ -13,32 +13,35 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { FileUploadEnum } from '../files/enums/file-upload.enum';
-import { FileValidationInterceptor } from '../files/interceptors/file-validation-interceptor';
-import { imageUploadRules } from '../files/config/file-upload.config';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
-import { FilesTypesEnum } from 'src/modules/files/enums/files-types.enum';
+import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 
 @Controller('products')
 export class ProductsController extends UploadManager3 {
   constructor(private readonly productsService: ProductsService) {
     //new ThumbnailManager({ thumbnailSize: { width: 250, height: 250 } })
-    super(FilesTypesEnum.Private, []);
+    super(FileTypesEnum.Public, ['test']);
   }
 
-  @Post()
+  /*@Post('/create1')
   @UseInterceptors(
     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
     new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
   )
-  async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: { image?: Express.Multer.File[] }) {
+  async create1(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: { image?: Express.Multer.File[] }) {
     const uploadedFiles = await this.uploadFiles(files, ['articles']);
     return {
       uploadedFiles,
       createProductDto,
     };
     //return this.productsService.create(createProductDto);
+  }*/
+
+  @Post()
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
+    return await this.productsService.createProduct(createProductDto, files);
   }
 
   @Get()

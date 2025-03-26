@@ -87,6 +87,6 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @JoinColumn({ name: 'family_id' })
   family: Family;
 
-  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-  gallery: ProductGallery[];
+/*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
+  gallery: ProductGallery[];*/
 }

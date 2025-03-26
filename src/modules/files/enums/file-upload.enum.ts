@@ -1,6 +1,8 @@
 export enum FileUploadEnum {
-  Image = 'image',
   Images = 'images',
+  Image = 'image',
+  DefaultImage = 'default-image',
   Pdf = 'pdf',
+  Files = 'files',
   File = 'file',
 }

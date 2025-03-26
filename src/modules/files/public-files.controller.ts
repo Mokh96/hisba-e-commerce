@@ -7,7 +7,7 @@ import { FilesService } from './files.service';
 export class PublicFilesController {
   constructor(private readonly fileService: FilesService) {}
 
-  @Get('*path')
+  @Get(':path(*)')
   async getFile(@Param('path') path: string, @Res() res: Response) {
     this.fileService.getFile(path, res);
   }

@@ -4,6 +4,7 @@ import {
   IsArray,
   IsBoolean,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
@@ -16,9 +17,14 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
- /* @IsPositive()
+  @IsOptional() //its optional because related image is not required
+  _uid: string | undefined;
+
+  @Type(() => Number)
+  @IsOptional()
+  @IsPositive()
   @IsInt()
-  syncId: number;*/
+  syncId: number | undefined;
 
   @IsString()
   @IsOptional()

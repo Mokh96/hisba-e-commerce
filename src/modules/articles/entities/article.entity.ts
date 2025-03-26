@@ -40,7 +40,7 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
+  @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article )
   gallery: ArticleGallery[];
 
   @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, { cascade: ['insert'] })

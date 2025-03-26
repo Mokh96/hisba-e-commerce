@@ -4,7 +4,7 @@ import { extname, join } from 'path';
 import { UploadFileType } from '../types/upload-file.type';
 import { ensureDirectoryExists, getPath } from '../utils/file-upload.util';
 import { ThumbnailManager } from './thumbnail-manager';
-import { FilesTypesEnum } from '../enums/files-types.enum';
+import { FileTypesEnum } from '../enums/file-types.enum';
 import { MAX_FILES_PER_FOLDER, UPLOAD_ROOT_DIR } from '../constant/upload.constant';
 
 /**
@@ -20,7 +20,7 @@ export class UploadManager3 implements OnModuleInit {
   /**
    * Type of files being managed (e.g., public, private)
    */
-  private readonly fileType: FilesTypesEnum;
+  private readonly fileType: FileTypesEnum;
   /**
    * Additional subdirectories for organizing uploads
    * Example: ['user', '123'] would create a subdirectory 'user/123' for uploads
@@ -35,7 +35,7 @@ export class UploadManager3 implements OnModuleInit {
    * @param thumbnailManager - Optional service for generating thumbnails
    */
   constructor(
-    fileType: FilesTypesEnum,
+    fileType: FileTypesEnum,
     subDir: string[],
     private readonly thumbnailManager?: ThumbnailManager, //inject thumbnail manager
   ) {
