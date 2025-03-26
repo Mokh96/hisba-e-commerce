@@ -15,9 +15,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/enums/roles.enum';
-
 
 @Entity()
 export class User {
