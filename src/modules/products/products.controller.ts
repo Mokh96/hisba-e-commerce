@@ -42,7 +42,6 @@ export class ProductsController extends UploadManager3 {
   @UseInterceptors(AnyFilesInterceptor())
   async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
     return await this.productsService.createProduct(createProductDto, files);
-
   }
 
   @Get()

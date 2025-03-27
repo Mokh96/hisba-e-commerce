@@ -7,6 +7,6 @@ export interface BulkResponse {
     index: number;
     syncId: number;
     // TODO : change to error type
-    errors: string[];
+    errors: string[]
   }[];
 }

@@ -6,10 +6,11 @@ import { Product } from './entities/product.entity';
 import { ArticlesModule } from '../articles/articles.module';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
+import { ProductsSyncController } from 'src/modules/products/products-sync.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product])],
-  controllers: [ProductsController],
+  controllers: [ProductsController , ProductsSyncController],
   providers: [ProductsService],
   exports: [TypeOrmModule, ProductsService],
 })

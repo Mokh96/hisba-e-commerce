@@ -6,14 +6,20 @@ import {
   Param,
   ParseIntPipe,
   ParseArrayPipe,
+  Res,
+  UseInterceptors,
+  UploadedFiles, BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { CreateSyncProductDto } from './dto/create-product.dto';
-import {
-  UpdateProductDto,
-  UpdateSyncProductDto,
-} from './dto/update-product.dto';
+import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
+import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { validateBulk } from 'src/helpers/validation/validation';
+import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
+import { Response } from 'express';
+import { IsArrayPipe } from 'src/common/pipes/isArray.pipe';
+import { CreateClientSyncDto } from 'src/modules/clients/dto/create-client.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.pipe';
 
 @Controller('products/sync')
 export class ProductsSyncController {
@@ -25,24 +31,38 @@ export class ProductsSyncController {
   }
 
   @Post('bulk')
-  async createBulk(@Body(ParseArrayPipe) createSyncProductDtoArray) {
-    const { valSuccess, valFailures } = await validateBulk(
-      createSyncProductDtoArray,
-      CreateSyncProductDto,
-    );
+  @UseInterceptors(AnyFilesInterceptor())
+  async createBulk(
+    @Res() res: Response,
+    @Body(ParseFormDataArrayPipe) createSyncProductsDto: CreateSyncProductDto[],
+    @UploadedFiles() files: Express.Multer.File[]
+  ) {
+    console.log('Parsed structured body:', createSyncProductsDto); // Verify transformation
 
-    const { success, baseFailures } = await this.productsService.createBulk(
-      valSuccess,
-    );
+  /*  if (!Array.isArray(createSyncProductsDto)) {
+      throw new BadRequestException('Validation failed: Expected an array of products.');
+    }*/
 
-    return { success, valFailures, baseFailures };
+    //const response = await this.productsService.createProductsBulk(createSyncProductsDto, files);
+    return res.status(207).json(createSyncProductsDto);
   }
 
+  /*  @Post('bulk')
+    async createBulk(@Body(ParseArrayPipe) createSyncProductDtoArray) {
+      const { valSuccess, valFailures } = await validateBulk(
+        createSyncProductDtoArray,
+        CreateSyncProductDto,
+      );
+  
+      /!*const { success, baseFailures } = await this.productsService.createBulk(
+        valSuccess,
+      );*!/
+  
+      return { valSuccess, valFailures};
+    }*/
+
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateSyncProductDto: UpdateSyncProductDto,
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateSyncProductDto: UpdateSyncProductDto) {
     return this.productsService.update(+id, updateSyncProductDto);
   }
 }

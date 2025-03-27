@@ -160,7 +160,7 @@ export class UploadManager3 implements OnModuleInit {
    */
   private getCurrentFolderIndex(subDir?: string[]): number {
     let folderIndex = 1;
-    //let folderPath = join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
+    // let folderPath = join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
     let folderPath = this.getFolderPath(folderIndex, subDir);
 
     // Check existing folders until finding one with available capacity

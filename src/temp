@@ -1,1 +1,9 @@
+I want to send array of products with articles (etch product have many articles)
+
+
+_uid: 123456
+categoryId: 1
+familyId: 1
+articles[0][_uid]: ar-1
+articles[0][label]: ARTICLE-11
 

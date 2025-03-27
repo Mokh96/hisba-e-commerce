@@ -17,14 +17,15 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
-  @IsOptional() //its optional because related image is not required
+  @IsString()
+  @IsNotEmpty() //its IsNotEmpty because related image is required
   _uid: string | undefined;
 
-  @Type(() => Number)
+/*  @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  syncId: number | undefined;
+  syncId: number | undefined;*/
 
   @IsString()
   @IsOptional()
@@ -106,7 +107,7 @@ export class CreateSyncArticleDtoArray extends IntersectionType(
   OmitType(CreateSyncArticleDto, ['productId'] as const),
 ) {}
 
-export class CreateSyncProductDto extends IntersectionType(
+/*export class CreateSyncProductDto extends IntersectionType(
   OmitType(CreateProductDto, ['articles'] as const),
   SyncIdDto,
 ) {
@@ -114,5 +115,19 @@ export class CreateSyncProductDto extends IntersectionType(
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateSyncArticleDtoArray)
-  articles: CreateSyncArticleDtoArray[];
+  articles: string[];
+}*/
+
+export class CreateSyncProductDto extends CreateProductDto {
+  @Type(() => Number)//todo : use reusable dto
+  @IsNotEmpty()
+  @IsPositive()
+  @IsInt()
+  syncId: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateSyncArticleDtoArray)
+  articles: CreateSyncArticleDtoArray[] =[];
 }

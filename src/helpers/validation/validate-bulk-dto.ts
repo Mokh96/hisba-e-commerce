@@ -31,7 +31,7 @@ export async function validateBulkDto<TDto extends object>(data: TDto[], dto: ne
       valFailures.push({
         index,
         syncId: errors[0].target['syncId'],
-        errors: errors.map(({ constraints }) => Object.values(constraints)[0]),
+        errors: errors.map(({ constraints }) => Object.values(constraints || {})[0]),
       });
     }
   }
