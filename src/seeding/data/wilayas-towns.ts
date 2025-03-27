@@ -1,4 +1,6 @@
-export const wilayas = [
+import { IdLabel } from 'src/common/types/id-label.type';
+
+export const wilayasTowns = [
   {
     id: 1,
     label: 'Adrar',
@@ -6495,158 +6497,13 @@ export const wilayas = [
       },
     ],
   },
-] as const;
+];
 
-export const listWilaya = [
-  {
-    label: 'Adrar',
-    value: 1,
-  },
-  { label: 'Chlef', value: 2 },
-  {
-    label: 'Laghouat',
-    value: 3,
-  },
-  { label: 'Oum El Bouaghi', value: 4 },
-  { label: 'Batna', value: 5 },
-  {
-    label: 'Béjaïa',
-    value: 6,
-  },
-  { label: 'Biskra', value: 7 },
-  { label: 'Béchar', value: 8 },
-  { label: 'Blida', value: 9 },
-  {
-    label: 'Bouira',
-    value: 10,
-  },
-  { label: 'Tamanrasset', value: 11 },
-  { label: 'Tébessa', value: 12 },
-  {
-    label: 'Tlemcen',
-    value: 13,
-  },
-  { label: 'Tiaret', value: 14 },
-  { label: 'Tizi Ouzou', value: 15 },
-  {
-    label: 'Alger',
-    value: 16,
-  },
-  { label: 'Djelfa', value: 17 },
-  { label: 'Jijel', value: 18 },
-  {
-    label: 'Sétif',
-    value: 19,
-  },
-  { label: 'Saïda', value: 20 },
-  { label: 'Skikda', value: 21 },
-  {
-    label: 'Sidi Bel Abbès',
-    value: 22,
-  },
-  { label: 'Annaba', value: 23 },
-  { label: 'Guelma', value: 24 },
-  {
-    label: 'Constantine',
-    value: 25,
-  },
-  { label: 'Médéa', value: 26 },
-  { label: 'Mostaganem', value: 27 },
-  {
-    label: "M'Sila",
-    value: 28,
-  },
-  { label: 'Mascara', value: 29 },
-  { label: 'Ouargla', value: 30 },
-  {
-    label: 'Oran',
-    value: 31,
-  },
-  { label: 'El Bayadh', value: 32 },
-  { label: 'Illizi', value: 33 },
-  {
-    label: 'Bordj Bou Arreridj',
-    value: 34,
-  },
-  { label: 'Boumerdès', value: 35 },
-  { label: 'El Tarf', value: 36 },
-  {
-    label: 'Tindouf',
-    value: 37,
-  },
-  { label: 'Tissemsilt', value: 38 },
-  { label: 'El Oued', value: 39 },
-  {
-    label: 'Khenchela',
-    value: 40,
-  },
-  { label: 'Souk Ahras', value: 41 },
-  { label: 'Tipaza', value: 42 },
-  {
-    label: 'Mila',
-    value: 43,
-  },
-  { label: 'Aïn Defla', value: 44 },
-  { label: 'Naâma', value: 45 },
-  {
-    label: 'Aïn Témouchent',
-    value: 46,
-  },
-  { label: 'Ghardaïa', value: 47 },
-  { label: 'Relizane', value: 48 },
-  {
-    label: 'Timimoun',
-    value: 49,
-  },
-  { label: 'Bordj Badji Mokhtar', value: 50 },
-  { label: 'Ouled Djellal', value: 51 },
-  {
-    label: 'Béni Abbès',
-    value: 52,
-  },
-  { label: 'Ain Salah', value: 53 },
-  { label: 'Ain Guezzam', value: 54 },
-  {
-    label: 'Touggourt',
-    value: 55,
-  },
-  { label: 'Djanet', value: 56 },
-  { label: "El M'ghair", value: 57 },
-  { label: 'El Menia', value: 58 },
-] as const;
+export const wilayasList: IdLabel[] = wilayasTowns.map(({ id, label }: { id: number; label: string }) => ({
+  id,
+  label,
+}));
 
-export const getListTowns = (wilayaId: number) => {
-  let towns = [];
-  wilayas[wilayaId]?.towns.map((e) => {
-    towns.push({ value: e.id, label: e.label });
-  });
-  return towns;
-};
-
-export const getWilayaId = (townId) => {
-  for (let index = 0; index < wilayas.length; index++) {
-    const element = wilayas[index];
-    for (let i = 0; i < element.towns.length; i++) {
-      if (element.towns[i].id === townId) {
-        return element.id;
-      }
-    }
-  }
-};
-
-export const getTownLabel = (wilayaId, townId) => {
-  return wilayas[wilayaId === 0 ? wilayaId : wilayaId - 1].towns.find((e) => e.id === townId)?.label;
-};
-
-export const getAllTowns = () => {
-  const ListTowns = [];
-
-  wilayas.map(({ towns }) => {
-    towns.map(({ id, label }) => ListTowns.push({ value: id, label: label }));
-  });
-
-  return ListTowns;
-};
-
-export const getWilayaByTownId = (townId) =>
-  wilayas.find((wilaya) => wilaya.towns.some((town) => town.id === townId)) || null;
+export const townsList: (IdLabel & { wilayaId: number })[] = wilayasTowns.flatMap((wilaya) =>
+  wilaya.towns.map((town) => ({ ...town, wilayaId: wilaya.id })),
+);

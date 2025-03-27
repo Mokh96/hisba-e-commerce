@@ -1,16 +1,18 @@
-import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Wilaya } from 'src/modules/wilayas/entities/wilaya.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
 
 @Entity()
-export class Town extends BaseEntity {
+export class Town {
+  @Column({ primary: true })
+  id: number;
+
   @Column()
   label: string;
 
   @Column({ name: 'wilaya_id' })
-  wilayaId: string;
+  wilayaId: number;
 
   @ManyToOne(() => Wilaya, (wilaya: Wilaya) => wilaya.towns, { nullable: false, cascade: true })
   @JoinColumn({ name: 'wilaya_id', referencedColumnName: 'id' })

@@ -1,9 +1,12 @@
 import { Roles, rolesObject } from 'src/enums/roles.enum';
 import { Role } from 'src/modules/roles/entities/role.entity';
 import { DataSource } from 'typeorm';
-import { Seeder, SeederFactoryManager, useSeederFactory } from 'typeorm-extension';
+import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { User } from 'src/modules/users/entities/user.entity';
-import { hash, genSalt } from 'bcrypt';
+import { genSalt, hash } from 'bcrypt';
+import { Wilaya } from 'src/modules/wilayas/entities/wilaya.entity';
+import { townsList, wilayasList } from 'src/seeding/data/wilayas-towns';
+import { Town } from 'src/modules/towns/entities/town.entity';
 
 export class MainSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -44,31 +47,14 @@ export class MainSeeder implements Seeder {
     ]);
 
     /**
-    * ! Cancelled Because .. 
- 
-    console.log('Seeding Users ...');
+     * Seed Wilayas and towns*/
 
-    const userFactory = await factoryManager.get(User);
+    console.log('Seeding Wilayas  ...');
+    const wilayasRepo = dataSource.getRepository(Wilaya);
+    await wilayasRepo.save(wilayasList);
 
-    const users = await userFactory.saveMany(10);
-
-    console.log('Seeding Clients ...');
-
-    const clientRepo = dataSource.getRepository(Client);
-    const ClientFactory = await useSeederFactory(Client);
-
-    const clients = await Promise.all(
-      Array(10)
-        .fill('')
-        .map(async () => {
-          const client = await ClientFactory.make({
-            user: faker.helpers.arrayElement(users),
-            creator: faker.helpers.arrayElement(admins),
-          });
-          return client;
-        }),
-    );
-
-    await clientRepo.save(clients);*/
+    console.log('Seeding Towns  ...');
+    const townsRepo = dataSource.getRepository(Town);
+    await townsRepo.save(townsList);
   }
 }
