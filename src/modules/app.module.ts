@@ -30,6 +30,8 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { FilesModule } from './files/files.module';
+import { TownsModule } from './towns/towns.module';
+import { WilayasModule } from './wilayas/wilayas.module';
 
 
 @Module({
@@ -70,6 +72,8 @@ import { FilesModule } from './files/files.module';
     SystemDataModule,
     AuthModule,
     FilesModule,
+    TownsModule,
+    WilayasModule,
   ],
 
   providers: [
