@@ -38,7 +38,7 @@ export class Client extends ClientSync {
   @Column({ name: 'creator_id' })
   creatorId: number;
 
-  @Column({ name: 'town_id' })
+  @Column({ name: 'town_id', nullable: true })
   townId: number;
 
   @OneToOne(() => Town, (town: Town) => town.clientSync)

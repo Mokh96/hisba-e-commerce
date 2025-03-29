@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
-import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils';
+import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
@@ -113,7 +113,6 @@ export class ProductsService extends UploadManager3 {
       }
     });
   }
-
 
   async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
     const baseFailures = [];
