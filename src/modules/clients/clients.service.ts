@@ -12,7 +12,6 @@ import { Client } from './entities/client.entity';
 export class ClientsService {
   constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
 
-
   async create(createClientDto: CreateClientDto | CreateClientSyncDto, user: CurrentUserData) {
     const client = this.clientRepository.create(createClientDto);
     client.creatorId = user.sub;
@@ -31,14 +30,13 @@ export class ClientsService {
       failures: [],
     };
 
-    for (let i = 0; i < createSyncClientDto.length; i++) {
+    for (const client of createSyncClientDto) {
       try {
-        const product = await this.create(createSyncClientDto[i], user);
+        const product = await this.create(client, user);
         response.successes.push(product);
       } catch (err) {
         response.failures.push({
-          index: i,
-          syncId: createSyncClientDto[i].syncId,
+          syncId: client.syncId,
           errors: [err.sqlMessage],
         });
       }
@@ -48,7 +46,7 @@ export class ClientsService {
   }
 
   async findAll() {
-    const clients = await this.clientRepository.find({
+    return await this.clientRepository.find({
       relations: {
         user: true,
       },
@@ -59,8 +57,6 @@ export class ClientsService {
         },
       },
     });
-
-    return clients;
   }
 
   async findOne(id: number) {

@@ -4,7 +4,7 @@ export interface BulkResponse {
     syncId: number;
   }[];
   failures: {
-    index: number;
+    index?: number;
     syncId: number;
     // TODO : change to error type
     errors: string[];

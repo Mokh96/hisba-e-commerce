@@ -5,7 +5,9 @@ import { IsArrayPipe } from 'src/common/pipes/isArray.pipe';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { ClientsService } from './clients.service';
 import { CreateClientSyncDto } from './dto/create-client.dto';
-@Controller('clients-sync')
+import { getBulkStatus } from 'src/common/utils/bulk-status.util';
+
+@Controller('clients/sync')
 export class ClientsSyncController {
   constructor(private clientsService: ClientsService) {}
 
@@ -26,17 +28,14 @@ export class ClientsSyncController {
       CreateClientSyncDto,
     );
     const { successes, failures } = await this.clientsService.createBulk(valSuccess, user);
+
     const result = {
       successes,
       failures: [...valFailures, ...failures],
     };
 
-    if (result.failures.length > 0 && successes.length > 0) {
-      res.status(207).json(result);
-    } else if (failures.length > 0) {
-      res.status(400).json(result);
-    } else {
-      res.status(200).json(result);
-    }
+    const status = getBulkStatus({ failures: result.failures.length, success: result.successes.length });
+
+    res.status(status).json(result);
   }
 }
