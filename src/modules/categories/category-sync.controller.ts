@@ -10,34 +10,34 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { BrandsService } from './brands.service';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
-import { UpdateBrandDto } from './dto/update-brand.dto';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
-import { CreateSyncBrandDto } from './dto/create-brand.dto';
+import { CategoriesService } from './categories.service';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateSyncCategoryDto } from './dto/create-category.dto';
+import { Response } from 'express';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
-import { Response } from 'express';
 
-@Controller('brands/sync')
-export class SyncBrandController {
-  constructor(private readonly brandsService: BrandsService) {}
+@Controller('categories/sync')
+export class SyncCategoryController {
+  constructor(private readonly categoryService: CategoriesService) {}
 
   @Post()
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  async createSync(@Body() createSyncBrandDto: CreateSyncBrandDto, @UploadedFiles() file: Image) {
-    return await this.brandsService.create(createSyncBrandDto, file);
+  createSync(@Body() createSyncCategoryDto: CreateSyncCategoryDto, @UploadedFiles() file: Image) {
+    return this.categoryService.create(createSyncCategoryDto, file);
   }
 
   @Post('/bulk')
-  async createSyncBulk(@Body(IsArrayPipe) createSyncBrandBulkDto: CreateSyncBrandDto[], @Res() res: Response) {
-    const { valFailures, valSuccess } = await validateBulkDto<CreateSyncBrandDto>(
-      createSyncBrandBulkDto,
-      CreateSyncBrandDto,
+  async createSyncBulk(@Body(new IsArrayPipe()) createSyncCategoryDto: CreateSyncCategoryDto[], @Res() res: Response) {
+    const { valFailures, valSuccess } = await validateBulkDto<CreateSyncCategoryDto>(
+      createSyncCategoryDto,
+      CreateSyncCategoryDto,
     );
-    const { successes, failures } = await this.brandsService.createSyncBulk(valSuccess);
+    const { successes, failures } = await this.categoryService.createBulk(valSuccess);
 
     const result = {
       successes,
@@ -53,14 +53,14 @@ export class SyncBrandController {
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   updateSync(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateBrandDto: UpdateBrandDto,
+    @Body() updateBrandDto: UpdateCategoryDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.brandsService.update(+id, updateBrandDto, file);
+    return this.categoryService.update(+id, updateBrandDto, file);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.brandsService.remove(+id);
+    return this.categoryService.remove(+id);
   }
 }

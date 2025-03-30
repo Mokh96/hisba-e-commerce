@@ -3,7 +3,7 @@ import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
-import { SyncCategoryController } from './categorySync.controller';
+import { SyncCategoryController } from './category-sync.controller';
 
 @Module({
   controllers: [SyncCategoryController, CategoriesController],
