@@ -67,6 +67,7 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
+
     nullable: true,
   })
   @JoinColumn({ name: 'brand_id' })
