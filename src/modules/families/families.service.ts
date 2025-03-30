@@ -1,9 +1,5 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +8,7 @@ import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { validateBulkInsert } from 'src/helpers/validation/global';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class FamiliesService {
@@ -29,10 +26,30 @@ export class FamiliesService {
     return newFamily;
   }
 
+  async createBulk(createFamilyDto: CreateSyncFamilyDto[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const family of createFamilyDto) {
+      try {
+        const newFamily = this.familyRepository.create(family);
+        await this.familyRepository.save(newFamily);
+        response.successes.push(newFamily);
+      } catch (err) {
+        response.failures.push({
+          syncId: family.syncId,
+          errors: [err.sqlMessage],
+        });
+      }
+    }
+
+    return response;
+  }
+
   async createSyncBulk(createFamilyDto: CreateSyncFamilyDto[]) {
-    const { validatedData, failureData } = await validateBulkInsert<
-      CreateSyncFamilyDto[]
-    >(createFamilyDto, 'family');
+    const { validatedData, failureData } = await validateBulkInsert<CreateSyncFamilyDto[]>(createFamilyDto, 'family');
 
     const successData: CreateSyncFamilyDto[] = [];
 
@@ -48,9 +65,7 @@ export class FamiliesService {
         successData.push(family);
       } catch (error) {
         failureData.push({
-          index: createFamilyDto.findIndex(
-            (item) => item.syncId === validatedData[i].syncId,
-          ),
+          index: createFamilyDto.findIndex((item) => item.syncId === validatedData[i].syncId),
           message: 'insert error',
         });
       }
@@ -72,30 +87,16 @@ export class FamiliesService {
   async update(id: number, updateFamilyDto: UpdateFamilyDto, file: Image) {
     if (updateFamilyDto.parentId) {
       if (updateFamilyDto.parentId === id)
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+        throw new BadRequestException('parent Id must be not children of this brand');
       // TODO: edit message of this error
-      if (
-        checkChildrenRecursive(
-          id,
-          await this.findAll(),
-          updateFamilyDto.parentId,
-        ) === false
-      )
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+      if (checkChildrenRecursive(id, await this.findAll(), updateFamilyDto.parentId) === false)
+        throw new BadRequestException('parent Id must be not children of this brand');
     }
     const { isDelete } = updateFamilyDto;
 
     const family = await this.findOne(id);
     const oldPath = family.imgPath;
-    const imgPath = isDelete
-      ? null
-      : file?.img
-      ? pathToFile(file.img[0])
-      : oldPath;
+    const imgPath = isDelete ? null : file?.img ? pathToFile(file.img[0]) : oldPath;
     const updatedFamily = this.familyRepository.merge(family, updateFamilyDto, {
       imgPath,
     });

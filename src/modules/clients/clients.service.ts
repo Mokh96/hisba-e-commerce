@@ -32,8 +32,8 @@ export class ClientsService {
 
     for (const client of createSyncClientDto) {
       try {
-        const product = await this.create(client, user);
-        response.successes.push(product);
+        const newClient = await this.create(client, user);
+        response.successes.push(newClient);
       } catch (err) {
         response.failures.push({
           syncId: client.syncId,
