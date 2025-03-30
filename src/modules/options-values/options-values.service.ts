@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOptionsValueDto } from './dto/create-options-value.dto';
+import { CreateOptionsValueDto, CreateOptionValueSyncDto } from './dto/create-options-value.dto';
 import { UpdateOptionsValueDto } from './dto/update-options-value.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OptionsValue } from './entities/options-value.entity';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class OptionsValuesService {
@@ -13,11 +14,31 @@ export class OptionsValuesService {
   ) {}
 
   async create(createOptionsValueDto: CreateOptionsValueDto) {
-    const optionsValue = this.optionsValueRepository.create(
-      createOptionsValueDto,
-    );
+    const optionsValue = this.optionsValueRepository.create(createOptionsValueDto);
     await this.optionsValueRepository.save(optionsValue);
     return optionsValue;
+  }
+
+  async createBulk(createOptionValueSyncDto: CreateOptionValueSyncDto[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const brand of createOptionValueSyncDto) {
+      try {
+        const newOption = this.optionsValueRepository.create(brand);
+        await this.optionsValueRepository.save(newOption);
+        response.successes.push(newOption);
+      } catch (err) {
+        response.failures.push({
+          syncId: brand.syncId,
+          errors: [err.sqlMessage],
+        });
+      }
+    }
+
+    return response;
   }
 
   async findAll() {
@@ -33,10 +54,7 @@ export class OptionsValuesService {
 
   async update(id: number, updateOptionsValueDto: UpdateOptionsValueDto) {
     const optionsValue = await this.findOne(id);
-    const updatedOptionsValue = this.optionsValueRepository.merge(
-      optionsValue,
-      updateOptionsValueDto,
-    );
+    const updatedOptionsValue = this.optionsValueRepository.merge(optionsValue, updateOptionsValueDto);
     await this.optionsValueRepository.save(updatedOptionsValue);
     return updatedOptionsValue;
   }

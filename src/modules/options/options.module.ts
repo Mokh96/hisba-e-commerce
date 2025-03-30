@@ -3,9 +3,10 @@ import { OptionsService } from './options.service';
 import { OptionsController } from './options.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Option } from './entities/option.entity';
+import { OptionsSyncController } from 'src/modules/options/options-sync.controller';
 
 @Module({
-  controllers: [OptionsController],
+  controllers: [OptionsController, OptionsSyncController],
   providers: [OptionsService],
   imports: [TypeOrmModule.forFeature([Option])],
 })
