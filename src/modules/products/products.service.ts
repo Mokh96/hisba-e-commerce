@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -13,7 +13,7 @@ import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 
 @Injectable()
@@ -140,44 +140,23 @@ export class ProductsService extends UploadManager3 {
     return response;
   }
 
-  /*  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
-      const baseFailures = [];
-      const success: Product[] = [];
-  
-      for (let i = 0; i < createSyncProductDtos.length; i++) {
-        try {
-          const product = await this.productRepository.save(createSyncProductDtos[i]);
-          success.push(product);
-        } catch (error) {
-          baseFailures.push({
-            syncId: createSyncProductDtos[i].syncId,
-            error,
-          });
-        }
-      }
-  
-      return { success, baseFailures };
-    }*/
-
   async findAll() {
     return await this.productRepository.find();
   }
 
   async findOne(id: number) {
-    const product = await this.productRepository.findOneOrFail({
+    return await this.productRepository.findOneOrFail({
       where: { id },
       relations: {
         articles: { gallery: true, optionValues: { option: true } },
       },
     });
-
-    return product;
   }
 
   async update(
     id: number,
     updateProductDto: UpdateProductDto,
-    files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+    files?: { [FileUploadEnum.Image]?: Express.Multer.File[] },
   ) {
     const product = await this.productRepository.findOneByOrFail({ id });
     const initialImgPath = product.imgPath; // Get the initial image path
@@ -192,7 +171,7 @@ export class ProductsService extends UploadManager3 {
       const shouldRemoveImage = updateProductDto.removeImage && !newPath;
 
       if (shouldRemoveImage) {
-        updatedFields.imgPath = null;// Remove image
+        updatedFields.imgPath = null; // Remove image
       } else if (newPath) {
         updatedFields.imgPath = newPath; // Update with new image
       }
@@ -205,9 +184,36 @@ export class ProductsService extends UploadManager3 {
       }
       return updatedProduct;
     } catch (error) {
+      console.log('error', error);
       await this.cleanupFiles(uploadedFiles);
       throw error;
     }
+  }
+
+  async updateBulk(
+    updateSyncProductDto: UpdateSyncProductDto[],
+    files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+  ) {
+    const response: UpdateBulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (let i = 0; i < updateSyncProductDto.length; i++) {
+      try {
+        const product = await this.update(updateSyncProductDto[i].id, updateSyncProductDto[i]);
+        response.successes.push(product);
+        //response.successes.push({ id: product.id, syncId: product.syncId });
+      } catch (error) {
+        response.failures.push({
+          index: i,
+          id: updateSyncProductDto[i].id,
+          errors: error,
+        });
+      }
+    }
+
+    return response;
   }
 
   async remove(id: number) {

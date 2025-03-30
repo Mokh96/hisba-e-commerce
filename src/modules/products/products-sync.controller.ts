@@ -45,8 +45,19 @@ export class ProductsSyncController {
     return res.status(207).json(response);
   }
 
- /* @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSyncProductDto: UpdateSyncProductDto) {
-    return this.productsService.update(+id, updateSyncProductDto);
-  }*/
+  @Patch('bulk')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateBulk(
+    @Res() res: Response,
+    @Body(ParseFormDataArrayPipe) updateSyncProductDto: UpdateSyncProductDto[],
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const response = await this.productsService.updateBulk(updateSyncProductDto, files as any);
+    return res.status(207).json(response);
+  }
+
+  /* @Patch(':id')
+   update(@Param('id') id: string, @Body() updateSyncProductDto: UpdateSyncProductDto) {
+     return this.productsService.update(+id, updateSyncProductDto);
+   }*/
 }

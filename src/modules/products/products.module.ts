@@ -10,7 +10,7 @@ import { ProductsSyncController } from 'src/modules/products/products-sync.contr
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product])],
-  controllers: [ProductsController , ProductsSyncController],
+  controllers: [ProductsSyncController , ProductsController ],
   providers: [ProductsService],
   exports: [TypeOrmModule, ProductsService],
 })
