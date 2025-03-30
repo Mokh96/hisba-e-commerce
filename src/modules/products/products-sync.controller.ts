@@ -45,8 +45,8 @@ export class ProductsSyncController {
     return res.status(207).json(response);
   }
 
-  @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateSyncProductDto: UpdateSyncProductDto) {
+ /* @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSyncProductDto: UpdateSyncProductDto) {
     return this.productsService.update(+id, updateSyncProductDto);
-  }
+  }*/
 }

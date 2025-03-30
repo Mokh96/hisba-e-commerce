@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -140,24 +140,24 @@ export class ProductsService extends UploadManager3 {
     return response;
   }
 
-/*  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
-    const baseFailures = [];
-    const success: Product[] = [];
-
-    for (let i = 0; i < createSyncProductDtos.length; i++) {
-      try {
-        const product = await this.productRepository.save(createSyncProductDtos[i]);
-        success.push(product);
-      } catch (error) {
-        baseFailures.push({
-          syncId: createSyncProductDtos[i].syncId,
-          error,
-        });
+  /*  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
+      const baseFailures = [];
+      const success: Product[] = [];
+  
+      for (let i = 0; i < createSyncProductDtos.length; i++) {
+        try {
+          const product = await this.productRepository.save(createSyncProductDtos[i]);
+          success.push(product);
+        } catch (error) {
+          baseFailures.push({
+            syncId: createSyncProductDtos[i].syncId,
+            error,
+          });
+        }
       }
-    }
-
-    return { success, baseFailures };
-  }*/
+  
+      return { success, baseFailures };
+    }*/
 
   async findAll() {
     return await this.productRepository.find();
@@ -174,12 +174,40 @@ export class ProductsService extends UploadManager3 {
     return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+  ) {
     const product = await this.productRepository.findOneByOrFail({ id });
+    const initialImgPath = product.imgPath; // Get the initial image path
 
-    const updatedProduct = this.productRepository.merge(product, updateProductDto);
-    await this.productRepository.save(updatedProduct);
-    return updatedProduct;
+    const uploadedFiles = await this.uploadFiles(files); // Upload new image
+    const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
+
+    try {
+      let updatedFields: Partial<Product> = { ...updateProductDto };
+
+      // Ignore removeImage if a new file is uploaded
+      const shouldRemoveImage = updateProductDto.removeImage && !newPath;
+
+      if (shouldRemoveImage) {
+        updatedFields.imgPath = null;// Remove image
+      } else if (newPath) {
+        updatedFields.imgPath = newPath; // Update with new image
+      }
+
+      const updatedProduct = this.productRepository.merge(product, updatedFields);
+      await this.productRepository.save(updatedProduct);
+
+      if ((newPath || shouldRemoveImage) && initialImgPath) {
+        await this.removeFile(initialImgPath);
+      }
+      return updatedProduct;
+    } catch (error) {
+      await this.cleanupFiles(uploadedFiles);
+      throw error;
+    }
   }
 
   async remove(id: number) {
