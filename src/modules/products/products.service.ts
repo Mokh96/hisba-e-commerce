@@ -14,6 +14,7 @@ import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 
 @Injectable()
 export class ProductsService extends UploadManager3 {
@@ -37,9 +38,7 @@ export class ProductsService extends UploadManager3 {
   }
 
   async createProduct(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
-    const clonedCreatedProduct: CreateProductDto & { imgPath: string } & {
-      articles: CreateProductDto['articles'] & { imgPath: string; gallery: Pick<ArticleGallery, 'path'>[] }[];
-    } = _.cloneDeep({
+    const clonedCreatedProduct: CreateProductWithImagesDto = _.cloneDeep({
       ...createProductDto,
       imgPath: null,
       articles: createProductDto.articles.map((article) => ({
@@ -118,23 +117,21 @@ export class ProductsService extends UploadManager3 {
     });
   }
 
-  async createProductsBulk(createSyncProductDtos: CreateSyncProductDto[], files: Express.Multer.File[]) {
+  async createBulk(createSyncProductsDto: CreateSyncProductDto[], files: Express.Multer.File[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
     };
 
-    for (let i = 0; i < createSyncProductDtos.length; i++) {
+    for (let i = 0; i < createSyncProductsDto.length; i++) {
       try {
-        const product = await this.createProduct(createSyncProductDtos[i], files);
+        const product = await this.createProduct(createSyncProductsDto[i], files);
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
-        //console.log(product);
       } catch (error) {
-        console.log(error);
         response.failures.push({
           index: i,
-          syncId: createSyncProductDtos[i].syncId,
+          syncId: createSyncProductsDto[i].syncId,
           errors: error,
         });
       }
@@ -143,7 +140,7 @@ export class ProductsService extends UploadManager3 {
     return response;
   }
 
-  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
+/*  async createBulk(createSyncProductDtos: CreateSyncProductDto[]) {
     const baseFailures = [];
     const success: Product[] = [];
 
@@ -160,7 +157,7 @@ export class ProductsService extends UploadManager3 {
     }
 
     return { success, baseFailures };
-  }
+  }*/
 
   async findAll() {
     return await this.productRepository.find();
