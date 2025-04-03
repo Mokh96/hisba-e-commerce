@@ -29,6 +29,9 @@ export class User {
   @Column({ select: false })
   password: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => OrderHistory, (history: OrderHistory) => history.creator)
   createdOrderHistory: OrderHistory[];
 

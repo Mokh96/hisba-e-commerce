@@ -1,12 +1,12 @@
+import { genSalt, hash } from 'bcrypt';
 import { Roles, rolesObject } from 'src/enums/roles.enum';
 import { Role } from 'src/modules/roles/entities/role.entity';
-import { DataSource } from 'typeorm';
-import { Seeder, SeederFactoryManager } from 'typeorm-extension';
+import { Town } from 'src/modules/towns/entities/town.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { genSalt, hash } from 'bcrypt';
 import { Wilaya } from 'src/modules/wilayas/entities/wilaya.entity';
 import { townsList, wilayasList } from 'src/seeding/data/wilayas-towns';
-import { Town } from 'src/modules/towns/entities/town.entity';
+import { DataSource } from 'typeorm';
+import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
 export class MainSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
@@ -43,6 +43,11 @@ export class MainSeeder implements Seeder {
         username: 'admin',
         password,
         roleId: Roles.ADMIN,
+      },
+      {
+        username: 'company',
+        password,
+        roleId: Roles.COMPANY,
       },
     ]);
 

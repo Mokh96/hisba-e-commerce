@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/enums/roles.enum';
-import { FindOptionsWhereProperty, Repository } from 'typeorm';
+import { FindOptionsWhere, FindOptionsWhereProperty, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -42,11 +42,17 @@ export class UsersService {
    * @returns The user if found, or `null` if not found.
    */
   async findUser(username: User['username']) {
-    const user = await this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       select: ['id', 'username', 'password', 'roleId'],
       where: { username },
     });
-    return user;
+  }
+
+  async findUserWhere(where: FindOptionsWhere<User>) {
+    return await this.usersRepository.findOne({
+      select: ['id', 'username', 'password', 'roleId'],
+      where,
+    });
   }
 
   async update(id: User['id'], updateUserDto: UpdateUserDto) {
