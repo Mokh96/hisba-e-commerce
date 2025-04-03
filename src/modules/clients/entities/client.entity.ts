@@ -4,7 +4,7 @@ import { Order } from 'src/modules/orders/entities/order.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
 import { Town } from 'src/modules/towns/entities/town.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class Client extends ClientSync {
@@ -30,13 +30,6 @@ export class Client extends ClientSync {
     cascade: true,
   })
   shippingAddresses: ShippingAddress[];
-
-  @ManyToOne(() => User, (user: User) => user.createdClients, { nullable: false })
-  @JoinColumn({ name: 'creator_id' })
-  creator: User;
-
-  @Column({ name: 'creator_id' })
-  creatorId: number;
 
   @Column({ name: 'town_id' })
   townId: number;

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentUserData } from 'src/common/decorators/current-user.decorator';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
@@ -12,9 +11,8 @@ import { Client } from './entities/client.entity';
 export class ClientsService {
   constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
 
-  async create(createClientDto: CreateClientDto | CreateClientSyncDto, user: CurrentUserData) {
+  async create(createClientDto: CreateClientDto | CreateClientSyncDto) {
     const client = this.clientRepository.create(createClientDto);
-    client.creatorId = user.sub;
     client.user.roleId = Roles.CLIENT;
     await this.clientRepository.save(client);
 
@@ -24,7 +22,7 @@ export class ClientsService {
     return client;
   }
 
-  async createBulk(createSyncClientDto: CreateClientSyncDto[], user: CurrentUserData) {
+  async createBulk(createSyncClientDto: CreateClientSyncDto[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
@@ -32,7 +30,7 @@ export class ClientsService {
 
     for (const client of createSyncClientDto) {
       try {
-        const newClient = await this.create(client, user);
+        const newClient = await this.create(client);
         response.successes.push(newClient);
       } catch (err) {
         response.failures.push({

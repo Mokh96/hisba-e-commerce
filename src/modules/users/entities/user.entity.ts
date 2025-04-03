@@ -35,9 +35,6 @@ export class User {
   @OneToMany(() => Order, (order: Order) => order.creator)
   createdOrders: Order[];
 
-  @OneToMany(() => Client, (client: Client) => client.creator)
-  createdClients: Client[];
-
   @OneToOne(() => Client, (client: Client) => client.user)
   client: Client;
 

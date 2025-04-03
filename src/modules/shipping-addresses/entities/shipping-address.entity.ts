@@ -1,7 +1,7 @@
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { Town } from 'src/modules/towns/entities/town.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class ShippingAddress extends SyncEntityCommon {
@@ -21,7 +21,7 @@ export class ShippingAddress extends SyncEntityCommon {
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @OneToOne(() => Town, (town: Town) => town.shippingAddresses)
+  @OneToMany(() => Town, (town: Town) => town.shippingAddresses)
   @JoinColumn({ name: 'town_id', referencedColumnName: 'id' })
   town: Town;
 }
