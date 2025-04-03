@@ -2,9 +2,9 @@ import { ClientSync } from 'src/common-entities/client.common.entity';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
+import { Town } from 'src/modules/towns/entities/town.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { Town } from 'src/modules/towns/entities/town.entity';
 
 @Entity()
 export class Client extends ClientSync {
@@ -38,7 +38,7 @@ export class Client extends ClientSync {
   @Column({ name: 'creator_id' })
   creatorId: number;
 
-  @Column({ name: 'town_id', nullable: true })
+  @Column({ name: 'town_id' })
   townId: number;
 
   @OneToOne(() => Town, (town: Town) => town.clientSync)

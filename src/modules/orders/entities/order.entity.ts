@@ -1,12 +1,12 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { OrderSync } from 'src/common-entities/order.common.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
-import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
-import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
-import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
-import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
+import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
+import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
+import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
+import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { User } from 'src/modules/users/entities/user.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Order extends OrderSync {
@@ -31,6 +31,9 @@ export class Order extends OrderSync {
   @Column({ name: 'delivery_address' })
   deliveryAddress: string;
 
+  @Column({ name: 'delivery_town_id' })
+  deliveryTownId: number;
+
   @Column({ ...defaultDecimal, default: 0 })
   discount?: number;
 
@@ -43,13 +46,9 @@ export class Order extends OrderSync {
   @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order)
   orderItems: OrderItem[];
 
-  @ManyToOne(
-    () => PaymentMethod,
-    (paymentMethod: PaymentMethod) => paymentMethod.orders,
-    {
-      nullable: false,
-    },
-  )
+  @ManyToOne(() => PaymentMethod, (paymentMethod: PaymentMethod) => paymentMethod.orders, {
+    nullable: false,
+  })
   paymentMethod: PaymentMethod;
 
   @ManyToOne(() => OrderStatus, (status: OrderStatus) => status.orders, {
