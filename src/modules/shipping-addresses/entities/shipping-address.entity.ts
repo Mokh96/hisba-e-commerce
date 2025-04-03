@@ -21,7 +21,7 @@ export class ShippingAddress extends SyncEntityCommon {
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @OneToOne(() => Town, (town: Town) => town.shippingAddresses, { onDelete: 'SET NULL' })
+  @OneToOne(() => Town, (town: Town) => town.shippingAddresses)
   @JoinColumn({ name: 'town_id', referencedColumnName: 'id' })
   town: Town;
 }
