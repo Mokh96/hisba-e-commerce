@@ -1,5 +1,5 @@
 /**
- * Finds a file in an array of files by its unique identifier (uid) and a prefix fieldname.
+ * Finds a file interceptors an array of files by its unique identifier (uid) and a prefix fieldname.
  * @param files - Array of files
  * @param prefixFieldname - Prefix of the fieldname (e.g. 'DefaultImage', 'Image')
  * @param uid - Unique identifier of the file
@@ -24,7 +24,7 @@ export function getFileByUid(
 }
 
 /**
- * Retrieves all files in an array that match a specific unique identifier (uid) and a prefix fieldname.
+ * Retrieves all files interceptors an array that match a specific unique identifier (uid) and a prefix fieldname.
  * @param files - Array of files
  * @param prefixFieldname - Prefix of the fieldname (e.g. 'DefaultImage', 'Image')
  * @param uid - Unique identifier of the file

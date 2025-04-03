@@ -1,15 +1,15 @@
 /**
- * Address length constant. Used to define the maximum length of a user's address field in the database.
+ * Address length constant. Used to define the maximum length of a user's address field interceptors the database.
  * */
 export const ADDRESS_LENGTH = 255;
 
 /**
- * Short description length constant. Defines the maximum length allowed for a short description field in the database.
+ * Short description length constant. Defines the maximum length allowed for a short description field interceptors the database.
  */
 export const SHORT_DESCRIPTION_LENGTH = 255;
 
 /**
- * Medium description length constant. Defines the maximum length allowed for a medium description field in the database.
+ * Medium description length constant. Defines the maximum length allowed for a medium description field interceptors the database.
  */
 export const MD_DESCRIPTION_LENGTH = 500;
 

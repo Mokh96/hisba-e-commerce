@@ -7,8 +7,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // remove fields that are not in the dto
-      forbidNonWhitelisted: false, // throw error if the field is not in the dto
+      whitelist: true, // remove fields that are not interceptors the dto
+      forbidNonWhitelisted: false, // throw error if the field is not interceptors the dto
       transform: true, // transform the value to the type of the dto
       transformOptions: {
         enableImplicitConversion: true, // convert the value to the type of the dto

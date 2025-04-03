@@ -1,4 +1,4 @@
-// enums in typescript are dangerous !!!
+// enums interceptors typescript are dangerous !!!
 export enum Roles {
   SUPERADMIN = 1,
   ADMIN = 2,

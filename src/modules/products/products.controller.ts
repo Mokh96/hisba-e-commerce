@@ -16,9 +16,13 @@ import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto
 import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
+/*
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
+*/
 import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynamic-file-validation.interceptor';
+import { createProductValidationRules } from 'src/modules/products/config/file-validation-config';
 
 @Controller('products')
 export class ProductsController extends UploadManager3 {
@@ -42,7 +46,7 @@ export class ProductsController extends UploadManager3 {
   }*/
 
   @Post()
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(AnyFilesInterceptor(), new DynamicFileValidationInterceptor(createProductValidationRules))
   async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
     return await this.productsService.createProduct(createProductDto, files);
   }
@@ -62,18 +66,18 @@ export class ProductsController extends UploadManager3 {
      return this.productsService.update(+id, updateProductDto);
    }*/
 
-  @Patch(':id')
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
-  )
-  update(
-    @Param('id') id: number,
-    @Body() updateProductDto: UpdateProductDto,
-    @UploadedFiles() files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
-  ) {
-    return this.productsService.update(+id, updateProductDto, files);
-  }
+  /* @Patch(':id')
+   @UseInterceptors(
+     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+     new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
+   )
+   update(
+     @Param('id') id: number,
+     @Body() updateProductDto: UpdateProductDto,
+     @UploadedFiles() files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+   ) {
+     return this.productsService.update(+id, updateProductDto, files);
+   }*/
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

@@ -41,7 +41,7 @@ export function getPath(fullPath: string): string {
  * ```
  *
  * **Expected Format:** `{fileType}-{entityId}`
- * - `fileType` must be one of the allowed types in `FileUploadEnum`.
+ * - `fileType` must be one of the allowed types interceptors `FileUploadEnum`.
  * - `entityId` can be any valid identifier.
  *
  * @param fieldname - The file field name to extract info from.

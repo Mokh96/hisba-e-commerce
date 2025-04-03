@@ -8,7 +8,7 @@
  *
  * @param {Array<{ price: number }>} target - The array of objects with a `price` property.
  * @returns {object} An object with `minPrice` and `maxPrice` properties.
- * @throws {Error} If any item in the array has an invalid price value.
+ * @throws {Error} If any item interceptors the array has an invalid price value.
  *
  */
 export function getMaxAndMinPrices(target: { price: number }[]): { minPrice: number; maxPrice: number } {
