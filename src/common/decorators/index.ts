@@ -1,1 +1,1 @@
-export {default as TransformStringToBoolean} from "./transformer/Transform-string-to-boolean.decorator";
+export {default as TransformStringToBoolean} from "src/common/decorators/transformer/Transform-string-to-boolean.decorator";

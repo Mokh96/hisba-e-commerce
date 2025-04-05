@@ -1,4 +1,4 @@
-import { Roles } from '../../enums/roles.enum';
+import { Roles } from 'src/enums/roles.enum';
 import { User } from '../../modules/users/entities/user.entity';
 import { setSeederFactory } from 'typeorm-extension';
 import { Faker } from '@faker-js/faker';
