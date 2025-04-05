@@ -20,10 +20,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
 import { SystemDataModule } from './system-data/system-data.module';
-import {
-  GlobalExceptionFilter,
-  NotFoundExceptionFilter,
-} from 'src/error-handlers/global-handler';
+import { GlobalExceptionFilter, NotFoundExceptionFilter } from 'src/error-handlers/global-handler';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
@@ -32,7 +29,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { FilesModule } from './files/files.module';
 import { TownsModule } from './towns/towns.module';
 import { WilayasModule } from './wilayas/wilayas.module';
-
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Module({
   imports: [
@@ -80,6 +77,10 @@ import { WilayasModule } from './wilayas/wilayas.module';
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     { provide: APP_GUARD, useClass: AuthGuard },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
