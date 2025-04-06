@@ -3,27 +3,18 @@ import {
   Post,
   Body,
   Patch,
-  Param,
-  ParseIntPipe,
-  ParseArrayPipe,
   Res,
   UseInterceptors,
   UploadedFiles,
-  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
-import { validateBulk } from 'src/helpers/validation/validation';
-import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { Response } from 'express';
-import { IsArrayPipe } from 'src/common/pipes/isArray.pipe';
-import { CreateClientSyncDto } from 'src/modules/clients/dto/create-client.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.pipe';
-import { BulkFileValidationInterceptor } from 'src/modules/files/interceptors/bulk-file-validation-interceptor';
-import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
-import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
+import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation-config';
+import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
 
 @Controller('products/sync')
 export class ProductsSyncController {
@@ -35,10 +26,10 @@ export class ProductsSyncController {
   }
 
   @Post('bulk')
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(AnyFilesInterceptor(), ParseFormDataArrayInterceptor, productValidationRulesInterceptor)
   async createBulk(
     @Res() res: Response,
-    @Body(ParseFormDataArrayPipe) createSyncProductsDto: CreateSyncProductDto[],
+    @Body() createSyncProductsDto: CreateSyncProductDto[],
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const response = await this.productsService.createBulk(createSyncProductsDto, files);
