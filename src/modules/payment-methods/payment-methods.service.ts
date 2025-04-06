@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+import { PaymentMethod } from './entities/payment-method.entity';
 
 @Injectable()
 export class PaymentMethodsService {
-  create(createPaymentMethodDto: CreatePaymentMethodDto) {
-    return 'This action adds a new paymentMethod';
+  constructor(@InjectRepository(PaymentMethod) private paymentMethodRepository: Repository<PaymentMethod>) {}
+  async create(createPaymentMethodDto: CreatePaymentMethodDto) {
+    return await this.paymentMethodRepository.save(createPaymentMethodDto);
   }
 
-  findAll() {
-    return `This action returns all paymentMethods`;
+  async findAll() {
+    return await this.paymentMethodRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} paymentMethod`;
+  async findOne(id: number) {
+    return await this.paymentMethodRepository.findOneBy({ id });
   }
 
-  update(id: number, updatePaymentMethodDto: UpdatePaymentMethodDto) {
-    return `This action updates a #${id} paymentMethod`;
+  async update(id: number, updatePaymentMethodDto: UpdatePaymentMethodDto) {
+    return await this.paymentMethodRepository.update(id, updatePaymentMethodDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} paymentMethod`;
+  async remove(id: number) {
+    return await this.paymentMethodRepository.delete(id);
   }
 }

@@ -1,4 +1,5 @@
-import { IsString, Min, IsInt, IsPositive } from 'class-validator';
+import { IsInt, IsPositive, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateOptionsValueDto {
   @IsString()
@@ -7,4 +8,11 @@ export class CreateOptionsValueDto {
   @IsPositive()
   @IsInt()
   optionId: number;
+}
+
+export class CreateOptionValueSyncDto extends CreateOptionsValueDto {
+  @Type(() => Number)
+  @IsPositive()
+  @IsInt()
+  syncId: number;
 }

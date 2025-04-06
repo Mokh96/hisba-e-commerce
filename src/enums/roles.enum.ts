@@ -2,8 +2,8 @@
 export enum Roles {
   SUPERADMIN = 1,
   ADMIN = 2,
-  CLIENT = 3,
-  DELEGATE = 4,
+  COMPANY = 3,
+  CLIENT = 4,
 }
 
 /**

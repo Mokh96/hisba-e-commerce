@@ -1,14 +1,14 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
-  UseInterceptors,
+  Patch,
+  Post,
   UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
@@ -22,15 +22,9 @@ export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   create(@Body() createBrandDto: CreateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.create(
-      createBrandDto as CreateSyncBrandDto,
-      file,
-    );
+    return this.brandsService.create(createBrandDto as CreateSyncBrandDto, file);
   }
 
   @Get()
@@ -44,15 +38,8 @@ export class BrandsController {
   }
 
   @Patch(':id')
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateBrandDto: UpdateBrandDto,
-    @UploadedFiles() file: Image,
-  ) {
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto, @UploadedFiles() file: Image) {
     return this.brandsService.update(+id, updateBrandDto, file);
   }
 

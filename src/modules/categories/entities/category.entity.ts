@@ -1,9 +1,15 @@
-import { LabelPathSync } from 'src/common-entities/labelPath.common.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { WithTimestamp } from 'src/common/entities/timestamp.entity';
+import { WithSyncId } from 'src/common/entities/sync.entity';
+import { WithLabel } from 'src/common/entities/label.entity';
+import { WithImgPath } from 'src/common/entities/img-path.entity';
+import { BaseEntity } from 'src/common/entities/base-entity.entity';
+
+const CategoryBase = WithTimestamp(WithSyncId(WithLabel(WithImgPath(BaseEntity))));
 
 @Entity()
-export class Category extends LabelPathSync {
+export class Category extends CategoryBase {
   @OneToMany(() => Category, (category: Category) => category.parent)
   children: Category[];
 

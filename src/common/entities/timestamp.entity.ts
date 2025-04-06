@@ -1,11 +1,10 @@
 import { Column } from 'typeorm';
-import { MixinConstructor  } from './entities.types';
+import { MixinConstructor } from '../types/entities.types';
 
 interface TimeStampProperties {
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 export function WithTimestamp<TBase extends MixinConstructor>(Base: TBase) {
   class TimeStampEntity extends Base implements TimeStampProperties {

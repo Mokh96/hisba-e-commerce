@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brand } from './entities/brand.entity';
@@ -11,8 +7,8 @@ import { Repository } from 'typeorm';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { validateBulkInsert } from 'src/helpers/validation/global';
 import { CreateSyncBrandDto } from './dto/create-brand.dto';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class BrandsService {
@@ -20,6 +16,7 @@ export class BrandsService {
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
   ) {}
+
   async create(createBrandDto: CreateSyncBrandDto, file: Image) {
     const brand = this.brandRepository.create(createBrandDto);
     const newBrand = this.brandRepository.merge(brand, {
@@ -30,32 +27,25 @@ export class BrandsService {
   }
 
   async createSyncBulk(createBrandDto: CreateSyncBrandDto[]) {
-    const { validatedData, failureData } = await validateBulkInsert<
-      CreateSyncBrandDto[]
-    >(createBrandDto, 'brand');
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
 
-    const successData: CreateSyncBrandDto[] = [];
-
-    if (failureData.length === createBrandDto.length)
-      // TODO: change validation failure message
-      throw new BadRequestException(' your body not valide ');
-
-    for (let i = 0; i < validatedData.length; i++) {
+    for (const brand of createBrandDto) {
       try {
-        const brand = this.brandRepository.create(validatedData[i]);
-        await this.brandRepository.save(brand);
-
-        successData.push(brand);
-      } catch (error) {
-        failureData.push({
-          index: createBrandDto.findIndex(
-            (item) => item.syncId === validatedData[i].syncId,
-          ),
-          message: 'insert error',
+        const product = this.brandRepository.create(brand);
+        await this.brandRepository.save(product);
+        response.successes.push(product);
+      } catch (err) {
+        response.failures.push({
+          syncId: brand.syncId,
+          errors: [err.sqlMessage],
         });
       }
     }
-    return { successData, failureData };
+
+    return response;
   }
 
   async findAll() {
@@ -70,31 +60,16 @@ export class BrandsService {
 
   async update(id: number, updateBrandDto: UpdateBrandDto, file: Image) {
     if (updateBrandDto.parentId) {
-      if (updateBrandDto.parentId === id)
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+      if (updateBrandDto.parentId === id) throw new BadRequestException('parent Id must be not children of this brand');
       // TODO: edit message of this error
-      if (
-        !checkChildrenRecursive(
-          id,
-          await this.findAll(),
-          updateBrandDto.parentId,
-        )
-      )
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+      if (!checkChildrenRecursive(id, await this.findAll(), updateBrandDto.parentId))
+        throw new BadRequestException('parent Id must be not children of this brand');
     }
 
     const { isDelete } = updateBrandDto;
     const brand = await this.findOne(id);
     const oldPath = brand.imgPath;
-    const imgPath = isDelete
-      ? null
-      : file?.img
-      ? pathToFile(file.img[0])
-      : oldPath;
+    const imgPath = isDelete ? null : file?.img ? pathToFile(file.img[0]) : oldPath;
 
     const updatedBrand = this.brandRepository.merge(brand, updateBrandDto, {
       imgPath,

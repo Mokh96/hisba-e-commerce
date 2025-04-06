@@ -29,14 +29,14 @@ export class User {
   @Column({ select: false })
   password: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToMany(() => OrderHistory, (history: OrderHistory) => history.creator)
   createdOrderHistory: OrderHistory[];
 
   @OneToMany(() => Order, (order: Order) => order.creator)
   createdOrders: Order[];
-
-  @OneToMany(() => Client, (client: Client) => client.creator)
-  createdClients: Client[];
 
   @OneToOne(() => Client, (client: Client) => client.user)
   client: Client;

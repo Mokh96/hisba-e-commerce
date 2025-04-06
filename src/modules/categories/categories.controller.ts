@@ -1,20 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
-  UseInterceptors,
+  Patch,
+  Post,
   UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import {
-  CreateCategoryDto,
-  CreateSyncCategoryDto,
-} from './dto/create-category.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
@@ -25,18 +22,9 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
-  create(
-    @Body() createCategoryDto: CreateCategoryDto,
-    @UploadedFiles() file: Image,
-  ) {
-    return this.categoriesService.create(
-      createCategoryDto as CreateSyncCategoryDto,
-      file,
-    );
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  create(@Body() createCategoryDto: CreateCategoryDto, @UploadedFiles() file: Image) {
+    return this.categoriesService.create(createCategoryDto as CreateCategoryDto, file);
   }
 
   @Get()
@@ -50,10 +38,7 @@ export class CategoriesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,

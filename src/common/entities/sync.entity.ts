@@ -1,5 +1,5 @@
 import { Column, Index } from 'typeorm';
-import { MixinConstructor } from './entities.types';
+import { MixinConstructor } from '../types/entities.types';
 
 interface SyncId {
   syncId: number;
