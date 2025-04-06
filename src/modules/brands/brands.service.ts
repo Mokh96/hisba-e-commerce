@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateBrandDto } from './dto/update-brand.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brand } from './entities/brand.entity';
 import { Repository } from 'typeorm';
+import { UpdateBrandDto } from './dto/update-brand.dto';
+import { Brand } from './entities/brand.entity';
 
+import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { CreateSyncBrandDto } from './dto/create-brand.dto';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class BrandsService {
@@ -34,9 +34,12 @@ export class BrandsService {
 
     for (const brand of createBrandDto) {
       try {
-        const product = this.brandRepository.create(brand);
-        await this.brandRepository.save(product);
-        response.successes.push(product);
+        const newBrand = this.brandRepository.create(brand);
+        await this.brandRepository.save(newBrand);
+        response.successes.push({
+          id: newBrand.id,
+          syncId: newBrand.syncId,
+        });
       } catch (err) {
         response.failures.push({
           syncId: brand.syncId,

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
+import { ClientBulkResponse } from './types/client-bulk-response.type';
 
 @Injectable()
 export class ClientsService {
@@ -23,7 +23,7 @@ export class ClientsService {
   }
 
   async createBulk(createSyncClientDto: CreateClientSyncDto[]) {
-    const response: BulkResponse = {
+    const response: ClientBulkResponse = {
       successes: [],
       failures: [],
     };
@@ -31,7 +31,14 @@ export class ClientsService {
     for (const client of createSyncClientDto) {
       try {
         const newClient = await this.create(client);
-        response.successes.push(newClient);
+        response.successes.push({
+          id: newClient.id,
+          syncId: client.syncId,
+          shippingAddresses: newClient.shippingAddresses.map((address) => ({
+            id: address.id,
+            syncId: address.syncId,
+          })),
+        });
       } catch (err) {
         response.failures.push({
           syncId: client.syncId,
