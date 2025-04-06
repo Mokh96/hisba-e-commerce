@@ -6,10 +6,10 @@ import { IsBoolean, IsOptional } from 'class-validator';
 import { IdCommonDto } from 'src/common/dtos/id.common.dto';
 
 export class UpdateProductDto extends PartialType(OmitType(CreateProductDto, ['articles'])) {
-  @TransformStringToBoolean()
+/*  @TransformStringToBoolean()
   @IsBoolean()
   @IsOptional()
-  removeImage: boolean | undefined; //pass true if you want to remove the image
+  removeImage: boolean | undefined; //pass true if you want to remove the image*/
 }
 
 export class UpdateSyncProductDto extends IntersectionType(UpdateProductDto , IdCommonDto) {}

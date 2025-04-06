@@ -160,7 +160,7 @@ export class ProductsService extends UploadManager3 {
   async update(
     id: number,
     updateProductDto: UpdateProductDto,
-    files?: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+    files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
     const product = await this.productRepository.findOneByOrFail({ id });
     const initialImgPath = product.imgPath; // Get the initial image path
@@ -170,20 +170,14 @@ export class ProductsService extends UploadManager3 {
 
     try {
       let updatedFields: Partial<Product> = { ...updateProductDto };
-
-      // Ignore removeImage if a new file is uploaded
-      const shouldRemoveImage = updateProductDto.removeImage && !newPath;
-
-      if (shouldRemoveImage) {
-        updatedFields.imgPath = null; // Remove image
-      } else if (newPath) {
+      if (newPath) {
         updatedFields.imgPath = newPath; // Update with new image
       }
 
       const updatedProduct = this.productRepository.merge(product, updatedFields);
       await this.productRepository.save(updatedProduct);
 
-      if ((newPath || shouldRemoveImage) && initialImgPath) {
+      if (newPath && initialImgPath) {
         await this.removeFile(initialImgPath);
       }
       return updatedProduct;
@@ -194,10 +188,35 @@ export class ProductsService extends UploadManager3 {
     }
   }
 
-  async updateBulk(
-    updateSyncProductDto: UpdateSyncProductDto[],
-    files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
+  /*async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
+    const product = await this.productRepository.findOneByOrFail({ id });
+    const initialImgPath = product.imgPath; // Get the initial image path
+
+    const uploadedFiles = await this.uploadFiles(files); // Upload new image
+    const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
+
+    const updatedFields: Partial<Product> = { ...updateProductDto, imgPath: newPath ? newPath : initialImgPath };
+    const updatedProduct = this.productRepository.merge(product, updatedFields);
+
+    try {
+      await this.productRepository.save(updatedProduct);
+      if (newPath && product.imgPath) {
+        await this.removeFile(initialImgPath); //remove old image
+      }
+      return updatedProduct;
+    } catch (error) {
+      console.log('error', error);
+      await this.cleanupFiles(uploadedFiles);
+      throw error;
+    }
+  }*/
+
+  async updateBulk(updateSyncProductDto: UpdateSyncProductDto[], files: Express.Multer.File[]) {
+    //console.log(files);
     const response: UpdateBulkResponse = {
       successes: [],
       failures: [],
@@ -205,7 +224,9 @@ export class ProductsService extends UploadManager3 {
 
     for (let i = 0; i < updateSyncProductDto.length; i++) {
       try {
-        const product = await this.update(updateSyncProductDto[i].id, updateSyncProductDto[i]);
+        const product = await this.update(updateSyncProductDto[i].id, updateSyncProductDto[i], {
+          [FileUploadEnum.Image]: files,
+        });
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
       } catch (error) {
@@ -222,8 +243,6 @@ export class ProductsService extends UploadManager3 {
 
   async remove(id: number) {
     const product = await this.productRepository.findOneByOrFail({ id });
-
-    await this.productRepository.remove(product);
-    return true;
+    return this.productRepository.remove(product);
   }
 }

@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -26,6 +28,7 @@ import {
   createProductValidationRules,
   productValidationRulesInterceptor,
 } from 'src/modules/products/config/file-validation-config';
+import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 
 @Controller('products')
 export class ProductsController extends UploadManager3 {
@@ -54,6 +57,27 @@ export class ProductsController extends UploadManager3 {
     return await this.productsService.createProduct(createProductDto, files);
   }
 
+  @Patch(':id')
+  /* @UseInterceptors(
+      FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+      new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
+    )*/
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+    new FileValidationInterceptor({
+      [FileUploadEnum.Image]: imageUploadRules,
+      // [FileUploadEnum.Pdf]: pdfUploadRules,
+    }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
+  ) {
+    console.log(files)
+    return this.productsService.update(id, updateProductDto , files);
+  }
+
   @Get()
   findAll() {
     return this.productsService.findAll();
@@ -65,11 +89,6 @@ export class ProductsController extends UploadManager3 {
   }
 
   /* @Patch(':id')
-   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
-     return this.productsService.update(+id, updateProductDto);
-   }*/
-
-  /* @Patch(':id')
    @UseInterceptors(
      FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
      new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
@@ -79,10 +98,12 @@ export class ProductsController extends UploadManager3 {
      @Body() updateProductDto: UpdateProductDto,
      @UploadedFiles() files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
    ) {
-     return this.productsService.update(+id, updateProductDto, files);
+     return updateProductDto;
+     // return this.productsService.update(+id, updateProductDto, files);
    }*/
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(+id);
   }
