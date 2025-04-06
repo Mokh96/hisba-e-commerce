@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { RoleVisibilityMap } from 'src/common/constants';
 import { Roles } from 'src/enums/roles.enum';
-import { FindOptionsWhere, FindOptionsWhereProperty, Repository } from 'typeorm';
+import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
+import { FindOptionsWhere, FindOptionsWhereProperty, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
-import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,8 +24,14 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async findAll(roleId?: Roles) {
+  async findAll(currentRoleId: User['roleId'], roleId?: Roles) {
     const where: FindOptionsWhereProperty<User> = {};
+
+    const visibleRoles = RoleVisibilityMap[currentRoleId] || [];
+
+    if (visibleRoles.length) {
+      where.roleId = In(visibleRoles);
+    }
 
     if (roleId) where.roleId = roleId;
 
@@ -75,6 +82,8 @@ export class UsersService {
       const salt = await bcrypt.genSalt(10);
       updatedUser.password = await bcrypt.hash(updateUserDto.password, salt);
     }
+
+    if (user.roleId === Roles.COMPANY) user.isActive = true; //Company users are always active
 
     await this.usersRepository.save(updatedUser);
     return updatedUser;

@@ -1,4 +1,5 @@
-import { IsString, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsStrongPassword, Length } from 'class-validator';
+import { Roles } from 'src/enums/roles.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -7,5 +8,10 @@ export class CreateUserDto {
 
   @IsString()
   @Length(4, 255)
+  @IsStrongPassword()
   password: string;
+
+  @IsOptional()
+  @IsEnum(Roles, { message: 'roleId must be a valid role' })
+  roleId?: Roles;
 }

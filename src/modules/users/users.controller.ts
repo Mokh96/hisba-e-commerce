@@ -1,26 +1,47 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { RoleHierarchyGuard } from 'src/common/guards';
+import { Roles } from 'src/enums/roles.enum';
+import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Roles } from 'src/enums/roles.enum';
-import { SetRoles } from 'src/common/decorators/roles.decorator';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
+import { User } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.usersService.create({ ...createUserDto, roleId: Roles.CLIENT });
+  @Role(Roles.SUPERADMIN, Roles.ADMIN)
+  async create(@Body() createUserDto: CreateUserDto, @CurrentUser('roleId') currentRole: User['roleId']) {
+    const roleId = createUserDto.roleId || Roles.CLIENT;
+
+    if (roleId <= Roles.ADMIN && currentRole !== Roles.SUPERADMIN) {
+      throw new ForbiddenException('You do not have permission to create this user');
+    }
+
+    const user = await this.usersService.create({ ...createUserDto, roleId });
     delete user.password;
     return user;
   }
 
   @Get()
-  findAll(@Query('roleId') roleId?: number) {
-    return this.usersService.findAll(roleId);
+  findAll(@CurrentUser('roleId') currentRole: User['roleId'], @Query('roleId') roleId?: number) {
+    return this.usersService.findAll(currentRole, roleId);
   }
 
   @Get(':id')
@@ -34,12 +55,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @SetRoles(Roles.SUPERADMIN, Roles.ADMIN)
+  @Role(Roles.SUPERADMIN, Roles.ADMIN)
+  @UseGuards(RoleHierarchyGuard)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(RoleHierarchyGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(+id);
   }
