@@ -21,11 +21,11 @@ export class CreateProductDto {
   @IsNotEmpty() //its IsNotEmpty because related image is required
   _uid: string | undefined;
 
-/*  @Type(() => Number)
-  @IsOptional()
-  @IsPositive()
-  @IsInt()
-  syncId: number | undefined;*/
+  /*  @Type(() => Number)
+    @IsOptional()
+    @IsPositive()
+    @IsInt()
+    syncId: number | undefined;*/
 
   @IsString()
   @IsOptional()
@@ -98,7 +98,7 @@ export class CreateProductDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateArticleDtoArray)
-  articles: CreateArticleDtoArray[] = [];
+  articles: CreateArticleDtoArray[] | undefined;
 }
 
 export class CreateArticleDtoArray extends OmitType(CreateArticleDto, ['productId'] as const) {}
@@ -119,7 +119,7 @@ export class CreateSyncArticleDtoArray extends IntersectionType(
 }*/
 
 export class CreateSyncProductDto extends CreateProductDto {
-  @Type(() => Number)//todo : use reusable dto
+  @Type(() => Number) //todo : use reusable dto
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
@@ -129,5 +129,5 @@ export class CreateSyncProductDto extends CreateProductDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateSyncArticleDtoArray)
-  articles: CreateSyncArticleDtoArray[] =[];
+  articles: CreateSyncArticleDtoArray[] | undefined;
 }

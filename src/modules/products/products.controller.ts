@@ -22,7 +22,10 @@ import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-v
 import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynamic-file-validation.interceptor';
-import { createProductValidationRules } from 'src/modules/products/config/file-validation-config';
+import {
+  createProductValidationRules,
+  productValidationRulesInterceptor,
+} from 'src/modules/products/config/file-validation-config';
 
 @Controller('products')
 export class ProductsController extends UploadManager3 {
@@ -46,7 +49,7 @@ export class ProductsController extends UploadManager3 {
   }*/
 
   @Post()
-  @UseInterceptors(AnyFilesInterceptor(), new DynamicFileValidationInterceptor(createProductValidationRules))
+  @UseInterceptors(AnyFilesInterceptor(), productValidationRulesInterceptor)
   async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
     return await this.productsService.createProduct(createProductDto, files);
   }

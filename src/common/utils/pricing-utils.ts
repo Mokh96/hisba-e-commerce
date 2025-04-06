@@ -12,7 +12,7 @@
  *
  */
 export function getMaxAndMinPrices(target: { price: number }[]): { minPrice: number; maxPrice: number } {
-  if (target.length === 0) {
+  if (!target ||target.length === 0) {
     return { minPrice: 0, maxPrice: 0 };
   }
 

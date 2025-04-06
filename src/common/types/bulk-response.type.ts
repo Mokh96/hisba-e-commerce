@@ -1,6 +1,6 @@
 type ErrorType = string // TODO : change to error type
 
-export interface BulkResponse {
+export interface BulkResponse <T = any>{
   successes: {
     id: number;
     syncId: number;

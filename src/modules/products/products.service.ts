@@ -21,7 +21,7 @@ export class ProductsService extends UploadManager3 {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    private dataSource: DataSource, // Required for transactions
+    private dataSource: DataSource,
   ) {
     super(FileTypesEnum.Public, ['service']);
   }
@@ -41,11 +41,12 @@ export class ProductsService extends UploadManager3 {
     const clonedCreatedProduct: CreateProductWithImagesDto = _.cloneDeep({
       ...createProductDto,
       imgPath: null,
-      articles: createProductDto.articles.map((article) => ({
-        ...article,
-        imgPath: null,
-        gallery: [],
-      })),
+      articles:
+        createProductDto.articles?.map((article) => ({
+          ...article,
+          imgPath: null,
+          gallery: [],
+        })) ?? [],
     });
 
     //use this array to remove uploaded files from the server if there is an error
@@ -66,9 +67,9 @@ export class ProductsService extends UploadManager3 {
           const defaultImage = getFileByUid(files, FileUploadEnum.DefaultImage, article._uid);
           const articleImages = getFilesByUid(files, FileUploadEnum.Image, article._uid);
 
-          if (!defaultImage) {
+          /*if (!defaultImage) {
             throw new BadRequestException('Default image is required when uploading article images.');
-          }
+          }*/
 
           // Upload default image
 
@@ -123,12 +124,15 @@ export class ProductsService extends UploadManager3 {
       failures: [],
     };
 
+    console.log(createSyncProductsDto);
     for (let i = 0; i < createSyncProductsDto.length; i++) {
       try {
         const product = await this.createProduct(createSyncProductsDto[i], files);
+        console.log('created product', product);
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
       } catch (error) {
+        console.log('error', error);
         response.failures.push({
           index: i,
           syncId: createSyncProductsDto[i].syncId,
