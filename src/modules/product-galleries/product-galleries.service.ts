@@ -4,23 +4,23 @@ import { UpdateProductGalleryDto } from './dto/update-product-gallery.dto';
 
 @Injectable()
 export class ProductGalleriesService {
-  create(createProductGalleryDto: CreateProductGalleryDto) {
-    return 'This action adds a new productGallery';
+  create(createArticleGalleryDto: CreateProductGalleryDto) {
+    return 'This action adds a new articleGallery';
   }
 
   findAll() {
-    return `This action returns all productGalleries`;
+    return `This action returns all articleGalleries`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} productGallery`;
+    return `This action returns a #${id} articleGallery`;
   }
 
-  update(id: number, updateProductGalleryDto: UpdateProductGalleryDto) {
-    return `This action updates a #${id} productGallery`;
+  update(id: number, updateArticleGalleryDto: UpdateProductGalleryDto) {
+    return `This action updates a #${id} articleGallery`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} productGallery`;
+    return `This action removes a #${id} articleGallery`;
   }
 }

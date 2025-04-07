@@ -6,7 +6,6 @@ import { BrandsModule } from './brands/brands.module';
 import { FamiliesModule } from './families/families.module';
 import { ProductsModule } from './products/products.module';
 import { ProductGalleriesModule } from './product-galleries/product-galleries.module';
-import { ArticleGalleriesModule } from './article-galleries/article-galleries.module';
 import { OptionsModule } from './options/options.module';
 import { OptionsValuesModule } from './options-values/options-values.module';
 import { OrderItemsModule } from './order-items/order-items.module';
@@ -46,14 +45,12 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
       dropSchema: false,
       logging: false,
     }),
-
     UsersModule,
     CategoriesModule,
     BrandsModule,
     FamiliesModule,
     ProductsModule,
     ProductGalleriesModule,
-    ArticleGalleriesModule,
     OptionsModule,
     OptionsValuesModule,
     OrderItemsModule,

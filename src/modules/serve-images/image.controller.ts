@@ -12,7 +12,6 @@ export class ImageController {
   @Get('/:type/:file/:name')
   async serveImage(
     @Param(ValidationPipe) imageParams: ImageParamsDto,
-
     @Res() res: Response,
   ) {
     const { type, file, name } = imageParams;

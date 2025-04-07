@@ -7,13 +7,13 @@ import { DataSource, Repository } from 'typeorm';
 import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { Article } from 'src/modules/articles/entities/article.entity';
-import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
 import * as _ from 'lodash';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
 import { getFileBySyncId, getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
+import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 
 @Injectable()
 export class ProductsService {
@@ -24,26 +24,15 @@ export class ProductsService {
     private uploadManager: UploadManager,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    const { minPrice, maxPrice } = getMaxAndMinPrices(createProductDto.articles);
-    const product = this.productRepository.create({
-      ...createProductDto,
-      minPrice,
-      maxPrice,
-    });
-    await this.productRepository.save(product);
-    return product;
-  }
-
-  async createProduct(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
+  async create(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
     const clonedCreatedProduct: CreateProductWithImagesDto = _.cloneDeep({
       ...createProductDto,
-      imgPath: null,
+      defaultImgPath: null,
+      gallery: [],
       articles:
         createProductDto.articles?.map((article) => ({
           ...article,
           imgPath: null,
-          gallery: [],
         })) ?? [],
     });
 
@@ -53,32 +42,34 @@ export class ProductsService {
     return this.dataSource.transaction(async (manager) => {
       try {
         // Step 1: Upload Product Image
-        const productFile = getFileBySyncId(files, FileUploadEnum.Image, createProductDto.syncId);
+        const productFile = getFileBySyncId(files, FileUploadEnum.DefaultImage, createProductDto.syncId);
         if (productFile) {
-          const uploadedProductImages = await this.uploadManager.uploadFiles({ [FileUploadEnum.Image]: [productFile] });
-          clonedCreatedProduct.imgPath = uploadedProductImages[0].path;
+          const uploadedProductImages = await this.uploadManager.uploadFiles({
+            [FileUploadEnum.DefaultImage]: [productFile],
+          });
+          clonedCreatedProduct.defaultImgPath = uploadedProductImages[0].path;
+          allUploadedFiles.push(...uploadedProductImages);
+        }
+
+        //step 2: Upload Product Gallery
+        const productImages = getFilesBySyncId(files, FileUploadEnum.Image, createProductDto.syncId);
+        if (productImages.length > 0) {
+          const uploadedProductImages = await this.uploadManager.uploadFiles({
+            [FileUploadEnum.Image]: productImages,
+          });
+          clonedCreatedProduct.gallery = uploadedProductImages.map((image) => ({ path: image.path }));
           allUploadedFiles.push(...uploadedProductImages);
         }
 
         //Step 2: Upload Articles' Images
         for (const article of clonedCreatedProduct.articles) {
-          const defaultImage = getFileBySyncId(files, FileUploadEnum.DefaultImage, article.syncId);
-          const articleImages = getFilesBySyncId(files, FileUploadEnum.Image, article.syncId);
+          const defaultArticleImage = getFileBySyncId(files, FileUploadEnum.DefaultImage, article.syncId);
 
           const uploadedDefaultImage = await this.uploadManager.uploadFiles({
-            [FileUploadEnum.DefaultImage]: [defaultImage],
+            [FileUploadEnum.DefaultImage]: [defaultArticleImage],
           });
           article.imgPath = uploadedDefaultImage[0].path;
           allUploadedFiles.push(...uploadedDefaultImage);
-
-          // Upload article gallery images (if any)
-          if (articleImages.length > 0) {
-            const uploadedArticleImages = await this.uploadManager.uploadFiles({
-              [FileUploadEnum.Image]: articleImages,
-            });
-            article.gallery = uploadedArticleImages.map((image) => ({ path: image.path }));
-            allUploadedFiles.push(...uploadedArticleImages);
-          }
         }
 
         //Step 3: Save Product
@@ -89,22 +80,20 @@ export class ProductsService {
           maxPrice,
         });
 
-        //Step 4: Save Articles & Their Galleries
-        for (let i = 0; i < clonedCreatedProduct.articles.length; i++) {
-          const articleData = clonedCreatedProduct.articles[i];
-          const article = await manager.save(Article, { ...articleData, product });
+        if (product.gallery.length > 0) {
+          const productGalleries = product.gallery.map((image) => ({
+            path: image.path,
+            productId: product.id,
+            product,
+          }));
 
-          if (articleData.gallery.length > 0) {
-            const articleGalleries = articleData.gallery.map((image) => ({
-              path: image.path,
-              articleId: article.id,
-              article,
-            }));
-
-            await manager.save(ArticleGallery, articleGalleries);
-          }
+          await manager.save(ProductGallery, productGalleries);
         }
 
+        //Step 4: Save Articles
+        for (const article of clonedCreatedProduct.articles) {
+          await manager.save(Article, { ...article, product });
+        }
         return product;
       } catch (error) {
         await this.uploadManager.cleanupFiles(allUploadedFiles); // Cleanup uploaded files if transaction fails
@@ -122,7 +111,7 @@ export class ProductsService {
     console.log(createSyncProductsDto);
     for (let i = 0; i < createSyncProductsDto.length; i++) {
       try {
-        const product = await this.createProduct(createSyncProductsDto[i], files);
+        const product = await this.create(createSyncProductsDto[i], files);
         console.log('created product', product);
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
@@ -147,7 +136,8 @@ export class ProductsService {
     return await this.productRepository.findOneOrFail({
       where: { id },
       relations: {
-        articles: { gallery: true, optionValues: { option: true } },
+        gallery: true,
+        articles: { optionValues: { option: true } },
       },
     });
   }
@@ -158,7 +148,7 @@ export class ProductsService {
     files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
     const product = await this.productRepository.findOneByOrFail({ id });
-    const initialImgPath = product.imgPath; // Get the initial image path
+    const initialImgPath = product.defaultImgPath; // Get the initial image path
 
     const uploadedFiles = await this.uploadManager.uploadFiles(files); // Upload new image
     const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
@@ -166,7 +156,7 @@ export class ProductsService {
     try {
       let updatedFields: Partial<Product> = { ...updateProductDto };
       if (newPath) {
-        updatedFields.imgPath = newPath; // Update with new image
+        updatedFields.defaultImgPath = newPath; // Update with new image
       }
 
       const updatedProduct = this.productRepository.merge(product, updatedFields);

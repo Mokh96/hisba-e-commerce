@@ -15,11 +15,6 @@ import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulk
 export class ProductsSyncController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
-  create(@Body() createSyncProductDto: CreateSyncProductDto) {
-    return this.productsService.create(createSyncProductDto);
-  }
-
   @Post('bulk')
   @UseInterceptors(
     AnyFilesInterceptor(),

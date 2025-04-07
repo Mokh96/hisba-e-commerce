@@ -6,11 +6,12 @@ import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynami
 export const createProductValidationRules: ValidationRules = {
   entity: 'products', //main entity
   files: {
-    [FileUploadEnum.Image]: {
+    [FileUploadEnum.DefaultImage]: {
       ...imageUploadRules,
       required: true,
       minCount: 1,
     },
+    [FileUploadEnum.Image]: imageUploadRules,
   },
   subItems: {
     articles: {
@@ -19,7 +20,6 @@ export const createProductValidationRules: ValidationRules = {
           ...imageUploadRules,
           required: true,
         },
-        [FileUploadEnum.Image]: imageUploadRules,
       },
     },
   },
