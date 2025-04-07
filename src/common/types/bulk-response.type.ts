@@ -1,4 +1,6 @@
-export interface BulkResponse {
+type ErrorType = string // TODO : change to error type
+
+export interface BulkResponse <T = any>{
   successes: {
     id: number;
     syncId: number;
@@ -6,7 +8,17 @@ export interface BulkResponse {
   failures: {
     index?: number;
     syncId: number;
-    // TODO : change to error type
-    errors: string[];
+    errors: ErrorType[];
+  }[];
+}
+
+export interface UpdateBulkResponse {
+  successes: {
+    id: number;
+  }[];
+  failures: {
+    index: number;
+    id: number;
+    errors: ErrorType[];
   }[];
 }

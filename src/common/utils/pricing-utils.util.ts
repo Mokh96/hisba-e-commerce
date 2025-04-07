@@ -8,10 +8,17 @@
  *
  * @param {Array<{ price: number }>} target - The array of objects with a `price` property.
  * @returns {object} An object with `minPrice` and `maxPrice` properties.
+ * @throws {Error} If any item interceptors the array has an invalid price value.
+ *
  */
 export function getMaxAndMinPrices(target: { price: number }[]): { minPrice: number; maxPrice: number } {
-  if (target.length === 0) {
+  if (!target ||target.length === 0) {
     return { minPrice: 0, maxPrice: 0 };
+  }
+
+  const invalidItems = target.filter(({ price }) => price === undefined || price === null || isNaN(price));
+  if (invalidItems.length > 0) {
+    throw new Error(`All items must have a valid price.`);
   }
 
   const prices = target.map(({ price }) => price);

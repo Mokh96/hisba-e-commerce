@@ -3,7 +3,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { runSeeders, SeederOptions } from 'typeorm-extension';
 import * as path from 'path';
 
-// to prevent undefined values in the seed.ts script
+// to prevent undefined values interceptors the seed.ts script
 ConfigModule.forRoot({
   isGlobal: true,
 });

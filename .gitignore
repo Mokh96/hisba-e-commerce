@@ -37,7 +37,7 @@ lerna-debug.log*
 
 .env
 *.ts~
-src/temp
+src/tt
 
 # exclude uploads foler
 uploads

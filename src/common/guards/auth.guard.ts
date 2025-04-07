@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
         secret: JWT_SECRET,
       });
       // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
+      // so that we can access it interceptors our route handlers
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

@@ -23,7 +23,7 @@ export class UploadManager3 implements OnModuleInit {
   private readonly fileType: FileTypesEnum;
   /**
    * Additional subdirectories for organizing uploads
-   * Example: ['user', '123'] would create a subdirectory 'user/123' for uploads
+   * Example: ['users', 'admins'] would create a subdirectory 'users/admins' for uploads
    */
   private readonly subDir: string[];
 
@@ -120,7 +120,6 @@ export class UploadManager3 implements OnModuleInit {
     for (const file of uploadedFiles) {
       // Delete the original file
       await this.cleanupFile(file.fullPath);
-
       // Delete thumbnail if it exists
       if (file.thumbnail && file.thumbnail.fullPath) {
         await this.cleanupFile(file.thumbnail.fullPath);
@@ -139,6 +138,10 @@ export class UploadManager3 implements OnModuleInit {
     } catch (error) {
       console.warn(`Failed to delete file: ${fullPath}`, error);
     }
+  }
+
+  protected async removeFile(fullPath: string) {
+    await this.cleanupFile(UPLOAD_ROOT_DIR + '/' + fullPath);
   }
 
   /**
@@ -160,7 +163,7 @@ export class UploadManager3 implements OnModuleInit {
    */
   private getCurrentFolderIndex(subDir?: string[]): number {
     let folderIndex = 1;
-    //let folderPath = join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
+    // let folderPath = join(this.uploadBaseDir, ...(subDir || []), folderIndex.toString());
     let folderPath = this.getFolderPath(folderIndex, subDir);
 
     // Check existing folders until finding one with available capacity
