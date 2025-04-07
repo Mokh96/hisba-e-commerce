@@ -41,6 +41,7 @@ import { parseFormDataToArray } from 'src/common/utils/form-data-parser.util';
  */
 @Injectable()
 export class ParseFormDataArrayInterceptor implements NestInterceptor {
+
   /**
    * Intercepts the request and transforms the body to a structured array of objects.
    *
