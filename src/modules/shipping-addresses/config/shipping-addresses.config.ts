@@ -1,0 +1,3 @@
+export const SHIPPING_ADDRESSES_LENGTHS = {
+  ADDRESS: 255,
+};

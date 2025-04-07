@@ -12,6 +12,11 @@ export class CreateShippingAddressDto {
   @IsPositive()
   @Type(() => Number)
   townId: number;
+
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  clientId: number;
 }
 
 export class CreateSyncShippingAddressDto extends IntersectionType(CreateShippingAddressDto, SyncIdDto) {}

@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
+import { ShippingAddressesService } from '../shipping-addresses/shipping-addresses.service';
+import { UsersService } from '../users/users.service';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
@@ -9,7 +11,11 @@ import { ClientBulkResponse } from './types/client-bulk-response.type';
 
 @Injectable()
 export class ClientsService {
-  constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
+  constructor(
+    @InjectRepository(Client) private clientRepository: Repository<Client>,
+    private readonly usersService: UsersService,
+    private readonly shippingAddressService: ShippingAddressesService,
+  ) {}
 
   async create(createClientDto: CreateClientDto | CreateClientSyncDto) {
     const client = this.clientRepository.create(createClientDto);
@@ -64,24 +70,41 @@ export class ClientsService {
     });
   }
 
-  async findOne(id: number) {
+  /**
+   * Finds a client by ID, optionally including specified relations and select fields.
+   *
+   * @param id - The ID of the client to find.
+   * @param relations - An array of strings specifying which relations to include in the query. Defaults to ['user', 'shippingAddresses'].
+   * @param select - An optional object to specify which fields to select. If not provided, a default selection is used.
+   *
+   * @throws NotFoundException - If no client with the given ID is found.
+   *
+   * @returns The client object, including specified relations and select fields.
+   */
+
+  async findOne(id: number, relations: string[] = ['user', 'shippingAddresses'], select?: Record<string, any>) {
+    // Dynamically build the `select` if not provided
+    const dynamicSelect = select || {
+      user: {
+        id: true,
+        username: true,
+      },
+      shippingAddresses: {
+        id: true,
+        address: true,
+        townId: true,
+      },
+    };
+
     const client = await this.clientRepository.findOne({
-      relations: {
-        user: true,
-        shippingAddresses: true,
-      },
-      select: {
-        user: {
-          id: true,
-          username: true,
-        },
-        shippingAddresses: {
-          id: true,
-          address: true,
-        },
-      },
+      relations: relations.reduce((acc, relation) => {
+        acc[relation] = true;
+        return acc;
+      }, {}),
+      select: dynamicSelect,
       where: { id },
     });
+
     if (!client) {
       throw new NotFoundException(`Client '${id}' not found`);
     }
@@ -89,11 +112,28 @@ export class ClientsService {
   }
 
   async update(id: number, updateClientDto: UpdateClientDto) {
-    const client = await this.clientRepository.findOneBy({ id });
+    const { user: clientuser, ...client } = await this.findOne(id, ['user', 'shippingAddresses'], {
+      user: { id: true },
+    });
 
-    this.clientRepository.merge(client, updateClientDto);
+    if (!client) {
+      throw new NotFoundException(`Client '${id}' not found`);
+    }
 
-    return await this.clientRepository.update(id, client);
+    const { user, shippingAddresses, ...rest } = updateClientDto;
+    // update user if exists
+    if (user) {
+      await this.usersService.update(clientuser.id, user);
+    }
+
+    // update shipping addresses if exist
+    if (shippingAddresses) {
+      await this.shippingAddressService.updateClientAddresses(client.id, shippingAddresses);
+    }
+
+    await this.clientRepository.update(id, rest);
+
+    return await this.findOne(id);
   }
 
   async remove(id: number) {
