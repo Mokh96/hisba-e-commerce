@@ -1,46 +1,34 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
-import { PaymentMethodsService } from './payment-methods.service';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+import { PaymentMethodsService } from './payment-methods.service';
 
 @Controller('payment-methods')
 export class PaymentMethodsController {
   constructor(private readonly paymentMethodsService: PaymentMethodsService) {}
 
   @Post()
-  create(@Body() createPaymentMethodDto: CreatePaymentMethodDto) {
-    return this.paymentMethodsService.create(createPaymentMethodDto);
+  async create(@Body() createPaymentMethodDto: CreatePaymentMethodDto) {
+    return await this.paymentMethodsService.create(createPaymentMethodDto);
   }
 
-  @Get()
-  findAll() {
-    return this.paymentMethodsService.findAll();
-  }
+  // @Get()
+  // async findAll() {
+  //   return await this.paymentMethodsService.findAll();
+  // }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.paymentMethodsService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.paymentMethodsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updatePaymentMethodDto: UpdatePaymentMethodDto,
-  ) {
-    return this.paymentMethodsService.update(+id, updatePaymentMethodDto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updatePaymentMethodDto: UpdatePaymentMethodDto) {
+    return await this.paymentMethodsService.update(+id, updatePaymentMethodDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.paymentMethodsService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.paymentMethodsService.remove(+id);
   }
 }

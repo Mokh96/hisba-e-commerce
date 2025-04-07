@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { RoleVisibilityMap } from 'src/common/constants';
 import { Roles } from 'src/enums/roles.enum';
-import { FindOptionsWhereProperty, Repository } from 'typeorm';
+import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
+import { FindOptionsWhere, FindOptionsWhereProperty, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -21,8 +24,14 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async findAll(roleId?: Roles) {
+  async findAll(currentRoleId: User['roleId'], roleId?: Roles) {
     const where: FindOptionsWhereProperty<User> = {};
+
+    const visibleRoles = RoleVisibilityMap[currentRoleId] || [];
+
+    if (visibleRoles.length) {
+      where.roleId = In(visibleRoles);
+    }
 
     if (roleId) where.roleId = roleId;
 
@@ -32,6 +41,9 @@ export class UsersService {
 
   async findOne(id: User['id']) {
     const user = await this.usersRepository.findOneByOrFail({ id });
+    if (!user) {
+      throw new NotFoundException(`User '${id}' not found`);
+    }
     return user;
   }
 
@@ -42,16 +54,37 @@ export class UsersService {
    * @returns The user if found, or `null` if not found.
    */
   async findUser(username: User['username']) {
-    const user = await this.usersRepository.findOne({
+    return await this.usersRepository.findOne({
       select: ['id', 'username', 'password', 'roleId'],
       where: { username },
     });
-    return user;
+  }
+
+  async findUserById(id: User['id']) {
+    return await this.usersRepository.findOne({
+      select: ['id', 'username', 'password', 'roleId'],
+      where: { id },
+    });
+  }
+
+  async findUserWhere(where: FindOptionsWhere<User>) {
+    return await this.usersRepository.findOne({
+      select: ['id', 'username', 'password', 'roleId'],
+      where,
+    });
   }
 
   async update(id: User['id'], updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     const updatedUser = this.usersRepository.merge(user, updateUserDto);
+
+    if (updateUserDto.password) {
+      const salt = await bcrypt.genSalt(10);
+      updatedUser.password = await bcrypt.hash(updateUserDto.password, salt);
+    }
+
+    if (user.roleId === Roles.COMPANY) user.isActive = true; //Company users are always active
+
     await this.usersRepository.save(updatedUser);
     return updatedUser;
   }
@@ -59,6 +92,34 @@ export class UsersService {
   async remove(id: User['id']) {
     const user = await this.findOne(id);
     await this.usersRepository.remove(user);
-    return true;
+    return { success: true };
+  }
+
+  async updateMe(id: User['id'], updateMeDto: UpdateMeDto) {
+    const { username, oldPassword, newPassword } = updateMeDto;
+
+    if (username) await this.update(id, { username });
+
+    if (oldPassword && newPassword) {
+      await this.changePassword(id, oldPassword, newPassword);
+    }
+
+    return { success: true };
+  }
+
+  async changePassword(userId: User['id'], oldPassword: string, newPassword: string) {
+    const user = await this.findUserById(userId);
+
+    //Compare the old password with the password in DB
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Old password is incorrect');
+    }
+
+    //Change user's password
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(newPassword, salt);
+
+    return await this.usersRepository.update({ id: userId }, { password });
   }
 }

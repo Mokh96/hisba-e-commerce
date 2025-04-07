@@ -1,19 +1,14 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
-import * as bcrypt from 'bcrypt';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
+import { AuthDto } from './dto/auth.dto';
+import { Roles } from 'src/enums/roles.enum';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
   async logIn(authDto: AuthDto) {
     const { username, password } = authDto;
@@ -30,6 +25,32 @@ export class AuthService {
     }
 
     const { id, roleId } = user;
+
+    const payload = {
+      username,
+      sub: id,
+      roleId,
+    };
+
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async logInCompany(authDto: AuthDto) {
+    const { username, password } = authDto;
+    const company = await this.usersService.findUserWhere({ username, roleId: Roles.COMPANY });
+
+    if (!company) {
+      throw new NotFoundException(`Company '${username}' not found`);
+    }
+    const isPasswordValid = await bcrypt.compare(password, company.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const { id, roleId } = company;
 
     const payload = {
       username,

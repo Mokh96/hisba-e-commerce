@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,7 +7,8 @@ import { Image } from 'src/types/types.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { validateBulkInsert } from 'src/helpers/validation/global';
-import { CreateSyncCategoryDto } from './dto/create-category.dto';
+import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class CategoriesService {
@@ -20,7 +17,7 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateSyncCategoryDto, file: Image) {
+  async create(createCategoryDto: CreateSyncCategoryDto | CreateCategoryDto, file: Image) {
     const category = this.categoryRepository.create(createCategoryDto);
     const newCategory = this.categoryRepository.merge(category, {
       imgPath: file.img ? pathToFile(file.img[0]) : null,
@@ -29,10 +26,33 @@ export class CategoriesService {
     return newCategory;
   }
 
+  async createBulk(createCategoryDto: CreateSyncCategoryDto[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const category of createCategoryDto) {
+      try {
+        const newCategory = this.categoryRepository.create(category);
+        await this.categoryRepository.save(newCategory);
+        response.successes.push(newCategory);
+      } catch (err) {
+        response.failures.push({
+          syncId: category.syncId,
+          errors: [err.sqlMessage],
+        });
+      }
+    }
+
+    return response;
+  }
+
   async createSyncBulk(createCategoryDto: CreateSyncCategoryDto[]) {
-    const { validatedData, failureData } = await validateBulkInsert<
-      CreateSyncCategoryDto[]
-    >(createCategoryDto, 'category');
+    const { validatedData, failureData } = await validateBulkInsert<CreateSyncCategoryDto[]>(
+      createCategoryDto,
+      'category',
+    );
 
     const successData: CreateSyncCategoryDto[] = [];
 
@@ -42,17 +62,13 @@ export class CategoriesService {
 
     for (let i = 0; i < validatedData.length; i++) {
       try {
-        const category: CreateSyncCategoryDto = this.categoryRepository.create(
-          validatedData[i],
-        );
+        const category: CreateSyncCategoryDto = this.categoryRepository.create(validatedData[i]);
         await this.categoryRepository.save(category);
 
         successData.push(category);
       } catch (error) {
         failureData.push({
-          index: createCategoryDto.findIndex(
-            (item) => item.syncId === validatedData[i].syncId,
-          ),
+          index: createCategoryDto.findIndex((item) => item.syncId === validatedData[i].syncId),
           message: 'insert error',
         });
       }
@@ -74,37 +90,19 @@ export class CategoriesService {
   async update(id: number, updateCategoryDto: UpdateCategoryDto, file: Image) {
     if (updateCategoryDto.parentId) {
       if (updateCategoryDto.parentId === id)
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+        throw new BadRequestException('parent Id must be not children of this brand');
       // TODO: edit message of this error
-      if (
-        !checkChildrenRecursive(
-          id,
-          await this.findAll(),
-          updateCategoryDto.parentId,
-        )
-      )
-        throw new BadRequestException(
-          'parent Id must be not children of this brand',
-        );
+      if (!checkChildrenRecursive(id, await this.findAll(), updateCategoryDto.parentId))
+        throw new BadRequestException('parent Id must be not children of this brand');
     }
     const { isDelete } = updateCategoryDto;
 
     const category = await this.findOne(id);
     const oldPath = category.imgPath;
-    const imgPath = isDelete
-      ? null
-      : file?.img
-      ? pathToFile(file.img[0])
-      : oldPath;
-    const updatedCategory = this.categoryRepository.merge(
-      category,
-      updateCategoryDto,
-      {
-        imgPath,
-      },
-    );
+    const imgPath = isDelete ? null : file?.img ? pathToFile(file.img[0]) : oldPath;
+    const updatedCategory = this.categoryRepository.merge(category, updateCategoryDto, {
+      imgPath,
+    });
     await this.categoryRepository.save(updatedCategory);
     if (isDelete || file?.img) removeFileIfExist(oldPath);
 

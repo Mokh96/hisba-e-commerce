@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentUserData } from 'src/common/decorators/current-user.decorator';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
@@ -12,10 +11,8 @@ import { Client } from './entities/client.entity';
 export class ClientsService {
   constructor(@InjectRepository(Client) private clientRepository: Repository<Client>) {}
 
-
-  async create(createClientDto: CreateClientDto | CreateClientSyncDto, user: CurrentUserData) {
+  async create(createClientDto: CreateClientDto | CreateClientSyncDto) {
     const client = this.clientRepository.create(createClientDto);
-    client.creatorId = user.sub;
     client.user.roleId = Roles.CLIENT;
     await this.clientRepository.save(client);
 
@@ -25,20 +22,19 @@ export class ClientsService {
     return client;
   }
 
-  async createBulk(createSyncClientDto: CreateClientSyncDto[], user: CurrentUserData) {
+  async createBulk(createSyncClientDto: CreateClientSyncDto[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
     };
 
-    for (let i = 0; i < createSyncClientDto.length; i++) {
+    for (const client of createSyncClientDto) {
       try {
-        const product = await this.create(createSyncClientDto[i], user);
-        response.successes.push(product);
+        const newClient = await this.create(client);
+        response.successes.push(newClient);
       } catch (err) {
         response.failures.push({
-          index: i,
-          syncId: createSyncClientDto[i].syncId,
+          syncId: client.syncId,
           errors: [err.sqlMessage],
         });
       }
@@ -48,7 +44,7 @@ export class ClientsService {
   }
 
   async findAll() {
-    const clients = await this.clientRepository.find({
+    return await this.clientRepository.find({
       relations: {
         user: true,
       },
@@ -59,8 +55,6 @@ export class ClientsService {
         },
       },
     });
-
-    return clients;
   }
 
   async findOne(id: number) {

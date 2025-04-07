@@ -6,7 +6,7 @@ export interface BulkResponse <T = any>{
     syncId: number;
   }[];
   failures: {
-    index: number;
+    index?: number;
     syncId: number;
     errors: ErrorType[];
   }[];

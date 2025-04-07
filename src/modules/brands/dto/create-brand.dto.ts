@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsPositive,
-  isString,
-} from 'class-validator';
+import { IsInt, IsOptional, IsPositive } from 'class-validator';
 import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
 
 export class CreateBrandDto extends LabelCommonDto {

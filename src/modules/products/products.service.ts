@@ -4,7 +4,7 @@ import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
-import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils';
+import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
@@ -12,8 +12,8 @@ import * as _ from 'lodash';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
-import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
 import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
+import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 
 @Injectable()
