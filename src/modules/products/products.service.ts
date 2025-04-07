@@ -188,35 +188,7 @@ export class ProductsService extends UploadManager3 {
     }
   }
 
-  /*async update(
-    id: number,
-    updateProductDto: UpdateProductDto,
-    files: { [FileUploadEnum.Image]: Express.Multer.File[] },
-  ) {
-    const product = await this.productRepository.findOneByOrFail({ id });
-    const initialImgPath = product.imgPath; // Get the initial image path
-
-    const uploadedFiles = await this.uploadFiles(files); // Upload new image
-    const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
-
-    const updatedFields: Partial<Product> = { ...updateProductDto, imgPath: newPath ? newPath : initialImgPath };
-    const updatedProduct = this.productRepository.merge(product, updatedFields);
-
-    try {
-      await this.productRepository.save(updatedProduct);
-      if (newPath && product.imgPath) {
-        await this.removeFile(initialImgPath); //remove old image
-      }
-      return updatedProduct;
-    } catch (error) {
-      console.log('error', error);
-      await this.cleanupFiles(uploadedFiles);
-      throw error;
-    }
-  }*/
-
   async updateBulk(updateSyncProductDto: UpdateSyncProductDto[], files: Express.Multer.File[]) {
-    //console.log(files);
     const response: UpdateBulkResponse = {
       successes: [],
       failures: [],
@@ -224,8 +196,9 @@ export class ProductsService extends UploadManager3 {
 
     for (let i = 0; i < updateSyncProductDto.length; i++) {
       try {
+        const productImage = getFilesByUid(files, FileUploadEnum.Image, updateSyncProductDto[i]._uid);
         const product = await this.update(updateSyncProductDto[i].id, updateSyncProductDto[i], {
-          [FileUploadEnum.Image]: files,
+          [FileUploadEnum.Image]: productImage,
         });
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });

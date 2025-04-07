@@ -14,42 +14,18 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
-import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
-import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
-/*
-import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
-*/
 import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
-import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynamic-file-validation.interceptor';
 import {
-  createProductValidationRules,
   productValidationRulesInterceptor,
 } from 'src/modules/products/config/file-validation-config';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 
 @Controller('products')
-export class ProductsController extends UploadManager3 {
-  constructor(private readonly productsService: ProductsService) {
-    //new ThumbnailManager({ thumbnailSize: { width: 250, height: 250 } })
-    super(FileTypesEnum.Public, ['test']);
-  }
-
-  /*@Post('/create1')
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
-  )
-  async create1(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: { image?: Express.Multer.File[] }) {
-    const uploadedFiles = await this.uploadFiles(files, ['articles']);
-    return {
-      uploadedFiles,
-      createProductDto,
-    };
-    //return this.productsService.create(createProductDto);
-  }*/
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor(), productValidationRulesInterceptor)
@@ -58,24 +34,16 @@ export class ProductsController extends UploadManager3 {
   }
 
   @Patch(':id')
-  /* @UseInterceptors(
-      FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-      new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
-    )*/
   @UseInterceptors(
     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({
-      [FileUploadEnum.Image]: imageUploadRules,
-      // [FileUploadEnum.Pdf]: pdfUploadRules,
-    }),
+    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
   )
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    console.log(files)
-    return this.productsService.update(id, updateProductDto , files);
+    return this.productsService.update(id, updateProductDto, files);
   }
 
   @Get()
@@ -87,20 +55,6 @@ export class ProductsController extends UploadManager3 {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(+id);
   }
-
-  /* @Patch(':id')
-   @UseInterceptors(
-     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-     new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
-   )
-   update(
-     @Param('id') id: number,
-     @Body() updateProductDto: UpdateProductDto,
-     @UploadedFiles() files: { [FileUploadEnum.Image]?: Express.Multer.File[] },
-   ) {
-     return updateProductDto;
-     // return this.productsService.update(+id, updateProductDto, files);
-   }*/
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
