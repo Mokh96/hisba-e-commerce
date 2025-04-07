@@ -20,12 +20,13 @@ export class UploadManager implements OnModuleInit {
   /**
    * Type of files being managed (e.g., public, private)
    */
-  private readonly fileType: FileTypesEnum;
+  //private readonly fileType: FileTypesEnum;
   /**
    * Additional subdirectories for organizing uploads
    * Example: ['users', 'admins'] would create a subdirectory 'users/admins' for uploads
    */
-  private readonly subDir: string[];
+
+  //private readonly subDir: string[];
 
   /**
    * Creates a new upload manager instance
@@ -35,12 +36,23 @@ export class UploadManager implements OnModuleInit {
    * @param thumbnailManager - Optional service for generating thumbnails
    */
   constructor(
-    fileType: FileTypesEnum,
-    subDir: string[],
+    /**
+     * Base directory for all uploads managed by this instance
+     */
+    private readonly fileType: FileTypesEnum,
+    /**
+     * Additional subdirectories for organizing uploads
+     * Example: ['users', 'admins'] would create a subdirectory 'users/admins' for uploads
+     */
+    private readonly subDir: string[],
+    /**
+     * Optional service for generating thumbnails
+     * @see ThumbnailManager
+     * */
     private readonly thumbnailManager?: ThumbnailManager, //inject thumbnail manager
   ) {
-    this.fileType = fileType;
-    this.subDir = subDir;
+    /* this.fileType = fileType;
+     this.subDir = subDir;*/
   }
 
   /**

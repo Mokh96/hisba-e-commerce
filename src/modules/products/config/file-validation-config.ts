@@ -25,5 +25,5 @@ export const createProductValidationRules: ValidationRules = {
   },
 } as const;
 
-const productValidationRulesInterceptor = new DynamicFileValidationInterceptor(createProductValidationRules)
-export { productValidationRulesInterceptor }
+const productValidationRulesInterceptor = new DynamicFileValidationInterceptor(createProductValidationRules);
+export { productValidationRulesInterceptor };

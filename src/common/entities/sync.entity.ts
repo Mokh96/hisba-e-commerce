@@ -9,7 +9,7 @@ export function WithSyncId<TBase extends MixinConstructor>(Base: TBase) {
   class SyncIdEntity extends Base implements SyncId {
     @Column({ name: 'sync_id', nullable: true })
     @Index('sync_id', { unique: true })
-    syncId: number;
+    syncId: number | null;
   }
 
   return SyncIdEntity;

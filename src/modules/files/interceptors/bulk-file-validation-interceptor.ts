@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { FileUploadEnum } from '../../files/enums/file-upload.enum';
 import { extractFileTypeAndEntityId } from '../../files/utils/file-upload.util';
 import { FileRules, FileValidationRules } from 'src/modules/files/types/file-validation.type';
+import { SyncedEntity } from 'src/common/types/global.type';
 
 const createDefaultFileMap = (): Record<FileUploadEnum, number> => ({
   [FileUploadEnum.Files]: 0,
@@ -23,7 +24,7 @@ export class BulkFileValidationInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const files: Express.Multer.File[] = request.files || [];
-    const entities: { _uid: string }[] = request.body[this.entityField]; // Expecting an array of entities
+    const entities: Pick<SyncedEntity, 'syncId'>[] = request.body[this.entityField]; // Expecting an array of entities
     //console.log(entities);
 
     if (!Array.isArray(entities) || entities.length === 0) {
@@ -60,8 +61,8 @@ export class BulkFileValidationInterceptor implements NestInterceptor {
     //console.log('entityFileMap', entityFileMap);
 
     // Validate that each entity meets the minimum/maximum file count requirements
-    entities.forEach((entity , index) => {
-      const entityId = entity._uid || index.toString();
+    entities.forEach((entity, index) => {
+      const entityId = entity.syncId.toString() || index.toString();
       const fileCounts = entityFileMap.get(entityId) || createDefaultFileMap();
 
       Object.keys(this.rules).forEach((fileType) => {

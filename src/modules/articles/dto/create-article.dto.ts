@@ -3,6 +3,7 @@ import {
   IsArray,
   IsBoolean,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
@@ -18,8 +19,11 @@ import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.conf
 import { TransformStringToBoolean } from 'src/common/decorators';
 
 export class CreateArticleDto {
-  @IsOptional() //its optional because related image is not required
-  _uid: string | undefined;
+  @Type(() => Number)
+  @IsNotEmpty()
+  @IsPositive()
+  @IsInt()
+  syncId: number;
 
   @IsOptional()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)

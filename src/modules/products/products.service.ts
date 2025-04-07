@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
-import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
+import { getFileBySyncId, getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class ProductsService {
     return this.dataSource.transaction(async (manager) => {
       try {
         // Step 1: Upload Product Image
-        const productFile = getFileByUid(files, FileUploadEnum.Image, createProductDto._uid);
+        const productFile = getFileBySyncId(files, FileUploadEnum.Image, createProductDto.syncId);
         if (productFile) {
           const uploadedProductImages = await this.uploadManager.uploadFiles({ [FileUploadEnum.Image]: [productFile] });
           clonedCreatedProduct.imgPath = uploadedProductImages[0].path;
@@ -62,14 +62,8 @@ export class ProductsService {
 
         //Step 2: Upload Articles' Images
         for (const article of clonedCreatedProduct.articles) {
-          const defaultImage = getFileByUid(files, FileUploadEnum.DefaultImage, article._uid);
-          const articleImages = getFilesByUid(files, FileUploadEnum.Image, article._uid);
-
-          /*if (!defaultImage) {
-            throw new BadRequestException('Default image is required when uploading article images.');
-          }*/
-
-          // Upload default image
+          const defaultImage = getFileBySyncId(files, FileUploadEnum.DefaultImage, article.syncId);
+          const articleImages = getFilesBySyncId(files, FileUploadEnum.Image, article.syncId);
 
           const uploadedDefaultImage = await this.uploadManager.uploadFiles({
             [FileUploadEnum.DefaultImage]: [defaultImage],
@@ -89,7 +83,6 @@ export class ProductsService {
 
         //Step 3: Save Product
         const { minPrice, maxPrice } = getMaxAndMinPrices(createProductDto.articles);
-        console.log('before insert product', { ...clonedCreatedProduct, maxPrice, minPrice });
         const product = await manager.save(Product, {
           ...clonedCreatedProduct,
           minPrice,
@@ -198,7 +191,7 @@ export class ProductsService {
 
     for (let i = 0; i < updateSyncProductDto.length; i++) {
       try {
-        const productImage = getFilesByUid(files, FileUploadEnum.Image, updateSyncProductDto[i]._uid);
+        const productImage = getFilesBySyncId(files, FileUploadEnum.Image, updateSyncProductDto[i].syncId);
         const product = await this.update(updateSyncProductDto[i].id, updateSyncProductDto[i], {
           [FileUploadEnum.Image]: productImage,
         });
