@@ -12,7 +12,7 @@ import { MAX_FILES_PER_FOLDER, UPLOAD_ROOT_DIR } from '../constant/upload.consta
  * Supports automatic file organization into folders and thumbnail generation.
  */
 @Injectable()
-export class UploadManager3 implements OnModuleInit {
+export class UploadManager implements OnModuleInit {
   /**
    * Base directory for all uploads managed by this instance
    */
@@ -61,7 +61,7 @@ export class UploadManager3 implements OnModuleInit {
    * @param subDir
    * @returns Array of metadata for all successfully uploaded files
    */
-  protected async uploadFiles(
+  public async uploadFiles(
     files: {
       [fieldName: string]: Express.Multer.File[];
     },
@@ -116,7 +116,7 @@ export class UploadManager3 implements OnModuleInit {
    *
    * @param uploadedFiles - Array of file metadata for files to be deleted
    */
-  protected async cleanupFiles(uploadedFiles: UploadFileType[]) {
+  public async cleanupFiles(uploadedFiles: UploadFileType[]) {
     for (const file of uploadedFiles) {
       // Delete the original file
       await this.cleanupFile(file.fullPath);
@@ -140,7 +140,7 @@ export class UploadManager3 implements OnModuleInit {
     }
   }
 
-  protected async removeFile(fullPath: string) {
+  public async removeFile(fullPath: string) {
     await this.cleanupFile(UPLOAD_ROOT_DIR + '/' + fullPath);
   }
 

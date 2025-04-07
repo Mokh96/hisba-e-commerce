@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,21 +10,19 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
 import * as _ from 'lodash';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
-import { UploadManager3 } from 'src/modules/files/upload/upload-manager';
-import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
 import { getFileByUid, getFilesByUid } from 'src/modules/files/utils/file-lookup.util';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 
 @Injectable()
-export class ProductsService extends UploadManager3 {
+export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
     private dataSource: DataSource,
-  ) {
-    super(FileTypesEnum.Public, ['service']);
-  }
+    private uploadManager: UploadManager,
+  ) {}
 
   async create(createProductDto: CreateProductDto) {
     const { minPrice, maxPrice } = getMaxAndMinPrices(createProductDto.articles);
@@ -57,7 +55,7 @@ export class ProductsService extends UploadManager3 {
         // Step 1: Upload Product Image
         const productFile = getFileByUid(files, FileUploadEnum.Image, createProductDto._uid);
         if (productFile) {
-          const uploadedProductImages = await this.uploadFiles({ [FileUploadEnum.Image]: [productFile] });
+          const uploadedProductImages = await this.uploadManager.uploadFiles({ [FileUploadEnum.Image]: [productFile] });
           clonedCreatedProduct.imgPath = uploadedProductImages[0].path;
           allUploadedFiles.push(...uploadedProductImages);
         }
@@ -73,13 +71,17 @@ export class ProductsService extends UploadManager3 {
 
           // Upload default image
 
-          const uploadedDefaultImage = await this.uploadFiles({ [FileUploadEnum.DefaultImage]: [defaultImage] });
+          const uploadedDefaultImage = await this.uploadManager.uploadFiles({
+            [FileUploadEnum.DefaultImage]: [defaultImage],
+          });
           article.imgPath = uploadedDefaultImage[0].path;
           allUploadedFiles.push(...uploadedDefaultImage);
 
           // Upload article gallery images (if any)
           if (articleImages.length > 0) {
-            const uploadedArticleImages = await this.uploadFiles({ [FileUploadEnum.Image]: articleImages });
+            const uploadedArticleImages = await this.uploadManager.uploadFiles({
+              [FileUploadEnum.Image]: articleImages,
+            });
             article.gallery = uploadedArticleImages.map((image) => ({ path: image.path }));
             allUploadedFiles.push(...uploadedArticleImages);
           }
@@ -112,7 +114,7 @@ export class ProductsService extends UploadManager3 {
 
         return product;
       } catch (error) {
-        await this.cleanupFiles(allUploadedFiles); // Cleanup uploaded files if transaction fails
+        await this.uploadManager.cleanupFiles(allUploadedFiles); // Cleanup uploaded files if transaction fails
         throw error;
       }
     });
@@ -165,7 +167,7 @@ export class ProductsService extends UploadManager3 {
     const product = await this.productRepository.findOneByOrFail({ id });
     const initialImgPath = product.imgPath; // Get the initial image path
 
-    const uploadedFiles = await this.uploadFiles(files); // Upload new image
+    const uploadedFiles = await this.uploadManager.uploadFiles(files); // Upload new image
     const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
 
     try {
@@ -178,12 +180,12 @@ export class ProductsService extends UploadManager3 {
       await this.productRepository.save(updatedProduct);
 
       if (newPath && initialImgPath) {
-        await this.removeFile(initialImgPath);
+        await this.uploadManager.removeFile(initialImgPath);
       }
       return updatedProduct;
     } catch (error) {
       console.log('error', error);
-      await this.cleanupFiles(uploadedFiles);
+      await this.uploadManager.cleanupFiles(uploadedFiles);
       throw error;
     }
   }
