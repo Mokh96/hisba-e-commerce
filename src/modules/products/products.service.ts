@@ -108,15 +108,12 @@ export class ProductsService {
       failures: [],
     };
 
-    console.log(createSyncProductsDto);
     for (let i = 0; i < createSyncProductsDto.length; i++) {
       try {
         const product = await this.create(createSyncProductsDto[i], files);
-        console.log('created product', product);
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
       } catch (error) {
-        console.log('error', error);
         response.failures.push({
           index: i,
           syncId: createSyncProductsDto[i].syncId,
@@ -167,7 +164,6 @@ export class ProductsService {
       }
       return updatedProduct;
     } catch (error) {
-      console.log('error', error);
       await this.uploadManager.cleanupFiles(uploadedFiles);
       throw error;
     }
