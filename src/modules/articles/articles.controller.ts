@@ -10,6 +10,8 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
@@ -24,22 +26,6 @@ import { UpdateProductDto } from 'src/modules/products/dto/update-product.dto';
 @Controller('articles')
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
-
-  /* @Post()
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
-  )
-  create(
-    @Body() createArticleDto: CreateArticleDto, @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] }
-  ) {
-    console.log(createArticleDto);
-    console.log(files);
-    return {
-      ...createArticleDto,
-    };
-    //return this.articlesService.create(createArticleDto);
-  }*/
 
   @Post()
   @UseInterceptors(
@@ -60,16 +46,25 @@ export class ArticlesController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.articlesService.findOne(+id);
+    return this.articlesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateArticleDto: UpdateArticleDto) {
-    return this.articlesService.update(id, updateArticleDto as UpdateSyncArticleDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateArticleDto: UpdateArticleDto,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
+  ) {
+    return this.articlesService.update(id, updateArticleDto , files);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.articlesService.remove(+id);
+    return this.articlesService.remove(id);
   }
 }

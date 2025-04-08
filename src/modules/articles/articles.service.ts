@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
-import { UpdateSyncArticleDto } from './dto/update-article.dto';
+import { UpdateArticleDto, UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { ProductsService } from 'src/modules/products/products.service';
@@ -19,10 +19,6 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-    @InjectRepository(Product)
-    private productRepository: Repository<Product>,
-    private dataSource: DataSource,
-    private productsService: ProductsService,
     private uploadManager: UploadManager,
   ) {}
 
@@ -99,21 +95,49 @@ export class ArticlesService {
 
   async findAll(queryArticleDto: QueryArticleDto) {
     const queryArticle = fromDtoToQuery(queryArticleDto);
-
     return await this.articleRepository.findBy(queryArticle);
   }
 
   async findOne(id: number) {
     return await this.articleRepository.findOneOrFail({
-      where: { id: id },
+      where: { id },
       relations: {
         optionValues: true,
       },
     });
   }
 
-  async update(id: number, updateArticleDto: UpdateSyncArticleDto) {
-    let article = await this.findById(id);
+  async update(
+    id: number,
+    updateArticleDto: UpdateArticleDto,
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    let article = await this.articleRepository.findOneByOrFail({ id });
+    const initialImgPath = article.defaultImgPath; // Get the initial image path
+
+    const uploadedFiles = await this.uploadManager.uploadFiles(files); // Upload new image
+    const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
+
+    try {
+      let updatedFields: DeepPartial<Article> = { ...updateArticleDto };
+
+      if (newPath) {
+        updatedFields.defaultImgPath = newPath; // Update with new image
+      }
+
+      article = this.articleRepository.merge(article, updatedFields);
+      await this.articleRepository.save(article);
+
+      if (newPath && initialImgPath) {
+        await this.uploadManager.removeFile(initialImgPath); //remove the old image
+      }
+    } catch (error) {
+      await this.uploadManager.cleanupFiles(uploadedFiles);
+      throw error;
+    }
+
     const updatedArticle = this.articleRepository.merge(article, updateArticleDto);
 
     await this.articleRepository.save(updatedArticle);
@@ -121,12 +145,8 @@ export class ArticlesService {
   }
 
   async remove(id: number) {
-    const article = await this.findById(id);
+    const article = await this.articleRepository.findOneByOrFail({ id });
     await this.articleRepository.remove(article);
     return true;
-  }
-
-  private async findById(id: number) {
-    return await this.articleRepository.findOneByOrFail({ id });
   }
 }

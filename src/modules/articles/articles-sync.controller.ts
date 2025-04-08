@@ -43,8 +43,8 @@ export class ArticlesSyncController {
     res.status(207).json(response);
   }
 
-  @Patch(':id')
+  /*@Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateArticleDto: UpdateSyncArticleDto) {
     return this.articlesService.update(+id, updateArticleDto);
-  }
+  }*/
 }
