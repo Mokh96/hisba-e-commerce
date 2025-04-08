@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSyncArticleDto } from './dto/create-article.dto';
+import {  Injectable } from '@nestjs/common';
+import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -8,6 +8,9 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { ProductsService } from 'src/modules/products/products.service';
 import { QueryArticleDto } from './dto/query-article.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
+import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 
 @Injectable()
 export class ArticlesService {
@@ -18,13 +21,54 @@ export class ArticlesService {
     private productRepository: Repository<Product>,
     private dataSource: DataSource,
     private productsService: ProductsService,
+    private uploadManager: UploadManager,
   ) {}
 
-  async create(createArticleDto: CreateSyncArticleDto) {
-    const article = this.articleRepository.create(createArticleDto);
+  async create(
+    createArticleDto: CreateArticleDto,
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ): Promise<Article> {
+    let uploadedFiles: UploadFileType[] = [];
 
-    await this.saveArticle(article);
-    return article;
+    // Use a transaction to ensure data consistency
+    return this.articleRepository.manager.transaction(async (manager) => {
+      try {
+        // Step 1: Upload article image
+        uploadedFiles = await this.uploadManager.uploadFiles(files);
+
+        const product = await manager.findOneOrFail(Product, {
+          where: { id: createArticleDto.productId },
+          select: { id: true, maxPrice: true, minPrice: true },
+        });
+
+        // Step 2: Create the article entity
+        const article = this.articleRepository.create({
+          ...createArticleDto,
+          defaultImgPath: uploadedFiles[0]?.path || null,
+        });
+
+        // Step 3: Update product price range if necessary
+        const price = createArticleDto.price;
+
+        const shouldUpdateMax = price > product.maxPrice;
+        const shouldUpdateMin = price < product.minPrice || product.minPrice === null;
+
+        if (shouldUpdateMax || shouldUpdateMin) {
+          await manager.update(Product, product.id, {
+            maxPrice: shouldUpdateMax ? price : product.maxPrice,
+            minPrice: shouldUpdateMin ? price : product.minPrice,
+          });
+        }
+
+        // Step 4: Save the article and return it
+        return await manager.save(article);
+      } catch (error) {
+        await this.uploadManager.cleanupFiles(uploadedFiles);
+        throw error;
+      }
+    });
   }
 
   async createBulk(createSyncArticlesDto: CreateSyncArticleDto[]) {

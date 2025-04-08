@@ -16,10 +16,10 @@ import { validateBulk } from 'src/helpers/validation/validation';
 export class ArticlesSyncController {
   constructor(private readonly articlesService: ArticlesService) {}
 
-  @Post()
+ /* @Post()
   create(@Body() createSyncArticleDto: CreateSyncArticleDto) {
     return this.articlesService.create(createSyncArticleDto);
-  }
+  }*/
 
   @Post('/bulk')
   async createBulk(@Body(ParseArrayPipe) createSyncArticleDtoArray) {
