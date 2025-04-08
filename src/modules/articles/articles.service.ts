@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,8 @@ import { fromDtoToQuery } from 'src/helpers/function.global';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 
 @Injectable()
 export class ArticlesService {
@@ -71,25 +73,28 @@ export class ArticlesService {
     });
   }
 
-  async createBulk(createSyncArticlesDto: CreateSyncArticleDto[]) {
-    const articles = this.articleRepository.create(createSyncArticlesDto);
+  async createBulk(createSyncArticlesDto: CreateSyncArticleDto[], files: Express.Multer.File[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
 
-    const baseFailures: { syncId: number; error: unknown }[] = [];
-    const success: Article[] = [];
+    for (let i = 0; i < createSyncArticlesDto.length; i++) {
+      const articleImage = getFilesBySyncId(files, FileUploadEnum.Image, createSyncArticlesDto[i].syncId);
 
-    for (const article of articles) {
       try {
-        const savedArticle = await this.saveArticle(article);
-        success.push(savedArticle);
+        const article = await this.create(createSyncArticlesDto[i], { [FileUploadEnum.Image]: articleImage });
+        response.successes.push(article);
+        //response.successes.push({ id: article.id, syncId: article.syncId });
       } catch (error) {
-        baseFailures.push({
-          syncId: article.syncId,
-          error,
+        response.failures.push({
+          index: i,
+          syncId: createSyncArticlesDto[i].syncId,
+          errors: error,
         });
       }
     }
-
-    return { success, baseFailures };
+    return response;
   }
 
   async findAll(queryArticleDto: QueryArticleDto) {
@@ -119,25 +124,6 @@ export class ArticlesService {
     const article = await this.findById(id);
     await this.articleRepository.remove(article);
     return true;
-  }
-
-  private async saveArticle(article: Article) {
-    return await this.articleRepository.save(article);
-    /*if (!article.lots) return await this.articleRepository.save(article);
-
-    let product = await this.productRepository.findOneByOrFail({
-      id: article.productId,
-    });
-
-    product = this.productsService.maxMin(
-      product,
-      article.lots.map(({ price }) => price),
-    );
-
-    await this.dataSource.transaction(async (manger) => {
-      await manger.getRepository(Product).save(product);
-      await manger.getRepository(Article).save(article);
-    });*/
   }
 
   private async findById(id: number) {

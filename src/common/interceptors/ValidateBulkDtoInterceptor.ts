@@ -53,6 +53,7 @@ export class ValidateBulkDtoInterceptor<T extends object> implements NestInterce
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request: Request = context.switchToHttp().getRequest(); //request from express
     const body: T = request.body;
+    console.log('body', body);
 
     if (!Array.isArray(body) || !body.every((item) => typeof item === 'object')) {
       throw new BadRequestException('Expected request body to be an array of objects');
