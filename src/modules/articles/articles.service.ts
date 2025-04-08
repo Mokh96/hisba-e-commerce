@@ -100,16 +100,16 @@ export class ArticlesService {
   async findAll(queryArticleDto: QueryArticleDto) {
     const queryArticle = fromDtoToQuery(queryArticleDto);
 
-    const articles = await this.articleRepository.findBy(queryArticle);
-    return articles;
+    return await this.articleRepository.findBy(queryArticle);
   }
 
   async findOne(id: number) {
-    const article = await this.articleRepository.findOneOrFail({
+    return await this.articleRepository.findOneOrFail({
       where: { id: id },
-      relations: ['lots', 'gallery', 'optionValues'],
+      relations: {
+        optionValues: true,
+      },
     });
-    return article;
   }
 
   async update(id: number, updateArticleDto: UpdateSyncArticleDto) {
