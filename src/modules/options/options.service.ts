@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { Repository } from 'typeorm';
 import { CreateOptionDto, CreateOptionSyncDto } from './dto/create-option.dto';
 import { UpdateOptionDto } from './dto/update-option.dto';
 import { Option } from './entities/option.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class OptionsService {
@@ -25,14 +25,17 @@ export class OptionsService {
       failures: [],
     };
 
-    for (const brand of createOptionDto) {
+    for (const option of createOptionDto) {
       try {
-        const product = this.optionRepository.create(brand);
-        await this.optionRepository.save(product);
-        response.successes.push(product);
+        const newOption = this.optionRepository.create(option);
+        await this.optionRepository.save(newOption);
+        response.successes.push({
+          id: newOption.id,
+          syncId: newOption.syncId,
+        });
       } catch (err) {
         response.failures.push({
-          syncId: brand.syncId,
+          syncId: option.syncId,
           errors: [err.sqlMessage],
         });
       }
