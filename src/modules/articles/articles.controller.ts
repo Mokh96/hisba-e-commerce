@@ -47,7 +47,7 @@ export class ArticlesController {
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
     return this.articlesService.update(
-      +id,
+      id,
       updateArticleDto as UpdateSyncArticleDto,
     );
   }

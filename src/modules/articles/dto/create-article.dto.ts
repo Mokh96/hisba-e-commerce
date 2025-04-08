@@ -8,7 +8,6 @@ import {
   IsPositive,
   IsString,
   MaxLength,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -25,7 +24,8 @@ export class CreateArticleDto {
   @IsInt()
   syncId: number;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)
   label: string;
 
@@ -36,22 +36,24 @@ export class CreateArticleDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(ARTICLE_FIELD_LENGTHS.NOTE)
-  note: string;
-
-  @IsOptional()
-  @IsString()
   @MaxLength(ARTICLE_FIELD_LENGTHS.DESCRIPTION)
   description: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(ARTICLE_FIELD_LENGTHS.NOTE)
+  note: string;
+
   @Type(() => Number)
-  @Min(0)
+  @IsNotEmpty()
+  @IsPositive()
   @IsInt()
   price: number;
 
   @TransformStringToBoolean()
   @IsBoolean()
-  isActive: boolean;
+  @IsOptional()
+  isActive: boolean | undefined;
 
   @Type(() => Number)
   @IsPositive()
@@ -65,5 +67,4 @@ export class CreateArticleDto {
   optionValues: IdCommonDto[];
 }
 
-//TODO: find batter implementation , tray to remove redundant
 export class CreateSyncArticleDto extends IntersectionType(CreateArticleDto, SyncIdDto) {}
