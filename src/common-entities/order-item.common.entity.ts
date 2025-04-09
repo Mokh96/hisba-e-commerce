@@ -1,57 +1,20 @@
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
-import {
-  Column,
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { WithTimestamp } from 'src/common/entities/timestamp.entity';
+import { WithSyncId } from 'src/common/entities/sync.entity';
+import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
 
-export abstract class OrderItemCommon {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  code: string;
-
-  @Column()
-  ref: string;
-
+export class OrderItemCommon extends WithTimestamp(BaseEntity) {
   @Column({ ...defaultDecimal, default: 0 })
   quantity: number;
 
-  @Column({ nullable: true })
-  label: string;
-
-  @Column({ ...defaultDecimal, default: 0 })
-  discount: number;
-
-  @Column({ ...defaultDecimal, default: 0, name: 'discount_percentage' })
-  discountPercentage: number;
-
-  @Column({ ...defaultDecimal, default: 0, name: 'tva_percentage' })
-  tvaPercentage: number;
-
-  @Column({ ...defaultDecimal, name: 'unite_price_ht' })
-  unitePriceHt: number;
-
-  @Column({ name: 'is_out_stock', default: false })
-  isOutStock: boolean;
+  @Column({ length: ORDER_ITEM_FIELD_LENGTHS.NOTE, nullable: true })
+  note: string;
 
   @Column()
   offset: number;
 
-  @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
-  updatedAt: Date;
+  @Column({ nullable: true, length: ORDER_ITEM_FIELD_LENGTHS.REF })
+  ref: string;
 }
