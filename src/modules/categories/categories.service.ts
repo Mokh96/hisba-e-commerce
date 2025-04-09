@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category } from './entities/category.entity';
-import { Image } from 'src/types/types.global';
-import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { validateBulkInsert } from 'src/helpers/validation/global';
-import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
+import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
+import { validateBulkInsert } from 'src/helpers/validation/global';
+import { Image } from 'src/types/types.global';
+import { Repository } from 'typeorm';
+import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -36,7 +36,10 @@ export class CategoriesService {
       try {
         const newCategory = this.categoryRepository.create(category);
         await this.categoryRepository.save(newCategory);
-        response.successes.push(newCategory);
+        response.successes.push({
+          id: newCategory.id,
+          syncId: newCategory.syncId,
+        });
       } catch (err) {
         response.failures.push({
           syncId: category.syncId,

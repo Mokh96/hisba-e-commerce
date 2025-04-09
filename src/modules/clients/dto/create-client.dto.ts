@@ -25,12 +25,6 @@ export class CreateClientBaseDto extends ClientCommonDto {
   @IsOptional()
   @IsString()
   webPage: string;
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateShippingAddressDto)
-  shippingAddresses: CreateShippingAddressDto[];
 }
 
 export class CreateClientDto extends CreateClientBaseDto {
@@ -38,6 +32,12 @@ export class CreateClientDto extends CreateClientBaseDto {
   @IsDefined()
   @ValidateNested()
   user: CreateUserDto;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateShippingAddressDto)
+  shippingAddresses: CreateShippingAddressDto[];
 }
 
 export class CreateClientSyncDto extends IntersectionType(OmitType(CreateClientDto, ['shippingAddresses']), SyncIdDto) {

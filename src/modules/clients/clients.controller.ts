@@ -1,16 +1,19 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Role } from 'src/common/decorators';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Roles } from 'src/enums/roles.enum';
+import { UpdateClientMeDto } from 'src/modules/clients/dto/update-me.dto';
+import { UsersService } from 'src/modules/users/users.service';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { UpdateClientMeDto } from 'src/modules/clients/dto/update-me.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { UsersService } from 'src/modules/users/users.service';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService, private readonly usersService: UsersService) {}
 
   @Post()
+  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
   create(@Body() createClientDto: CreateClientDto) {
     return this.clientsService.create(createClientDto);
   }
@@ -32,11 +35,13 @@ export class ClientsController {
   }
 
   @Patch(':id')
+  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateClientDto: UpdateClientDto) {
     return this.clientsService.update(+id, updateClientDto);
   }
 
   @Delete(':id')
+  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.clientsService.remove(+id);
   }

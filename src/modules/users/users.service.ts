@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleVisibilityMap } from 'src/common/constants';
-import { Roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/common/enums/roles.enum';
 import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
 import { FindOptionsWhere, FindOptionsWhereProperty, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -121,5 +121,9 @@ export class UsersService {
     const password = await bcrypt.hash(newPassword, salt);
 
     return await this.usersRepository.update({ id: userId }, { password });
+  }
+
+  async exist() {
+    return await this.usersRepository.exist();
   }
 }
