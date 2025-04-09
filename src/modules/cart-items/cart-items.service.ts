@@ -26,7 +26,19 @@ export class CartItemsService {
 
   async findAll(userId: User['id']) {
     const clientId = await this.clientService.getClientIdByUserId(userId);
-    return this.cartItemRepository.find({ where: { clientId } });
+    return this.cartItemRepository.find({
+      where: { clientId },
+      relations: {
+        article: true,
+      },
+      select: {
+        article: {
+          id: true,
+          label: true,
+          defaultImgPath: true,
+        },
+      },
+    });
   }
 
   async findOne(id: number, userId: User['id']) {
@@ -34,13 +46,15 @@ export class CartItemsService {
     return this.cartItemRepository.findOne({
       where: { id, clientId },
       relations: {
-        article: true,//todo : check if all article attributes are needed
+        article: true, //todo : check if all article attributes are needed
       },
     });
   }
 
-  update(id: number, updateCartItemDto: UpdateCartItemDto) {
-    return `This action updates a #${id} cartItem`;
+  async update(id: number, updateCartItemDto: UpdateCartItemDto) {
+    const cartItem = await this.cartItemRepository.findOneByOrFail({ id });
+    this.cartItemRepository.merge(cartItem, updateCartItemDto);
+    return await this.cartItemRepository.save(cartItem);
   }
 
   remove(id: number) {
