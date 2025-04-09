@@ -23,8 +23,8 @@ export class CartItemsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.cartItemsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser('sub') userId: User['id']) {
+    return this.cartItemsService.findOne(id, userId);
   }
 
   @Patch(':id')

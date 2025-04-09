@@ -29,8 +29,14 @@ export class CartItemsService {
     return this.cartItemRepository.find({ where: { clientId } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cartItem`;
+  async findOne(id: number, userId: User['id']) {
+    const clientId = await this.clientService.getClientIdByUserId(userId);
+    return this.cartItemRepository.findOne({
+      where: { id, clientId },
+      relations: {
+        article: true,//todo : check if all article attributes are needed
+      },
+    });
   }
 
   update(id: number, updateCartItemDto: UpdateCartItemDto) {
