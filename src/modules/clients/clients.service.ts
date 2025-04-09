@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { Roles } from 'src/enums/roles.enum';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
@@ -91,13 +91,21 @@ export class ClientsService {
     return await this.clientRepository.update(id, client);
   }
 
-  async getClientByUserId<T extends Partial<Client>>(userId: number, options: FindOneOptions<Client> = {}): Promise<T> {
+  async getClientByUserId<T extends DeepPartial<Client>>(
+    userId: number,
+    options: FindOneOptions<Client> = {},
+  ): Promise<T> {
     const requiredOptions: FindOneOptions<Client> = {
       where: { user: { id: userId } },
-    };
+    } as const;
 
     const mergedOptions = merge({}, options, requiredOptions);
-    return await this.clientRepository.findOneOrFail(mergedOptions) as T;
+    return (await this.clientRepository.findOneOrFail(mergedOptions)) as T;
+  }
+
+  async getClientIdByUserId(userId: number) {
+    const client = await this.getClientByUserId<Pick<Client, 'id'>>(userId, { select: { id: true } });
+    return client.id;
   }
 
   async remove(id: number) {

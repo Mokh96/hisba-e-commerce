@@ -13,7 +13,7 @@ import { Client } from 'src/modules/clients/entities/client.entity';
 export class CartItemsService {
   constructor(
     @InjectRepository(CartItem)
-    private cartItemRepository: Repository<CartItem>,
+    private readonly cartItemRepository: Repository<CartItem>,
     private readonly clientService: ClientsService,
   ) {}
 
@@ -24,8 +24,9 @@ export class CartItemsService {
     return this.cartItemRepository.save(cartItem);
   }
 
-  findAll() {
-    return `This action returns all cartItems`;
+  async findAll(userId: User['id']) {
+    const clientId = await this.clientService.getClientIdByUserId(userId);
+    return this.cartItemRepository.find({ where: { clientId } });
   }
 
   findOne(id: number) {

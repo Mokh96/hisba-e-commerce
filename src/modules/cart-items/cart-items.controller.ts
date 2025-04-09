@@ -17,8 +17,9 @@ export class CartItemsController {
   }
 
   @Get()
-  findAll() {
-    return this.cartItemsService.findAll();
+  @Role(Roles.CLIENT)
+  findAll(@CurrentUser('sub') userId: User['id']) {
+    return this.cartItemsService.findAll(userId);
   }
 
   @Get(':id')
