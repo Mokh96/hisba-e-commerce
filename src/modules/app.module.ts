@@ -25,6 +25,7 @@ import { UsersModule } from './users/users.module';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FilesModule } from './files/files.module';
+import { SystemEntitiesModule } from './system-entities/system-entities.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { FilesModule } from './files/files.module';
     ShippingAddressesModule,
     AuthModule,
     FilesModule,
+    SystemEntitiesModule,
   ],
 
   providers: [
