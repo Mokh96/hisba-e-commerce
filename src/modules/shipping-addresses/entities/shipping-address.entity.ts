@@ -2,10 +2,11 @@ import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { SHIPPING_ADDRESSES_LENGTHS } from '../config/shipping-addresses.config';
 
 @Entity()
 export class ShippingAddress extends SyncEntityCommon {
-  @Column()
+  @Column({ length: SHIPPING_ADDRESSES_LENGTHS.ADDRESS })
   address: string;
 
   @Column({ name: 'client_id' })
