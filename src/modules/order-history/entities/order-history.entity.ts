@@ -1,7 +1,7 @@
-import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { OrderStatus } from 'src/modules/system-entities/entities/order-status.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class OrderHistory {

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Roles } from 'src/common/enums/roles.enum';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { Roles } from 'src/enums/roles.enum';
 import { Repository } from 'typeorm';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';

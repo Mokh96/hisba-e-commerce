@@ -2,7 +2,7 @@ import { ClientSync } from 'src/common-entities/client.common.entity';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
-import { Town } from 'src/modules/towns/entities/town.entity';
+import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 

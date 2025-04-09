@@ -1,9 +1,9 @@
 import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/common/enums/roles.enum';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
-import { Role } from 'src/modules/roles/entities/role.entity';
+import { Role } from 'src/modules/system-entities/entities/role.entity';
 import {
   BeforeInsert,
   Column,

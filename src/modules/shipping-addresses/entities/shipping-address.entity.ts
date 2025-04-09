@@ -1,6 +1,6 @@
 import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
-import { Town } from 'src/modules/towns/entities/town.entity';
+import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
