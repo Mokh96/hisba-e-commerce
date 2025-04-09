@@ -3,8 +3,8 @@ import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
-import { OrderStatus } from 'src/modules/order-status/entities/order-status.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
+import { OrderStatus } from 'src/modules/system-entities/entities/order-status.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 

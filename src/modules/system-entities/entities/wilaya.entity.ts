@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { Town } from 'src/modules/towns/entities/town.entity';
+import { Town } from './town.entity';
 
 @Entity()
 export class Wilaya {

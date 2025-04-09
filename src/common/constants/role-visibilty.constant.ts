@@ -1,4 +1,4 @@
-import { Roles } from '../../enums/roles.enum';
+import { Roles } from '../enums/roles.enum';
 
 export const RoleVisibilityMap: Record<Roles, Roles[]> = {
   [Roles.SUPERADMIN]: [Roles.ADMIN, Roles.COMPANY],
