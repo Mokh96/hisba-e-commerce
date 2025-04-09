@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
+import { merge } from 'lodash';
 
 @Injectable()
 export class ClientsService {
@@ -87,6 +89,15 @@ export class ClientsService {
     this.clientRepository.merge(client, updateClientDto);
 
     return await this.clientRepository.update(id, client);
+  }
+
+  async getClientByUserId<T extends Partial<Client>>(userId: number, options: FindOneOptions<Client> = {}): Promise<T> {
+    const requiredOptions: FindOneOptions<Client> = {
+      where: { user: { id: userId } },
+    };
+
+    const mergedOptions = merge({}, options, requiredOptions);
+    return await this.clientRepository.findOneOrFail(mergedOptions) as T;
   }
 
   async remove(id: number) {
