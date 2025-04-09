@@ -1,4 +1,3 @@
-import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
 import { OptionsValue } from 'src/modules/options-values/entities/options-value.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
@@ -15,8 +14,8 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.LABEL })
   label: string;
 
-  @Column({ name: 'img_path', nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
-  imgPath: string;
+  @Column({ name: 'default_img_path', nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
+  defaultImgPath: string;
 
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
   ref: string;
@@ -40,8 +39,6 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @OneToMany(() => ArticleGallery, (image: ArticleGallery) => image.article)
-  gallery: ArticleGallery[];
 
   @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, { cascade: ['insert'] })
   orderItems: OrderItem[];

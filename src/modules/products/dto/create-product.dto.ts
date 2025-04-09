@@ -17,15 +17,11 @@ import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
 export class CreateProductDto {
-  @IsString()
-  @IsNotEmpty() //its IsNotEmpty because related image is required
-  _uid: string | undefined;
-
-  /*  @Type(() => Number)
-    @IsOptional()
-    @IsPositive()
-    @IsInt()
-    syncId: number | undefined;*/
+  @Type(() => Number)
+  @IsNotEmpty()
+  @IsPositive()
+  @IsInt()
+  syncId: number;
 
   @IsString()
   @IsOptional()
@@ -119,12 +115,6 @@ export class CreateSyncArticleDtoArray extends IntersectionType(
 }*/
 
 export class CreateSyncProductDto extends CreateProductDto {
-  @Type(() => Number) //todo : use reusable dto
-  @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
-  syncId: number;
-
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

@@ -12,7 +12,7 @@ import { MAX_FILES_PER_FOLDER, UPLOAD_ROOT_DIR } from '../constant/upload.consta
  * Supports automatic file organization into folders and thumbnail generation.
  */
 @Injectable()
-export class UploadManager3 implements OnModuleInit {
+export class UploadManager implements OnModuleInit {
   /**
    * Base directory for all uploads managed by this instance
    */
@@ -20,12 +20,13 @@ export class UploadManager3 implements OnModuleInit {
   /**
    * Type of files being managed (e.g., public, private)
    */
-  private readonly fileType: FileTypesEnum;
+  //private readonly fileType: FileTypesEnum;
   /**
    * Additional subdirectories for organizing uploads
    * Example: ['users', 'admins'] would create a subdirectory 'users/admins' for uploads
    */
-  private readonly subDir: string[];
+
+  //private readonly subDir: string[];
 
   /**
    * Creates a new upload manager instance
@@ -35,12 +36,23 @@ export class UploadManager3 implements OnModuleInit {
    * @param thumbnailManager - Optional service for generating thumbnails
    */
   constructor(
-    fileType: FileTypesEnum,
-    subDir: string[],
+    /**
+     * Base directory for all uploads managed by this instance
+     */
+    private readonly fileType: FileTypesEnum,
+    /**
+     * Additional subdirectories for organizing uploads
+     * Example: ['users', 'admins'] would create a subdirectory 'users/admins' for uploads
+     */
+    private readonly subDir: string[],
+    /**
+     * Optional service for generating thumbnails
+     * @see ThumbnailManager
+     * */
     private readonly thumbnailManager?: ThumbnailManager, //inject thumbnail manager
   ) {
-    this.fileType = fileType;
-    this.subDir = subDir;
+    /* this.fileType = fileType;
+     this.subDir = subDir;*/
   }
 
   /**
@@ -61,7 +73,7 @@ export class UploadManager3 implements OnModuleInit {
    * @param subDir
    * @returns Array of metadata for all successfully uploaded files
    */
-  protected async uploadFiles(
+  public async uploadFiles(
     files: {
       [fieldName: string]: Express.Multer.File[];
     },
@@ -116,7 +128,7 @@ export class UploadManager3 implements OnModuleInit {
    *
    * @param uploadedFiles - Array of file metadata for files to be deleted
    */
-  protected async cleanupFiles(uploadedFiles: UploadFileType[]) {
+  public async cleanupFiles(uploadedFiles: UploadFileType[]) {
     for (const file of uploadedFiles) {
       // Delete the original file
       await this.cleanupFile(file.fullPath);
@@ -140,7 +152,7 @@ export class UploadManager3 implements OnModuleInit {
     }
   }
 
-  protected async removeFile(fullPath: string) {
+  public async removeFile(fullPath: string) {
     await this.cleanupFile(UPLOAD_ROOT_DIR + '/' + fullPath);
   }
 

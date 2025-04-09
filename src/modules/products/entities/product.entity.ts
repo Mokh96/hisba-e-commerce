@@ -2,13 +2,13 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { Brand } from 'src/modules/brands/entities/brand.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Family } from 'src/modules/families/entities/family.entity';
-import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 
 
 @Entity()
@@ -16,8 +16,8 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.CODE })
   code: string;
 
-  @Column({ name: 'img_path', nullable: true, length: PRODUCT_FIELD_LENGTHS.IMG_PATH })
-  imgPath: string;
+  @Column({ name: 'default_img_path', nullable: true, length: PRODUCT_FIELD_LENGTHS.IMG_PATH })
+  defaultImgPath: string;
 
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.REF })
   ref: string;
@@ -64,10 +64,12 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @OneToMany(() => Article, (article: Article) => article.product, { cascade: ['insert'] })
   articles: Article[];
 
+  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
+  gallery: ProductGallery[];
+
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
-
     nullable: true,
   })
   @JoinColumn({ name: 'brand_id' })

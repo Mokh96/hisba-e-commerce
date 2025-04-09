@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { FileValidationRules } from 'src/modules/files/types/file-validation.type';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
+import { SyncedEntity } from 'src/common/types/global.type';
 
 @Injectable()
 export class DynamicFileValidationInterceptor implements NestInterceptor {
   constructor(private readonly rules: ValidationRules) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request: Request = context.switchToHttp().getRequest<Request>();
     const files = request.files as Express.Multer.File[];
     const body = request.body;
 
@@ -28,14 +29,19 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
     return next.handle();
   }
 
-  private validateEntity(entity: any, files: Express.Multer.File[], rules: ValidationRules, path: string) {
-    if (!entity._uid) {
-      throw new BadRequestException(`Missing _uid in ${path}`);
+  private validateEntity<T extends SyncedEntity>(
+    entity: T,
+    files: Express.Multer.File[],
+    rules: ValidationRules,
+    path: string,
+  ) {
+    if (!entity.syncId) {
+      throw new BadRequestException(`Missing syncId in ${path}`);
     }
 
     this.validateEntityFiles(entity, files, rules.files, path);
 
-    // Validate sub-items recursively
+    // Validate subItems recursively
     if (rules.subItems) {
       Object.keys(rules.subItems).forEach((subItemKey) => {
         if (entity[subItemKey]) {
@@ -45,7 +51,7 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
             this.validateEntity(
               subEntity,
               files,
-              rules.subItems![subItemKey] as any,
+              rules.subItems![subItemKey] as any, //todo remove any
               `${path}.${subItemKey}[${index}]`,
             );
           });
@@ -55,14 +61,14 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
   }
 
   private validateEntityFiles(
-    entity: any,
+    entity: SyncedEntity,
     files: Express.Multer.File[],
     fileRules: Record<string, FileValidationRules>,
     entityPath: string,
   ) {
     Object.keys(fileRules).forEach((fileType) => {
       const rule = fileRules[fileType];
-      const matchingFiles = this.getFilesByType(files, fileType, entity._uid);
+      const matchingFiles = this.getFilesByType(files, fileType, entity.syncId);
 
       if (rule.required && matchingFiles.length === 0) {
         throw new BadRequestException(`${fileType} is required for ${entityPath}`);
@@ -87,12 +93,23 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
       }
 
       if (file.size > rule.maxSize) {
-        throw new BadRequestException(`${context}: File size exceeds limit (${rule.maxSize / 1024 / 1024} MB).`);
+        throw new BadRequestException(`${context}: File size exceeds limit (${this.formatFileSize(rule.maxSize)}).`);;
       }
     });
   }
 
-  private getFilesByType(files: Express.Multer.File[], type: string, uid: string) {
-    return files.filter((file) => file.fieldname === `${type}-${uid}`);
+  private getFilesByType(files: Express.Multer.File[], type: string, syncId: SyncedEntity['syncId']) {
+    return files.filter((file) => file.fieldname === `${type}-${syncId}`);
+  }
+
+  private formatFileSize(bytes: number) {
+    const units = ['B', 'kB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 B';
+
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const size = bytes / Math.pow(1024, i);
+    const precision = size < 10 ? 2 : size < 100 ? 1 : 0;
+
+    return `${size.toFixed(precision)} ${units[i]}`;
   }
 }

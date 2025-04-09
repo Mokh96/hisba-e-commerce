@@ -15,34 +15,34 @@ import { UpdateProductGalleryDto } from './dto/update-product-gallery.dto';
 @Controller('product-galleries')
 export class ProductGalleriesController {
   constructor(
-    private readonly productGalleriesService: ProductGalleriesService,
+    private readonly articleGalleriesService: ProductGalleriesService,
   ) {}
 
   @Post()
-  create(@Body() createProductGalleryDto: CreateProductGalleryDto) {
-    return this.productGalleriesService.create(createProductGalleryDto);
+  create(@Body() createArticleGalleryDto: CreateProductGalleryDto) {
+    return this.articleGalleriesService.create(createArticleGalleryDto);
   }
 
   @Get()
   findAll() {
-    return this.productGalleriesService.findAll();
+    return this.articleGalleriesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productGalleriesService.findOne(+id);
+    return this.articleGalleriesService.findOne(+id);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateProductGalleryDto: UpdateProductGalleryDto,
+    @Body() updateArticleGalleryDto: UpdateProductGalleryDto,
   ) {
-    return this.productGalleriesService.update(+id, updateProductGalleryDto);
+    return this.articleGalleriesService.update(+id, updateArticleGalleryDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productGalleriesService.remove(+id);
+    return this.articleGalleriesService.remove(+id);
   }
 }

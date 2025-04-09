@@ -1,6 +1,10 @@
 import { CreateProductDto } from 'src/modules/products/dto/create-product.dto';
-import { ArticleGallery } from 'src/modules/article-galleries/entities/article-gallery.entity';
+import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
+import { Product } from 'src/modules/products/entities/product.entity';
 
-export type CreateProductWithImagesDto = CreateProductDto & { imgPath: string } & {
-  articles: CreateProductDto['articles'] & { imgPath: string; gallery: Pick<ArticleGallery, 'path'>[] }[];
-}
+export type CreateProductWithImagesDto = CreateProductDto &
+  Pick<Product, 'defaultImgPath'> & {
+    gallery: Pick<ProductGallery, 'path'>[];
+  } & {
+    articles: CreateProductDto['articles'] & { imgPath: string }[];
+  };

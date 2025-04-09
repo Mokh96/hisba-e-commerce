@@ -15,24 +15,24 @@ import { BadRequestException } from '@nestjs/common';
  *
  * @example
  * // Form Data:
- * // [0][_uid]: 123
+ * // [0][syncId]: 123
  * // [0][name]: "Product A"
  * // [0][article][0][title]: "Article 1"
- * // [1][_uid]: 456
+ * // [1][syncId]: 456
  * // [1][name]: "Product B"
  *
  * const result = parseFormDataToArray(req.body);
  * // Output:
  * [
  *   {
- *     _uid: 123,
+ *     syncId: 123,
  *     name: "Product A",
  *     article: [
  *       { title: "Article 1" }
  *     ]
  *   },
  *   {
- *     _uid: 456,
+ *     syncId: 456,
  *     name: "Product B"
  *   }
  * ]

@@ -30,7 +30,7 @@ export class ProductsController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor(), productValidationRulesInterceptor)
   async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
-    return await this.productsService.createProduct(createProductDto, files);
+    return await this.productsService.create(createProductDto, files);
   }
 
   @Patch(':id')

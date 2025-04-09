@@ -17,20 +17,20 @@ import { parseFormDataToArray } from 'src/common/utils/form-data-parser.util';
  *
  * Example:
  * - Input (raw form data):
- *    - [0][_uid]: '123'
+ *    - [0][syncId]: '123'
  *    - [0][name]: 'Product A'
- *    - [1][_uid]: '456'
+ *    - [1][syncId]: '456'
  *    - [1][name]: 'Product B'
  *
  * - Output (parsed JSON):
  *    ```json
  *    [
  *      {
- *        "_uid": "123",
+ *        "syncId": "123",
  *        "name": "Product A"
  *      },
  *      {
- *        "_uid": "456",
+ *        "syncId": "456",
  *        "name": "Product B"
  *      }
  *    ]
@@ -41,6 +41,7 @@ import { parseFormDataToArray } from 'src/common/utils/form-data-parser.util';
  */
 @Injectable()
 export class ParseFormDataArrayInterceptor implements NestInterceptor {
+
   /**
    * Intercepts the request and transforms the body to a structured array of objects.
    *

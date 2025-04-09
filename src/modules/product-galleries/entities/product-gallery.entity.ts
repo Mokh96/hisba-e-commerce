@@ -1,13 +1,18 @@
 import { GalleryCommon } from 'src/common-entities/gallery.common.entity';
+import { Article } from 'src/modules/articles/entities/article.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { Entity, ManyToOne } from 'typeorm';
 
-/*@Entity()*/
+@Entity()
 export class ProductGallery extends GalleryCommon {
- /* @ManyToOne(() => Product, (product: Product) => product.gallery, {
-    onUpdate: 'CASCADE',
+  @Column({ name: 'product_id' })
+  productId: number;
+
+  @ManyToOne(() => Product, (product: Product) => product.gallery, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     nullable: false,
   })
-  product: Product;*/
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 }
