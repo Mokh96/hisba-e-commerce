@@ -43,7 +43,7 @@ export class CartItemsService {
 
   async findOne(id: number, userId: User['id']) {
     const clientId = await this.clientService.getClientIdByUserId(userId);
-    return this.cartItemRepository.findOne({
+    return this.cartItemRepository.findOneOrFail({
       where: { id, clientId },
       relations: {
         article: true, //todo : check if all article attributes are needed
@@ -57,7 +57,8 @@ export class CartItemsService {
     return await this.cartItemRepository.save(cartItem);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cartItem`;
+  async remove(id: number) {
+    const product = await this.cartItemRepository.findOneByOrFail({ id });
+    return this.cartItemRepository.remove(product);
   }
 }
