@@ -6,9 +6,18 @@ import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynami
 const createArticleValidationRules: ValidationRules = {
   entity: 'articles', //main entity
   files: {
+    [FileUploadEnum.Image]: { ...imageUploadRules, required: true, minCount: 1 },
+  },
+};
+
+const updateArticleValidationRules: ValidationRules = {
+  entity: 'articles', //main entity
+  files: {
     [FileUploadEnum.Image]: imageUploadRules,
   },
 };
 
-const articleValidationRulesInterceptor = new DynamicFileValidationInterceptor(createArticleValidationRules);
-export { articleValidationRulesInterceptor };
+const createArticlesValidation = new DynamicFileValidationInterceptor(createArticleValidationRules);
+const updateArticlesValidation = new DynamicFileValidationInterceptor(updateArticleValidationRules);
+
+export { createArticlesValidation, updateArticlesValidation };

@@ -15,7 +15,7 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   label: string;
 
   @Column({ name: 'default_img_path', nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
-  defaultImgPath: string;
+  defaultImgPath: string;//todo rename to image path
 
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
   ref: string;

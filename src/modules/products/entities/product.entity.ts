@@ -84,12 +84,18 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   category: Category;
 
   @ManyToOne(() => Family, (family: Family) => family.products, {
+    cascade: true,
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'family_id' })
+  @JoinColumn({ name: 'family_id'  })
   family: Family;
 /*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
   gallery: ProductGallery[];*/
+}
+
+
+class Image {
+  img: string[];
 }
