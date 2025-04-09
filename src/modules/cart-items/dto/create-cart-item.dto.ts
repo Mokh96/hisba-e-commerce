@@ -20,9 +20,4 @@ export class CreateCartItemDto {
   @IsString()
   @Max(ORDER_ITEM_FIELD_LENGTHS.NOTE)
   note: string;
-
-  @IsOptional()
-  @IsString()
-  @Max(ORDER_ITEM_FIELD_LENGTHS.REF)
-  ref: string;
 }

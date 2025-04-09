@@ -10,11 +10,8 @@ export class OrderItemCommon extends WithTimestamp(BaseEntity) {
   quantity: number;
 
   @Column({ length: ORDER_ITEM_FIELD_LENGTHS.NOTE, nullable: true })
-  note: string;
+  note: string | null;
 
   @Column()
   offset: number;
-
-  @Column({ nullable: true, length: ORDER_ITEM_FIELD_LENGTHS.REF })
-  ref: string;
 }
