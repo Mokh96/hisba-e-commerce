@@ -6,6 +6,7 @@ import { ensureDirectoryExists, getPath } from '../utils/file-upload.util';
 import { ThumbnailManager } from './thumbnail-manager';
 import { FileTypesEnum } from '../enums/file-types.enum';
 import { MAX_FILES_PER_FOLDER, UPLOAD_ROOT_DIR } from '../constant/upload.constant';
+import * as process from 'node:process';
 
 /**
  * Service for managing file uploads including storage, organization, and cleanup.
@@ -148,6 +149,7 @@ export class UploadManager implements OnModuleInit {
     try {
       await fs.unlink(fullPath);
     } catch (error) {
+      if (process.env.NODE_ENV === 'production') return;//todo : use config module to access the env values
       console.warn(`Failed to delete file: ${fullPath}`, error);
     }
   }

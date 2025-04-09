@@ -11,11 +11,11 @@ import { BaseEntity } from 'src/common/entities/base-entity.entity';
 
 @Entity()
 export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
-  @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.LABEL })
+  @Column({length: ARTICLE_FIELD_LENGTHS.LABEL })
   label: string;
 
   @Column({ name: 'default_img_path', nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
-  defaultImgPath: string;
+  defaultImgPath: string;//todo rename to image path
 
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
   ref: string;
@@ -35,10 +35,9 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ name: 'product_id' })
   productId: number;
 
-  @ManyToOne(() => Product, (product: Product) => product.articles, { onDelete: 'CASCADE'  })
+  @ManyToOne(() => Product, (product: Product) => product.articles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'product_id' })
   product: Product;
-
 
   @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.article, { cascade: ['insert'] })
   orderItems: OrderItem[];

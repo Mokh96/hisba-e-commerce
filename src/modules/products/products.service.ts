@@ -160,7 +160,7 @@ export class ProductsService {
       await this.productRepository.save(updatedProduct);
 
       if (newPath && initialImgPath) {
-        await this.uploadManager.removeFile(initialImgPath);
+        await this.uploadManager.removeFile(initialImgPath);//remove the old image
       }
       return updatedProduct;
     } catch (error) {

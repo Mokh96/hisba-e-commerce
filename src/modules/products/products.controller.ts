@@ -20,7 +20,7 @@ import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import {
   productValidationRulesInterceptor,
-} from 'src/modules/products/config/file-validation-config';
+} from 'src/modules/products/config/file-validation.config';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 
 @Controller('products')

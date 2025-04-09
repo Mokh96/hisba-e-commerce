@@ -5,11 +5,9 @@ import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto
 import { Response } from 'express';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.pipe';
-import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation-config';
+import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation.config';
 import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
-import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulkDtoInterceptor';
-
 
 @Controller('products/sync')
 export class ProductsSyncController {
