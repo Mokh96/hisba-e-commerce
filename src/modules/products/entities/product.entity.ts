@@ -2,7 +2,7 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { Brand } from 'src/modules/brands/entities/brand.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Family } from 'src/modules/families/entities/family.entity';
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
@@ -34,10 +34,10 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.DESCRIPTION })
   description: string;
 
-  @Column({ ...defaultDecimal, name: 'min_price', default: 0 })
+  @Column({ ...decimalColumnOptions, name: 'min_price', default: 0 })
   minPrice: number;
 
-  @Column({ ...defaultDecimal, name: 'max_price', default: 0 })
+  @Column({ ...decimalColumnOptions, name: 'max_price', default: 0 })
   maxPrice: number;
 
   @Column({ name: 'is_out_stock', default: false })

@@ -3,7 +3,7 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { OrderItem } from '../../order-items/entities/order-item.entity';
 import { CartItem } from '../../cart-items/entities/cart-item.entity';
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
@@ -17,7 +17,7 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ name: 'default_img_path', nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
   defaultImgPath: string;//todo rename to image path
 
-  @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.IMG_PATH })
+  @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.REF })
   ref: string;
 
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.NOTE })
@@ -26,7 +26,7 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.DESCRIPTION })
   description: string;
 
-  @Column({ ...defaultDecimal, default: 0 })
+  @Column({ ...decimalColumnOptions, default: 0 })
   price: number;
 
   @Column({ name: 'is_active', default: true })

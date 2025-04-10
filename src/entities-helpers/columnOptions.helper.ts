@@ -1,6 +1,6 @@
 import { ColumnOptions } from 'typeorm';
 
-export const defaultDecimal: ColumnOptions = {
+export const decimalColumnOptions: ColumnOptions = {
   type: 'decimal',
   precision: 18,
   scale: 2,

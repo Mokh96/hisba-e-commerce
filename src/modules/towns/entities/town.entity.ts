@@ -23,4 +23,7 @@ export class Town {
 
   @OneToOne(() => Client, (client: Client) => client.town)
   clientSync: Client;
+
+  @OneToMany(() => ShippingAddress, (shippingAddress: ShippingAddress) => shippingAddress.town)
+  orders: ShippingAddress[];
 }

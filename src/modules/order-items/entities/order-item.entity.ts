@@ -1,6 +1,6 @@
 import { OrderItemCommon } from 'src/common-entities/order-item.common.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Article } from '../../articles/entities/article.entity';
 import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
@@ -16,16 +16,16 @@ export class OrderItem extends OrderItemCommon {
   @Column({ length: ORDER_ITEM_FIELD_LENGTHS.ARTICLE_LABEL })
   articleLabel: string | null;
 
-  @Column({ ...defaultDecimal, default: 0 })
+  @Column({ ...decimalColumnOptions, default: 0 })
   discount: number;
 
   @Column({ name: 'discount_percentage', default: 0, type: 'double' })
   discountPercentage: number;
 
-  @Column({ ...defaultDecimal, name: 'unite_price_ht' })
+  @Column({ ...decimalColumnOptions, name: 'unite_price_ht' })
   unitePriceHt: number;
 
-  @Column({ ...defaultDecimal, name: 'unite_price_ttc' })
+  @Column({ ...decimalColumnOptions, name: 'unite_price_ttc' })
   unitePriceTtc: number;
 
   @Column({ name: 'is_out_stock', default: false })
