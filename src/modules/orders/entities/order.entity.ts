@@ -77,8 +77,8 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ name: 'client_id' })
   clientId: number;
 
-  @Column({ name: 'town_id' })
-  townId: number;
+/*  @Column({ name: 'town_id' })
+  townId: number;*/
 
   @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order)
   orderItems: OrderItem[];

@@ -7,7 +7,9 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  Max,
   MaxLength,
+  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -49,6 +51,13 @@ export class CreateArticleDto {
   @IsPositive()
   @IsInt()
   price: number;
+
+  @Type(() => Number)
+  @IsNotEmpty()
+  @IsInt()
+  @Max(100)
+  @Min(0)
+  tvaPercentage: number;
 
   @TransformStringToBoolean()
   @IsBoolean()

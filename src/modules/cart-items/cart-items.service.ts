@@ -18,9 +18,9 @@ export class CartItemsService {
   ) {}
 
   async create(createCartItemDto: CreateCartItemDto, userId: User['id']) {
-    const client = await this.clientService.getClientByUserId<Pick<Client, 'id'>>(userId, { select: { id: true } });
+    const clientId = await this.clientService.getClientIdByUserId(userId);
 
-    const cartItem = this.cartItemRepository.create({ ...createCartItemDto, clientId: client.id });
+    const cartItem = this.cartItemRepository.create({ ...createCartItemDto, clientId });
     return this.cartItemRepository.save(cartItem);
   }
 

@@ -23,6 +23,9 @@ export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.NOTE })
   note: string;
 
+  @Column({ name: 'tva_percentage', default: 0 })
+  tvaPercentage : number
+
   @Column({ nullable: true, length: ARTICLE_FIELD_LENGTHS.DESCRIPTION })
   description: string;
 
