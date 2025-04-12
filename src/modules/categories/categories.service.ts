@@ -1,11 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
+import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { validateBulkInsert } from 'src/helpers/validation/global';
 import { Image } from 'src/types/types.global';
 import { Repository } from 'typeorm';
+import { BasePaginationDto } from './../../common/dtos/base-pagination.dto';
+import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
@@ -82,6 +84,21 @@ export class CategoriesService {
   async findAll() {
     const categories = await this.categoryRepository.find();
     return categories;
+  }
+
+  async findMany(filterDto: CategoryFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.categoryRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   async findOne(id: number) {
