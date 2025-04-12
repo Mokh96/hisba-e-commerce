@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { Role } from 'src/common/decorators';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { Roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/common/enums/roles.enum';
 import { UpdateClientMeDto } from 'src/modules/clients/dto/update-me.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { ClientsService } from './clients.service';
