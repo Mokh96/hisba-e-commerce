@@ -8,6 +8,9 @@ export class CartItem extends OrderItemCommon {
   @Column({ name: 'article_id' , type: 'int' })
   articleId: number;
 
+  @Column({ name: 'client_id' , type: 'int' })
+  clientId: number;
+
   @ManyToOne(() => Article, (article: Article) => article.cartItems, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
@@ -15,9 +18,6 @@ export class CartItem extends OrderItemCommon {
   })
   @JoinColumn({ name: 'article_id' })
   article: Article;
-
-  @Column({ name: 'client_id' , type: 'int' })
-  clientId: number;
 
   @ManyToOne(() => Client, (client: Client) => client.cartItems, {
     onUpdate: 'CASCADE',
