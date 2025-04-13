@@ -4,13 +4,13 @@ import { DEFAULT_PAGINATION_SETTINGS } from '../constants';
 export class BasePaginationDto {
   @IsOptional()
   @IsNumber()
-  @Min(0)
+  @Min(DEFAULT_PAGINATION_SETTINGS.minOffset)
   offset?: number = DEFAULT_PAGINATION_SETTINGS.offset;
 
   @IsOptional()
   @IsNumber()
   @IsPositive()
-  @Max(100)
+  @Max(DEFAULT_PAGINATION_SETTINGS.maxLimit)
   limit?: number = DEFAULT_PAGINATION_SETTINGS.limit;
 
   @IsOptional()
