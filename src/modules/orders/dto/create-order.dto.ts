@@ -18,6 +18,7 @@ import { Type } from 'class-transformer';
 import { CreateOrderItemDto } from 'src/modules/order-items/dto/create-order-item.dto';
 import { OneOfFields } from 'src/common/decorators/validators/one-of-fields.decorator';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
 
 @OneOfFields(['cartItemsIds', 'orderItems'], {
   message: 'You must provide at least one of cartItemsIds or orderItems.',
@@ -47,20 +48,18 @@ export class CreateOrderDto {
 
   @IsInt()
   @IsPositive()
-  statusId: number;
+  statusId: OrderStatus;
 
-  //@ValidateIf((o) => !o.orderItems || o.orderItems.length === 0)
+  @ValidateIf((o) => o.orderItems?.length === 0 && o.cartItemsIds?.length > 0)
   @IsArray()
   @IsInt({ each: true })
   @ArrayMinSize(1)
-  cartItemsIds?: number[];
+  cartItemsIds?: CartItem['id'][];
 
-  //@ValidateIf((o) => !o.cartItemsIds || o.cartItemsIds.length === 0)
+  @ValidateIf((o) => o.cartItemsIds?.length === 0 && o.orderItems?.length > 0)
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)
   @ArrayMinSize(1)
   orderItems?: CreateOrderItemDto[];
 }
-
-export class cartItemsIdsDto  {}
