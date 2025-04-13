@@ -14,6 +14,7 @@ import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-meth
 import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { OrderStatus } from 'src/common/enums/order-status.enum';
+import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 
 @Injectable()
 export class OrdersService {
@@ -25,6 +26,7 @@ export class OrdersService {
     @InjectRepository(PaymentMethod)
     private readonly paymentMethodRepository: Repository<PaymentMethod>,
     private readonly clientService: ClientsService,
+    private readonly cartItemsService: CartItemsService,
     private dataSource: DataSource,
   ) {}
 
@@ -73,7 +75,7 @@ export class OrdersService {
       const discountPercentage = 0; //Future implementation
 
       //Step 3: Create order items from both cartItems and directly provided orderItems
-      const cartItems = await this.getCartItems(createOrderDto.cartItemsIds, manager);
+      const cartItems = await this.cartItemsService.getCartItems(createOrderDto.cartItemsIds, manager);
 
       for (const cartAndOrderItem of [...cartItems, ...(createOrderDto.orderItems || [])]) {
         const article = await this.articleRepository.findOneByOrFail({ id: cartAndOrderItem.articleId });
@@ -144,34 +146,6 @@ export class OrdersService {
         orderHistory,
       };
     });
-  }
-
-  /**
-   * Retrieves a list of cart items by their IDs using the provided transaction manager.
-   *
-   * @param cartItemsIds - An array of cart item IDs to retrieve.
-   * @param manager - The transactional EntityManager instance.
-   * @returns An array of found CartItem entities.
-   *
-   * @throws {BadRequestException} If one or more cart items are not found.
-   */
-  private async getCartItems(cartItemsIds: CartItem['id'][], manager: EntityManager): Promise<CartItem[]> {
-    if (!cartItemsIds?.length) {
-      return [];
-    }
-
-    const cartItems = await manager.find(CartItem, {
-      where: { id: In(cartItemsIds) },
-    });
-
-    const foundIds = new Set(cartItems.map((item) => item.id));
-    const missingIds = cartItemsIds.filter((id) => !foundIds.has(id));
-
-    if (missingIds.length > 0) {
-      throw new BadRequestException(`Cart items not found: ${missingIds.join(', ')}`);
-    }
-
-    return cartItems;
   }
 
   remove(id: number) {

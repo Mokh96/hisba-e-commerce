@@ -6,9 +6,10 @@ import { Order } from './entities/order.entity';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { ClientsModule } from 'src/modules/clients/clients.module';
+import { CartItemsModule } from 'src/modules/cart-items/cart-items.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Article, PaymentMethod]), ClientsModule],
+  imports: [TypeOrmModule.forFeature([Order, Article, PaymentMethod]), ClientsModule , CartItemsModule],
   controllers: [OrdersController],
   providers: [OrdersService],
 })
