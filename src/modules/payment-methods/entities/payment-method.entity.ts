@@ -1,9 +1,9 @@
-import { LabelCommon } from 'src/common-entities/label.common.entity';
+import { LabelSync } from 'src/common-entities/label.common.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
-export class PaymentMethod extends LabelCommon {
+export class PaymentMethod extends LabelSync {
   @Column({ name: 'is_stamp', default: false })
   isStamp: boolean;
 

@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { Wilaya } from 'src/modules/wilayas/entities/wilaya.entity';
-import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
+import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Wilaya } from './wilaya.entity';
 
 @Entity()
 export class Town {

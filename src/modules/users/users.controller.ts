@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Role } from 'src/common/decorators/roles.decorator';
+import { Roles } from 'src/common/enums/roles.enum';
 import { RoleHierarchyGuard } from 'src/common/guards';
-import { Roles } from 'src/enums/roles.enum';
 import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';

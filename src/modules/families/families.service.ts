@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
+import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
+import { validateBulkInsert } from 'src/helpers/validation/global';
+import { Image } from 'src/types/types.global';
+import { Repository } from 'typeorm';
 import { CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Family } from './entities/family.entity';
-import { Image } from 'src/types/types.global';
-import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { validateBulkInsert } from 'src/helpers/validation/global';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 @Injectable()
 export class FamiliesService {
@@ -36,7 +36,10 @@ export class FamiliesService {
       try {
         const newFamily = this.familyRepository.create(family);
         await this.familyRepository.save(newFamily);
-        response.successes.push(newFamily);
+        response.successes.push({
+          id: newFamily.id,
+          syncId: newFamily.syncId,
+        });
       } catch (err) {
         response.failures.push({
           syncId: family.syncId,
