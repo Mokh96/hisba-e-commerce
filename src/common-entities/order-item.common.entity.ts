@@ -6,7 +6,7 @@ import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
 
 export class OrderItemCommon extends WithTimestamp(BaseEntity) {
-  @Column({ ...decimalColumnOptions, default: 0 })
+  @Column({  default: 0 , type: 'int' })
   quantity: number;
 
   @Column({ length: ORDER_ITEM_FIELD_LENGTHS.NOTE, nullable: true })

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from 'class-validator';
 import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
 
 export class CreateCartItemDto {
@@ -18,6 +18,6 @@ export class CreateCartItemDto {
 
   @IsOptional()
   @IsString()
-  @Max(ORDER_ITEM_FIELD_LENGTHS.NOTE)
+  @MaxLength(ORDER_ITEM_FIELD_LENGTHS.NOTE)
   note: string;
 }

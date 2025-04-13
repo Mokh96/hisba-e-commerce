@@ -13,6 +13,7 @@ import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
+import { OrderStatus } from 'src/common/enums/order-status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -46,11 +47,19 @@ export class OrdersService {
         note: createOrderDto.note,
         clientFirstName: client.firstName,
         clientLastName: client.lastName,
+        clientPhone: client.phone,
+        clientMobile: client.mobile,
+        clientFax: client.fax,
+        deliveryTownId: createOrderDto.deliveryTownId,
         deliveryAddress: createOrderDto.deliveryAddress || client.address,
         ref: createOrderDto.ref,
         clientId: client.id,
         paymentMethodId: paymentMethod.id,
-        statusId: 1, //temp status
+        amountHt: 0, //temp usage
+        netAmountTtc: 0, //temp usage
+        netToPay: 0, //temp usage
+        totalTva: 0, //temp usage
+        statusId: OrderStatus.NEW, //temp status
       });
 
       let productTotalHt = 0;
@@ -60,10 +69,10 @@ export class OrdersService {
       const discountPercentage = 0; //temp usage
 
       for (const cartItemId of createOrderDto.cartItemsIds) {
-        const article = await this.articleRepository.findOneByOrFail({ id: cartItemId });
-        const cartItem = await manager.findOneBy(CartItem, { id: cartItemId });
+        const cartItem = await manager.findOneOrFail(CartItem, { where: { id: cartItemId } });
+        const article = await this.articleRepository.findOneByOrFail({ id: cartItem.articleId });
 
-        const product: Pick<Product, 'isOutStock'> = await manager.findOne(Product, {
+        const product: Pick<Product, 'isOutStock'> = await manager.findOneOrFail(Product, {
           where: { id: article.productId },
           select: { isOutStock: true },
         });
@@ -79,15 +88,15 @@ export class OrdersService {
         const totalTva = netAmountTtc - netAmountHt;
 
         const orderItem = await manager.save(OrderItem, {
+          isOutStock: product.isOutStock,
+          orderId: order.id,
           quantity: cartItem.quantity,
           note: cartItem.note,
           offset: cartItem.offset,
           articleId: article.id,
-          orderId: order.id,
           price: article.price,
           articleRef: article.ref,
           articleLabel: article.label,
-          isOutStock: product.isOutStock,
           //
           discountPercentage,
           unitePriceHt,
@@ -102,22 +111,29 @@ export class OrdersService {
         productTotalTva = productTotalTva + totalTva;
       }
 
-      await manager.update(Order, order.id, {
+      const updatedOrderData: Partial<Order> = {
         amountHt: productTotalHt,
         netAmountTtc: productTotalTtc,
         totalTva: productTotalTva,
         netToPay: productTotalTtc - (productTotalTtc * discountPercentage) / 100 + stampDuty,
+      };
+
+      await manager.update(Order, order.id, updatedOrderData);
+
+      const orderHistory = await manager.save(OrderHistory, {
+        statusId: OrderStatus.NEW,
+        creatorId: userId,
+        orderId: order.id,
       });
 
-
-      const orderItem = await manager.save(OrderHistory, {
-
-      });
-
+      //remove cartItems after successful cation of order
+      //await manager.delete(CartItem, createOrderDto.cartItemsIds);
 
       return {
         ...order,
+        ...updatedOrderData,
         orderItems,
+        orderHistory,
       };
     });
   }

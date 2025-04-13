@@ -20,7 +20,6 @@ import { ProductGalleriesModule } from './product-galleries/product-galleries.mo
 import { ProductsModule } from './products/products.module';
 import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
 import { UsersModule } from './users/users.module';
-
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FilesModule } from './files/files.module';
