@@ -7,15 +7,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { Upload } from 'src/helpers/upload/upload.global';
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { Image } from 'src/types/types.global';
 import { CategoriesService } from './categories.service';
+import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { Image } from 'src/types/types.global';
 
 @Controller('categories')
 export class CategoriesController {
@@ -28,8 +31,8 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findMany(@Query() filterDto: CategoryFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.categoriesService.findMany(filterDto, paginationDto);
   }
 
   @Get(':id')

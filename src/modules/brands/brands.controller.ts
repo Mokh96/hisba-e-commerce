@@ -7,15 +7,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { Upload } from 'src/helpers/upload/upload.global';
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { Image } from 'src/types/types.global';
 import { BrandsService } from './brands.service';
+import { BrandFilterDto } from './dto/brand-filter.dto';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { Image } from 'src/types/types.global';
 
 @Controller('brands')
 export class BrandsController {
@@ -28,8 +31,8 @@ export class BrandsController {
   }
 
   @Get()
-  findAll() {
-    return this.brandsService.findAll();
+  findMany(@Query() filterDto: BrandFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.brandsService.findMany(filterDto, paginationDto);
   }
 
   @Get(':id')

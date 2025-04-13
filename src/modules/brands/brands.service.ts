@@ -4,10 +4,12 @@ import { Repository } from 'typeorm';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Brand } from './entities/brand.entity';
 
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
+import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
+import { BrandFilterDto } from './dto/brand-filter.dto';
 import { CreateSyncBrandDto } from './dto/create-brand.dto';
 
 @Injectable()
@@ -53,6 +55,21 @@ export class BrandsService {
 
   async findAll() {
     return await this.brandRepository.find();
+  }
+
+  async findMany(filterDto: BrandFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.brandRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   async findOne(id: number) {

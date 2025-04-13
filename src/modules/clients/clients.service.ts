@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/common/enums/roles.enum';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { fromDtoToQuery } from 'src/helpers/function.global';
 import { Repository } from 'typeorm';
 import { ShippingAddressesService } from '../shipping-addresses/shipping-addresses.service';
 import { UsersService } from '../users/users.service';
+import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
@@ -70,6 +72,30 @@ export class ClientsService {
         },
       },
     });
+  }
+
+  async findMany(filterDto: ClientFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.clientRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+      relations: {
+        user: true,
+      },
+      select: {
+        user: {
+          id: true,
+          username: true,
+        },
+      },
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   /**
