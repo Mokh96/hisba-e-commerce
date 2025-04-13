@@ -53,7 +53,7 @@ export class CreateOrderDto {
   @IsArray()
   @IsInt({ each: true })
   @ArrayMinSize(1)
-  cartItemsIds?: CartItem['id'][];
+  cartItemsIds?: number[];
 
   //@ValidateIf((o) => !o.cartItemsIds || o.cartItemsIds.length === 0)
   @IsArray()
@@ -62,3 +62,5 @@ export class CreateOrderDto {
   @ArrayMinSize(1)
   orderItems?: CreateOrderItemDto[];
 }
+
+export class cartItemsIdsDto  {}

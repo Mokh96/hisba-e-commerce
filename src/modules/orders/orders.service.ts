@@ -34,8 +34,9 @@ export class OrdersService {
     return `This action returns a #${id} order`;
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAll() {
+    const [data, totalItems] = await this.orderRepository.findAndCount();
+    return { data, totalItems };
   }
 
   async create(createOrderDto: CreateOrderDto, userId: User['id']) {
