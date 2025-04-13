@@ -12,6 +12,7 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 
 @Injectable()
 export class OrdersService {
@@ -107,6 +108,12 @@ export class OrdersService {
         totalTva: productTotalTva,
         netToPay: productTotalTtc - (productTotalTtc * discountPercentage) / 100 + stampDuty,
       });
+
+
+      const orderItem = await manager.save(OrderHistory, {
+
+      });
+
 
       return {
         ...order,

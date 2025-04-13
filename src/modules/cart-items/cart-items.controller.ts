@@ -3,7 +3,7 @@ import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CurrentUser, Role } from 'src/common/decorators';
-import { Roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/common/enums/roles.enum';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Controller('cart-items')

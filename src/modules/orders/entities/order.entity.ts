@@ -4,14 +4,13 @@ import { OrderHistory } from 'src/modules/order-history/entities/order-history.e
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { OrderStatus } from 'src/modules/system-entities/entities/order-status.entity';
-import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
-import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { ORDER_FIELD_LENGTHS } from 'src/modules/orders/config/orders.config';
-import { Town } from 'src/modules/towns/entities/town.entity';
+import { Town } from 'src/modules/system-entities/entities/town.entity';
+import {OrderStatus as OrderStatusEnum} from "src/common/enums/order-status.enum";
 
 @Entity()
 export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
@@ -72,7 +71,7 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   paymentMethodId: number;
 
   @Column({ name: 'status_id' })
-  statusId: number; //todo : use order status type enum
+  statusId: OrderStatusEnum;
 
   @Column({ name: 'client_id' })
   clientId: number;

@@ -3,7 +3,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CurrentUser, Role } from 'src/common/decorators';
-import { Roles } from 'src/enums/roles.enum';
+import { Roles } from 'src/common/enums/roles.enum';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Controller('orders')
