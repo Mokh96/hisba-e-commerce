@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/common/enums/roles.enum';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 
 import { Repository } from 'typeorm';
 import { ShippingAddressesService } from '../shipping-addresses/shipping-addresses.service';
