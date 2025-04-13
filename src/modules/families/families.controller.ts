@@ -1,44 +1,38 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
-  UseInterceptors,
+  Patch,
+  Post,
+  Query,
   UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
-import { FamiliesService } from './families.service';
-import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
-import { UpdateFamilyDto } from './dto/update-family.dto';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { Upload } from 'src/helpers/upload/upload.global';
+import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Image } from 'src/types/types.global';
+import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
+import { FamilyFilterDto } from './dto/family-filter.dto';
+import { UpdateFamilyDto } from './dto/update-family.dto';
+import { FamiliesService } from './families.service';
 
 @Controller('families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
   @Post()
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
-  create(
-    @Body() createFamilyDto: CreateFamilyDto,
-    @UploadedFiles() file: Image,
-  ) {
-    return this.familiesService.create(
-      createFamilyDto as CreateSyncFamilyDto,
-      file,
-    );
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  create(@Body() createFamilyDto: CreateFamilyDto, @UploadedFiles() file: Image) {
+    return this.familiesService.create(createFamilyDto as CreateSyncFamilyDto, file);
   }
 
   @Get()
-  findAll() {
-    return this.familiesService.findAll();
+  findMany(@Query() filterDto: FamilyFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.familiesService.findMany(filterDto, paginationDto);
   }
 
   @Get(':id')
@@ -47,10 +41,7 @@ export class FamiliesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFamilyDto: UpdateFamilyDto,
