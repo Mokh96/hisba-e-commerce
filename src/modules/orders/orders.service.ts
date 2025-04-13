@@ -1,10 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
-import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { ClientsService } from 'src/modules/clients/clients.service';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
@@ -30,8 +29,11 @@ export class OrdersService {
     private dataSource: DataSource,
   ) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number) {
+    return await this.orderRepository.findOneOrFail({
+      where: { id },
+      relations: { orderItems: true, client: true },
+    });
   }
 
   async findAll() {
