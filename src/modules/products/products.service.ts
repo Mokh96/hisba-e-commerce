@@ -127,7 +127,8 @@ export class ProductsService {
   }
 
   async findAll() {
-    return await this.productRepository.find();
+    const [data, totalItems] = await this.productRepository.findAndCount();
+    return { data, totalItems };
   }
 
   async findOne(id: number) {
