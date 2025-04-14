@@ -1,0 +1,10 @@
+import { MAX_FAX_LENGTH, MAX_PHONE_LENGTH } from 'src/common/constants';
+
+export const CLIENT_FIELD_LENGTHS = {
+  FIRST_NAME: 255,
+  LAST_NAME: 255,
+  PHONE: MAX_PHONE_LENGTH,
+  MOBILE: MAX_PHONE_LENGTH,
+  FAX: MAX_FAX_LENGTH,
+  EMAIL: 255,
+}

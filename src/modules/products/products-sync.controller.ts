@@ -26,6 +26,7 @@ export class ProductsSyncController {
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const response = await this.productsService.createBulk(createSyncProductsDto, files);
+
     return res.status(207).json(response);
   }
 

@@ -1,17 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, DeepPartial, In, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { ClientsService } from 'src/modules/clients/clients.service';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
-import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { OrderStatus } from 'src/common/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { ArticlesService } from 'src/modules/articles/articles.service';
@@ -99,17 +97,17 @@ export class OrdersService {
     }
 
     //Step 4: Create and save the complete order with items in one go
-    const order = await this.orderRepository.save({
-      note: createOrderDto.note,
+    return await this.orderRepository.save({
+      clientId: client.id,
       clientFirstName: client.firstName,
       clientLastName: client.lastName,
       clientPhone: client.phone,
       clientMobile: client.mobile,
       clientFax: client.fax,
-      deliveryTownId: createOrderDto.deliveryTownId,
       deliveryAddress: createOrderDto.deliveryAddress || client.address,
+      deliveryTownId: createOrderDto.deliveryTownId,
       ref: createOrderDto.ref,
-      clientId: client.id,
+      note: createOrderDto.note,
       paymentMethodId: createOrderDto.paymentMethodId,
       amountHt: productTotalHt,
       netAmountTtc: productTotalTtc,
@@ -124,8 +122,6 @@ export class OrdersService {
         },
       ],
     });
-
-    return order;
   }
 
   remove(id: number) {
