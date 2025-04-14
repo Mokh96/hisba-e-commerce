@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto, UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, DeepPartial, EntityManager, Repository } from 'typeorm';
+import { DataSource, DeepPartial, EntityManager, FindManyOptions, In, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { QueryArticleDto } from './dto/query-article.dto';
@@ -12,6 +12,7 @@ import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
+import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -184,6 +185,10 @@ export class ArticlesService {
         minPrice: shouldUpdateMin ? newPrice : product.minPrice,
       });
     }
+  }
+
+  public async getArticlesByIds(articleIds: Article['id'][], options: FindManyOptions<Article> = {}) {
+    return await getEntitiesByIds(this.articleRepository, articleIds, options);
   }
 
   async remove(id: number) {

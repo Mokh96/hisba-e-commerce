@@ -3,7 +3,7 @@ import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, FindManyOptions, Repository } from 'typeorm';
 import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { Article } from 'src/modules/articles/entities/article.entity';
@@ -14,6 +14,7 @@ import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response
 import { getFileBySyncId, getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { CreateProductWithImagesDto } from 'src/modules/products/types/producuts.types';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
+import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 
 @Injectable()
 export class ProductsService {
@@ -160,7 +161,7 @@ export class ProductsService {
       await this.productRepository.save(updatedProduct);
 
       if (newPath && initialImgPath) {
-        await this.uploadManager.removeFile(initialImgPath);//remove the old image
+        await this.uploadManager.removeFile(initialImgPath); //remove the old image
       }
       return updatedProduct;
     } catch (error) {
@@ -193,6 +194,10 @@ export class ProductsService {
     }
 
     return response;
+  }
+
+  public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {
+    return await getEntitiesByIds(this.productRepository, articleIds, options);
   }
 
   async remove(id: number) {

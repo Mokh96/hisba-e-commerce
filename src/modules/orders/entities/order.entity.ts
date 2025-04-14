@@ -10,7 +10,8 @@ import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ORDER_FIELD_LENGTHS } from 'src/modules/orders/config/orders.config';
 import { Town } from 'src/modules/system-entities/entities/town.entity';
-import {OrderStatus as OrderStatusEnum} from "src/common/enums/order-status.enum";
+import { OrderStatus as OrderStatusEnum } from 'src/common/enums/order-status.enum';
+import { PaymentMethod as PaymentMethodEnum } from 'src/modules/payment-methods/enums/payment.method';
 
 @Entity()
 export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
@@ -68,7 +69,7 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   deliveryTownId: number;
 
   @Column({ name: 'payment_method_id' })
-  paymentMethodId: number;
+  paymentMethodId: PaymentMethodEnum;
 
   @Column({ name: 'status_id' })
   statusId: OrderStatusEnum;
@@ -76,10 +77,10 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ name: 'client_id' })
   clientId: number;
 
-/*  @Column({ name: 'town_id' })
-  townId: number;*/
+  /*  @Column({ name: 'town_id' })
+    townId: number;*/
 
-  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order)
+  @OneToMany(() => OrderItem, (orderItem: OrderItem) => orderItem.order, { cascade: ['insert'] })
   orderItems: OrderItem[];
 
   @ManyToOne(() => PaymentMethod, (paymentMethod: PaymentMethod) => paymentMethod.orders, {
@@ -96,6 +97,7 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
 
   @OneToMany(() => OrderHistory, (history: OrderHistory) => history.order, {
     nullable: false,
+    cascade: ['insert'],
   })
   history: OrderHistory[];
 

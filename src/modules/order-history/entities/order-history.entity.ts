@@ -5,14 +5,14 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 't
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
-
+import { OrderStatus  as OrderStatusEnum} from 'src/common/enums/order-status.enum';
 @Entity()
 export class OrderHistory extends WithTimestamp(BaseEntity) {
   @Column({ name: 'order_id' })
   orderId: number;
 
   @Column({ name: 'status_id' })
-  statusId: number;
+  statusId: OrderStatusEnum;
 
   @Column({ name: 'creator_id' })
   creatorId: number;

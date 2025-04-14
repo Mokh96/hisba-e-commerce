@@ -4,12 +4,13 @@ import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Article } from 'src/modules/articles/entities/article.entity';
-import { PaymentMethod } from 'src/modules/payment-methods/entities/payment-method.entity';
 import { ClientsModule } from 'src/modules/clients/clients.module';
 import { CartItemsModule } from 'src/modules/cart-items/cart-items.module';
+import { ArticlesModule } from 'src/modules/articles/articles.module';
+import { ProductsModule } from 'src/modules/products/products.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Article, PaymentMethod]), ClientsModule , CartItemsModule],
+  imports: [TypeOrmModule.forFeature([Order, Article]), ClientsModule , CartItemsModule , ArticlesModule , ProductsModule],
   controllers: [OrdersController],
   providers: [OrdersService],
 })

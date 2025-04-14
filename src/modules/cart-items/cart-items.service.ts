@@ -60,12 +60,32 @@ export class CartItemsService {
    *
    * @throws {BadRequestException} If one or more cart items are not found.
    */
-  public async getCartItems(cartItemsIds: CartItem['id'][], manager: EntityManager): Promise<CartItem[]> {
+
+  /* public async getCartItems(cartItemsIds: CartItem['id'][], manager: EntityManager): Promise<CartItem[]> {
+     if (!cartItemsIds?.length) {
+       return [];
+     }
+ 
+     const cartItems = await manager.find(CartItem, {
+       where: { id: In(cartItemsIds) },
+     });
+ 
+     const foundIds = new Set(cartItems.map((item) => item.id));
+     const missingIds = cartItemsIds.filter((id) => !foundIds.has(id));
+ 
+     if (missingIds.length > 0) {
+       throw new BadRequestException(`Cart items not found: ${missingIds.join(', ')}`);
+     }
+ 
+     return cartItems;
+   }*/
+
+  public async getCartItems(cartItemsIds: CartItem['id'][]): Promise<CartItem[]> {
     if (!cartItemsIds?.length) {
       return [];
     }
 
-    const cartItems = await manager.find(CartItem, {
+    const cartItems = await this.cartItemRepository.find({
       where: { id: In(cartItemsIds) },
     });
 
