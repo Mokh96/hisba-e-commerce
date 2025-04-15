@@ -10,7 +10,6 @@ import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 
-
 @Entity()
 export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.CODE })
@@ -64,8 +63,8 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @OneToMany(() => Article, (article: Article) => article.product, { cascade: ['insert'] })
   articles: Article[];
 
-  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-  gallery: ProductGallery[];
+  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product, { cascade: ['insert', 'remove'] })
+  gallery: ProductGallery[]; //todo : If you use cascade when deleting, delete the files as well.
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
     onDelete: 'SET NULL',
@@ -89,12 +88,11 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
     onUpdate: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'family_id'  })
+  @JoinColumn({ name: 'family_id' })
   family: Family;
-/*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-  gallery: ProductGallery[];*/
+  /*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
+    gallery: ProductGallery[];*/
 }
-
 
 class Image {
   img: string[];
