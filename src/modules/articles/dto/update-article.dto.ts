@@ -1,6 +1,5 @@
 import { IntersectionType, OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateArticleDto } from './create-article.dto';
-import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IdCommonDto } from 'src/common/dtos/id.common.dto';
 import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsOptional, IsPositive } from 'class-validator';

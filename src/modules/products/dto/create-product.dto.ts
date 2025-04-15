@@ -12,7 +12,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateArticleDto, CreateSyncArticleDto } from 'src/modules/articles/dto/create-article.dto';
-import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { TransformStringToBoolean } from '../../../common/decorators';
 
@@ -60,35 +59,35 @@ export class CreateProductDto {
   @TransformStringToBoolean()
   @IsBoolean()
   @IsOptional()
-  isExpired: boolean | undefined;
+  isExpired?: boolean;
 
   @TransformStringToBoolean()
   @IsBoolean()
   @IsOptional()
-  isMultiArticle: boolean | undefined;
+  isMultiArticle?: boolean;
 
   @TransformStringToBoolean()
   @IsBoolean()
   @IsOptional()
-  isActive: boolean | undefined;
+  isActive?: boolean;
 
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  brandId: number | undefined;
+  brandId?: number;
 
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  categoryId: number | undefined;
+  categoryId?: number;
 
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @IsInt()
-  familyId: number | undefined;
+  familyId?: number;
 
   @IsOptional()
   @IsArray()

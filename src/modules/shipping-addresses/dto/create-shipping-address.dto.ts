@@ -1,7 +1,7 @@
 import { IntersectionType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNumber, IsPositive, IsString, Length } from 'class-validator';
-import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
+import { SyncIdDto } from 'src/common/dtos/sync-id.dto';
 
 export class CreateShippingAddressDto {
   @IsString()

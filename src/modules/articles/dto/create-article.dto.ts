@@ -14,17 +14,19 @@ import {
 } from 'class-validator';
 
 import { IdCommonDto } from 'src/common/dtos/id.common.dto';
-import { SyncIdDto } from 'src/common-dtos/sync-id.common.dto';
 import { IntersectionType } from '@nestjs/mapped-types';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { TransformStringToBoolean } from 'src/common/decorators';
+import { TvaPercentageDto } from 'src/common/dtos/tva-percentage.dto';
+import { PriceDto } from 'src/common/dtos/price.dto';
+import { SyncIdDto } from 'src/common/dtos/sync-id.dto';
 
-export class CreateArticleDto {
-  @Type(() => Number)
+export class CreateArticleDto extends IntersectionType(TvaPercentageDto, PriceDto , SyncIdDto) {
+/*  @Type(() => Number)
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
-  syncId: number;
+  syncId: number;*/
 
   @IsNotEmpty()
   @IsString()
@@ -46,23 +48,23 @@ export class CreateArticleDto {
   @MaxLength(ARTICLE_FIELD_LENGTHS.NOTE)
   note: string;
 
-  @Type(() => Number)
+ /* @Type(() => Number)
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
-  price: number;
+  price: number;*/
 
-  @Type(() => Number)
+ /* @Type(() => Number)
   @IsNotEmpty()
   @IsInt()
   @Max(100)
   @Min(0)
-  tvaPercentage: number;
+  tvaPercentage: number;*/
 
   @TransformStringToBoolean()
   @IsBoolean()
   @IsOptional()
-  isActive: boolean | undefined;
+  isActive?: boolean;
 
   @Type(() => Number)
   @IsPositive()
