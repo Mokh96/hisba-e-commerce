@@ -20,21 +20,44 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    @InjectRepository(Article)
-    private readonly articleRepository: Repository<Article>,
     private readonly clientService: ClientsService,
     private readonly cartItemsService: CartItemsService,
     private readonly articlesService: ArticlesService,
     private readonly productsService: ProductsService,
-    private dataSource: DataSource,
   ) {}
 
   async findOne(id: number) {
     return await this.orderRepository.findOneOrFail({
       where: { id },
-      relations: { orderItems: true, client: true },
+      relations: {
+        orderItems: { article: true },
+        client: true,
+        history: true,
+      },
+      select: {
+        orderItems: {
+          ...OrderItem.getSelectableAttributes(),
+          article: {
+            id: true,
+            label: true,
+            defaultImgPath: true,
+          },
+        },
+      },
     });
   }
+
+/*  async findOnes(id: number) {
+    return await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderItems', 'orderItem')
+      .leftJoinAndSelect('orderItem.article', 'article')
+      .leftJoinAndSelect('order.client', 'client')
+      .leftJoinAndSelect('order.history', 'history')
+      .where('order.id = :id', { id })
+      .select(['order', 'orderItem', 'article.id', 'article.label', 'article.defaultImgPath', 'client', 'history'])
+      .getOneOrFail();
+  }*/
 
   async findAll() {
     const [data, totalItems] = await this.orderRepository.findAndCount();

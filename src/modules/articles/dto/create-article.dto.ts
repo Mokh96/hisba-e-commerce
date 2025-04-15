@@ -7,9 +7,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  Max,
   MaxLength,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
