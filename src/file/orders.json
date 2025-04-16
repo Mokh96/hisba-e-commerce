@@ -1,0 +1,361 @@
+{
+  "orders": [
+    {
+      "order_id": 101,
+      "note": "Please deliver after 5 PM",
+      "discount": 10.00,
+      "discount_percentage": 5.0,
+      "client_first_name": "Salim",
+      "client_last_name": "Boumediene",
+      "delivery_address": "20 Rue Frantz Fanon, Algiers",
+      "client_mobile": "+213664441111",
+      "client_fax": "021112233",
+      "client_phone": "+21321333444",
+      "stamp_duty": 1.50,
+      "amount_ht": 20000000.00,
+      "net_amount_ttc": 20000000.00,
+      "net_to_pay": 226.50,
+      "total_tva": 38.00,
+      "ref": "ORD-2025-005",
+      "created_at": "2025-05-09T00:00:00Z",
+      "updated_at": "2025-05-09T00:00:00Z",
+      "client": {
+        "clientId": 101,
+        "code": "CLT-20250409-001",
+        "ref": "REF123456",
+        "firstName": "Yacine",
+        "lastName": "Benkhelifa",
+        "address": "Rue de l'Indépendance, Alger, Algérie",
+        "birthDate": "1995-07-15T00:00:00Z",
+        "note": "Client fidèle avec plusieurs commandes.",
+        "phone": "+21321345678",
+        "mobile": "+213661234567",
+        "fax": "+21321345679",
+        "email": "yacine.benkhelifa@example.com",
+        "webPage": "https://yacine-client.com",
+        "rc": "RC20250001",
+        "agr": "AGR445566",
+        "ai": "AI998877",
+        "activity": "Vente de matériel informatique",
+        "legalForm": "SARL",
+        "idFiscal": "TIN123456789",
+        "imgPath": "https://randomuser.me/api/portraits/men/75.jpg"
+      },
+      "payment_method": {
+        "payment_method_id": 2,
+        "label": "transfer",
+        "is_stamp": true
+      },
+      "status": {
+        "status_id": 3,
+        "label": "validated"
+      },
+      "order_items": [
+        {
+          "order_item_id": 1,
+          "quantity": 2,
+          "article_ref": "ART-001",
+          "article_label": "Wireless Mouse",
+          "discount": 5.00,
+          "discount_percentage": 10.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 50.00,
+          "unite_price_ttc": 59.50,
+          "note": "Black edition",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 1,
+            "is_active": true,
+            "img_path": "https://img.freepik.com/free-vector/realistic-ad-with-product-landing-page_52683-70870.jpg",
+            "ref": "ART-001",
+            "label": "Wireless Mouse",
+            "note": "2.4GHz ergonomic wireless mouse",
+            "description": "Comfortable wireless mouse for everyday use.",
+            "is_disponible": true,
+            "price": 59.50,
+            "tva": 19.0
+          }
+        },
+        {
+          "order_item_id": 2,
+          "quantity": 1,
+          "article_ref": "ART-002",
+          "article_label": "Mechanical Keyboard",
+          "discount": 0.00,
+          "discount_percentage": 0.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 140.00,
+          "unite_price_ttc": 166.60,
+          "note": "Backlit keys",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 2,
+            "is_active": true,
+            "img_path": "https://cdn.pixabay.com/photo/2018/05/08/08/49/keyboard-3385052_960_720.jpg",
+            "ref": "ART-002",
+            "label": "Mechanical Keyboard",
+            "note": "RGB backlight mechanical keyboard",
+            "description": "Perfect for gaming and productivity.",
+            "is_disponible": true,
+            "price": 166.60,
+            "tva": 19.0
+          }
+        }
+      ],
+      "tracking_history": [
+        {
+          "status": "Order Placed",
+          "timestamp": "2025-04-12T10:00:00Z"
+        },
+        {
+          "status": "Shipped",
+          "timestamp": "2025-04-12T18:00:00Z"
+        },
+        {
+          "status": "Out for Delivery",
+          "timestamp": "2025-04-13T12:30:00Z"
+        }
+      ]
+    },
+    {
+      "order_id": 101,
+      "note": "Please deliver after 5 PM",
+      "discount": 10.00,
+      "discount_percentage": 5.0,
+      "client_first_name": "Salim",
+      "client_last_name": "Boumediene",
+      "delivery_address": "20 Rue Frantz Fanon, Algiers",
+      "client_mobile": "+213664441111",
+      "client_fax": "021112233",
+      "client_phone": "+21321333444",
+      "stamp_duty": 1.50,
+      "amount_ht": 20000000.00,
+      "net_amount_ttc": 20000000.00,
+      "net_to_pay": 226.50,
+      "total_tva": 38.00,
+      "ref": "ORD-2025-123",
+      "created_at": "2025-05-09T00:00:00Z",
+      "updated_at": "2025-05-09T00:00:00Z",
+      "client": {
+        "clientId": 101,
+        "code": "CLT-20250409-001",
+        "ref": "REF123456",
+        "firstName": "Yacine",
+        "lastName": "Benkhelifa",
+        "address": "Rue de l'Indépendance, Alger, Algérie",
+        "birthDate": "1995-07-15T00:00:00Z",
+        "note": "Client fidèle avec plusieurs commandes.",
+        "phone": "+21321345678",
+        "mobile": "+213661234567",
+        "fax": "+21321345679",
+        "email": "yacine.benkhelifa@example.com",
+        "webPage": "https://yacine-client.com",
+        "rc": "RC20250001",
+        "agr": "AGR445566",
+        "ai": "AI998877",
+        "activity": "Vente de matériel informatique",
+        "legalForm": "SARL",
+        "idFiscal": "TIN123456789",
+        "imgPath": "https://randomuser.me/api/portraits/men/75.jpg"
+      },
+      "payment_method": {
+        "payment_method_id": 2,
+        "label": "transfer",
+        "is_stamp": true
+      },
+      "status": {
+        "status_id": 4,
+        "label": "delivered"
+      },
+      "order_items": [
+        {
+          "order_item_id": 1,
+          "quantity": 2,
+          "article_ref": "ART-001",
+          "article_label": "Wireless Mouse",
+          "discount": 5.00,
+          "discount_percentage": 10.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 50.00,
+          "unite_price_ttc": 59.50,
+          "note": "Black edition",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 1,
+            "is_active": true,
+            "img_path": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5dCBuFxy47jcYOmNCs15NX5FwL7YmV9ZC-Q&s",
+            "ref": "ART-001",
+            "label": "Wireless Mouse",
+            "note": "2.4GHz ergonomic wireless mouse",
+            "description": "Comfortable wireless mouse for everyday use.",
+            "is_disponible": true,
+            "price": 59.50,
+            "tva": 19.0
+          }
+        },
+        {
+          "order_item_id": 2,
+          "quantity": 1,
+          "article_ref": "ART-002",
+          "article_label": "Mechanical Keyboard",
+          "discount": 0.00,
+          "discount_percentage": 0.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 140.00,
+          "unite_price_ttc": 166.60,
+          "note": "Backlit keys",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 2,
+            "is_active": true,
+            "img_path": "https://cdn.pixabay.com/photo/2018/05/08/08/49/keyboard-3385052_960_720.jpg",
+            "ref": "ART-002",
+            "label": "Mechanical Keyboard",
+            "note": "RGB backlight mechanical keyboard",
+            "description": "Perfect for gaming and productivity.",
+            "is_disponible": true,
+            "price": 166.60,
+            "tva": 19.0
+          }
+        }
+      ],
+      "tracking_history": [
+        {
+          "status": "Order Placed",
+          "timestamp": "2025-04-12T10:00:00Z"
+        },
+        {
+          "status": "Shipped",
+          "timestamp": "2025-04-12T18:00:00Z"
+        },
+        {
+          "status": "Out for Delivery",
+          "timestamp": "2025-04-13T12:30:00Z"
+        }
+      ]
+    },
+    {
+      "order_id": 101,
+      "note": "Please deliver after 5 PM",
+      "discount": 10.00,
+      "discount_percentage": 5.0,
+      "client_first_name": "Salim",
+      "client_last_name": "Boumediene",
+      "delivery_address": "20 Rue Frantz Fanon, Algiers",
+      "client_mobile": "+213664441111",
+      "client_fax": "021112233",
+      "client_phone": "+21321333444",
+      "stamp_duty": 1.50,
+      "amount_ht": 20000000.00,
+      "net_amount_ttc": 20000000.00,
+      "net_to_pay": 226.50,
+      "total_tva": 38.00,
+      "ref": "ORD-2025-0409",
+      "created_at": "2025-05-09T00:00:00Z",
+      "updated_at": "2025-05-09T00:00:00Z",
+      "client": {
+        "clientId": 101,
+        "code": "CLT-20250409-001",
+        "ref": "REF123456",
+        "firstName": "Yacine",
+        "lastName": "Benkhelifa",
+        "address": "Rue de l'Indépendance, Alger, Algérie",
+        "birthDate": "1995-07-15T00:00:00Z",
+        "note": "Client fidèle avec plusieurs commandes.",
+        "phone": "+21321345678",
+        "mobile": "+213661234567",
+        "fax": "+21321345679",
+        "email": "yacine.benkhelifa@example.com",
+        "webPage": "https://yacine-client.com",
+        "rc": "RC20250001",
+        "agr": "AGR445566",
+        "ai": "AI998877",
+        "activity": "Vente de matériel informatique",
+        "legalForm": "SARL",
+        "idFiscal": "TIN123456789",
+        "imgPath": "https://randomuser.me/api/portraits/men/75.jpg"
+      },
+      "payment_method": {
+        "payment_method_id": 2,
+        "label": "transfer",
+        "is_stamp": true
+      },
+      "status": {
+        "status_id": 2,
+        "label": "in progress"
+      },
+      "order_items": [
+        {
+          "order_item_id": 1,
+          "quantity": 2,
+          "article_ref": "ART-001",
+          "article_label": "Wireless Mouse",
+          "discount": 5.00,
+          "discount_percentage": 10.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 50.00,
+          "unite_price_ttc": 59.50,
+          "note": "Black edition",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 1,
+            "is_active": true,
+            "img_path": "https://files.ekmcdn.com/barter/images/deactivated-romanian-akm-assault-rifle-1991-dated-sold-617-p.jpg",
+            "ref": "ART-001",
+            "label": "Wireless Mouse",
+            "note": "2.4GHz ergonomic wireless mouse",
+            "description": "Comfortable wireless mouse for everyday use.",
+            "is_disponible": true,
+            "price": 59.50,
+            "tva": 19.0
+          }
+        },
+        {
+          "order_item_id": 2,
+          "quantity": 1,
+          "article_ref": "ART-002",
+          "article_label": "Mechanical Keyboard",
+          "discount": 0.00,
+          "discount_percentage": 0.0,
+          "tva_percentage": 19.0,
+          "unite_price_ht": 140.00,
+          "unite_price_ttc": 166.60,
+          "note": "Backlit keys",
+          "is_out_stock": false,
+          "offset": 0,
+          "article": {
+            "article_id": 2,
+            "is_active": true,
+            "img_path": "https://cdn.pixabay.com/photo/2018/05/08/08/49/keyboard-3385052_960_720.jpg",
+            "ref": "ART-002",
+            "label": "Mechanical Keyboard",
+            "note": "RGB backlight mechanical keyboard",
+            "description": "Perfect for gaming and productivity.",
+            "is_disponible": true,
+            "price": 166.60,
+            "tva": 19.0
+          }
+        }
+      ],
+      "tracking_history": [
+        {
+          "status": "Order Placed",
+          "timestamp": "2025-04-12T10:00:00Z"
+        },
+        {
+          "status": "Shipped",
+          "timestamp": "2025-04-12T18:00:00Z"
+        },
+        {
+          "status": "Out for Delivery",
+          "timestamp": "2025-04-13T12:30:00Z"
+        }
+      ]
+    }
+  ]
+}

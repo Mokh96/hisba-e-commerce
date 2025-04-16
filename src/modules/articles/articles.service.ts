@@ -92,7 +92,9 @@ export class ArticlesService {
     return await this.articleRepository.findOneOrFail({
       where: { id },
       relations: {
-        optionValues: true,
+        optionValues: {
+          option: true,
+        },
         product: true,
       },
     });

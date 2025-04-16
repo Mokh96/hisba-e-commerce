@@ -1,0 +1,85 @@
+{
+    "products": [
+      {
+        "product_id": 1,
+        "is_active": true,
+        "img_path": "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "code": "P12345",
+        "ref": "REF-001",
+        "label": "Smartphone",
+        "label2": "Android Device",
+        "note": "Latest model with great features.",
+        "description": "A high-performance smartphone with a stunning display.",
+        "is_out_stock": false,
+        "is_expired": false,
+        "is_multi_article": false,
+        "min_price": 299.99,
+        "max_price": 3999969.99
+      },
+      {
+        "product_id": 2,
+        "is_active": true,
+        "img_path": "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "code": "P67890",
+        "ref": "REF-002",
+        "label": "Laptop",
+        "label2": "Gaming Edition",
+        "note": "Powerful laptop for gaming and work.",
+        "description": "A gaming laptop with a high refresh rate display and RGB keyboard.",
+        "is_out_stock": false,
+        "is_expired": false,
+        "is_multi_article": true,
+        "min_price": 999.99,
+        "max_price": 1499.99
+      },
+      {
+        "product_id": 3,
+        "is_active": false,
+        "img_path": "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "code": "P54321",
+        "ref": "REF-003",
+        "label": "Wireless Headphones",
+        "label2": "Noise Cancelling",
+        "note": "Comfortable and high-quality sound.",
+        "description": "Bluetooth headphones with active noise cancellation and long battery life.",
+        "is_out_stock": true,
+        "is_expired": false,
+        "is_multi_article": false,
+        "min_price": 149.99,
+        "max_price": 199.99
+      },
+      {
+        "product_id": 4,
+        "is_active": true,
+        "img_path": "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "code": "P09876",
+        "ref": "REF-004",
+        "label": "Smart Watch",
+        "label2": "Fitness Tracker",
+        "note": "Track your activities with ease.",
+        "description": "A smartwatch with heart rate monitoring and GPS tracking.",
+        "is_out_stock": false,
+        "is_expired": false,
+        "is_multi_article": false,
+        "min_price": 79.99,
+        "max_price": 129.99
+      },
+      {
+        "product_id": 5,
+        "is_active": true,
+        "img_path": "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "code": "P13579",
+        "ref": "REF-005",
+        "label": "4K TV",
+        "label2": "Smart TV",
+        "note": "Cinematic experience at home.",
+        "description": "A 55-inch 4K Ultra HD Smart TV with HDR and voice control.",
+        "is_out_stock": false,
+        "is_expired": false,
+        "is_multi_article": false,
+        "min_price": 599.99,
+        "max_price": 899.99
+      }
+    ]
+  }
+  
