@@ -40,7 +40,7 @@ export class OrdersService {
           article: {
             id: true,
             label: true,
-            defaultImgPath: true,
+            imgPath: true,
           },
         },
       },

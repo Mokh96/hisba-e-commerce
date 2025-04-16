@@ -48,7 +48,7 @@ export class ProductsService {
       const articles: typeof createProductDto.articles & { imgPath: string }[] = [];
       for (const article of createProductDto.articles ?? []) {
         const articleImage = getFileBySyncId(files, FileUploadEnum.DefaultImage, article.syncId);
-        let imgPath: Article['defaultImgPath'] = null;
+        let imgPath: Article['imgPath'] = null;
 
         if (articleImage) {
           const uploaded = await this.uploadManager.uploadFiles({ [FileUploadEnum.DefaultImage]: [articleImage] });

@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto, UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -43,7 +43,7 @@ export class ArticlesService {
         // Step 2: Create the article entity
         const article = this.articleRepository.create({
           ...createArticleDto,
-          defaultImgPath: uploadedFiles[0]?.path || null,
+          imgPath: uploadedFiles[0]?.path || null,
         });
 
         // Step 3: Update product price range if necessary
@@ -105,7 +105,7 @@ export class ArticlesService {
     },
   ) {
     let article = await this.articleRepository.findOneByOrFail({ id });
-    const initialImgPath = article.defaultImgPath; // Get the initial image path
+    const initialImgPath = article.imgPath; // Get the initial image path
 
     const uploadedFiles = await this.uploadManager.uploadFiles(files); // Upload new image
     const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
@@ -115,7 +115,7 @@ export class ArticlesService {
         let updatedFields: DeepPartial<Article> = { ...updateArticleDto };
 
         if (newPath) {
-          updatedFields.defaultImgPath = newPath; // Update with new image
+          updatedFields.imgPath = newPath; // Update with new image
         }
 
         article = this.articleRepository.merge(article, updatedFields);
@@ -127,7 +127,7 @@ export class ArticlesService {
         }
 
         //update product price only when the article price is updated
-        if (typeof updateArticleDto.price === 'number' && article.price !== updateArticleDto.price) {
+        if (article.price !== updateArticleDto.price) {
           const product = await this.getProductById(article.productId, manager);
           await this.updateProductPricing(product, updateArticleDto.price, manager);
         }

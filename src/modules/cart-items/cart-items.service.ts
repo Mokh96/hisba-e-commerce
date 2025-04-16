@@ -35,7 +35,7 @@ export class CartItemsService {
         article: {
           id: true,
           label: true,
-          defaultImgPath: true,
+          imgPath: true,
         },
       },
     });
