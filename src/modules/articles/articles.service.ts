@@ -93,6 +93,7 @@ export class ArticlesService {
       where: { id },
       relations: {
         optionValues: true,
+        product: true,
       },
     });
   }
