@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get, HttpCode, HttpStatus,
+  Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -53,12 +55,6 @@ export class BrandsController {
     return this.brandsService.findOne(+id);
   }
 
-  /*@Patch(':id')
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.update(+id, updateBrandDto, file);
-  }*/
-
   @Patch(':id')
   @UseInterceptors(
     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
@@ -69,7 +65,7 @@ export class BrandsController {
     @Body() updateBrandDto: UpdateBrandDto,
     @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.brandsService.update(id, updateBrandDto , files);
+    return this.brandsService.update(id, updateBrandDto, files);
   }
 
   @Delete(':id')

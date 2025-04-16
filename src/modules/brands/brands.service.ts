@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdateBrandDto } from './dto/update-brand.dto';
+import { UpdateBrandDto, UpdateSyncBrandsDto } from './dto/update-brand.dto';
 import { Brand } from './entities/brand.entity';
 
 import { BulkResponse } from 'src/common/types/bulk-response.type';
@@ -120,5 +120,28 @@ export class BrandsService {
     await this.brandRepository.remove(brand);
     if (brand.imgPath) removeFileIfExist(brand.imgPath);
     return true;
+  }
+
+  async updateBulk(updateBrandDto: UpdateSyncBrandsDto[], files: Express.Multer.File[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const updateBrand of updateBrandDto) {
+      const brandImage = getFilesBySyncId(files, FileUploadEnum.Image, updateBrand.syncId);
+      try {
+        const brand = await this.update(updateBrand.id, updateBrand, {
+          [FileUploadEnum.Image]: brandImage,
+        });
+        response.successes.push(brand);
+      } catch (error) {
+        response.failures.push({
+          syncId: updateBrand.syncId,
+          errors: error,
+        });
+      }
+    }
+    return response;
   }
 }
