@@ -11,6 +11,7 @@ import { Image } from 'src/types/types.global';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
+import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 
 @Injectable()
 export class BrandsService {
@@ -39,20 +40,18 @@ export class BrandsService {
     }
   }
 
-  async createSyncBulk(createBrandDto: CreateSyncBrandDto[]) {
+  async createSyncBulk(createBrandDto: CreateSyncBrandDto[], files: Express.Multer.File[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
     };
 
     for (const brand of createBrandDto) {
+      const brandImage = getFilesBySyncId(files, FileUploadEnum.Image, brand.syncId);
+
       try {
-        const newBrand = this.brandRepository.create(brand);
-        await this.brandRepository.save(newBrand);
-        response.successes.push({
-          id: newBrand.id,
-          syncId: newBrand.syncId,
-        });
+        const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
+        response.successes.push(createdBrand);
       } catch (err) {
         response.failures.push({
           syncId: brand.syncId,

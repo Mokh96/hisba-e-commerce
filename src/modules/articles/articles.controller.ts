@@ -20,7 +20,7 @@ import { QueryArticleDto } from './dto/query-article.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
-import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
+import { imageUploadRules, requiredImageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { UpdateProductDto } from 'src/modules/products/dto/update-product.dto';
 
 @Controller('articles')
@@ -30,7 +30,7 @@ export class ArticlesController {
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({ [FileUploadEnum.Image]: { ...imageUploadRules, required: true, minCount: 1 } }),
+    new FileValidationInterceptor({ [FileUploadEnum.Image]: { ...requiredImageUploadRules} }),
   )
   create(
     @Body() createArticleDto: CreateArticleDto,
