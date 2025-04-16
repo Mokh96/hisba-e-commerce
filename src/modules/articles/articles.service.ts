@@ -196,7 +196,7 @@ export class ArticlesService {
 
   async remove(id: number) {
     const article = await this.articleRepository.findOneByOrFail({ id });
-    await this.articleRepository.remove(article);
+    await this.articleRepository.remove(article);//todo : remove related images
     return true;
   }
 }

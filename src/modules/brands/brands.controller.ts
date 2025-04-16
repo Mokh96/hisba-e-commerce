@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode, HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -20,6 +20,7 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { imageUploadRules, optionalImageUploadRules } from 'src/modules/files/config/file-upload.config';
+import { UpdateArticleDto } from 'src/modules/articles/dto/update-article.dto';
 
 @Controller('brands')
 export class BrandsController {
@@ -52,13 +53,27 @@ export class BrandsController {
     return this.brandsService.findOne(+id);
   }
 
-  @Patch(':id')
+  /*@Patch(':id')
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto, @UploadedFiles() file: Image) {
     return this.brandsService.update(+id, updateBrandDto, file);
+  }*/
+
+  @Patch(':id')
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+    new FileValidationInterceptor({ [FileUploadEnum.Image]: imageUploadRules }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBrandDto: UpdateBrandDto,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
+  ) {
+    return this.brandsService.update(id, updateBrandDto , files);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.brandsService.remove(+id);
   }

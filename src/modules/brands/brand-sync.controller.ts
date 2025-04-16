@@ -67,20 +67,10 @@ export class SyncBrandController {
     @Res() res: Response,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    const { valFailures, valSuccess } = await validateBulkDto<CreateSyncBrandDto>(
-      createSyncBrandBulkDto,
-      CreateSyncBrandDto,
-    );
-    const { successes, failures } = await this.brandsService.createSyncBulk(valSuccess, files);
+    const response = await this.brandsService.createSyncBulk(createSyncBrandBulkDto, files);
+    const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
 
-    const result = {
-      successes,
-      failures: [...valFailures, ...failures],
-    };
-
-    const status = getBulkStatus({ failures: result.failures.length, success: result.successes.length });
-
-    res.status(status).json(result);
+    res.status(status).json(response);
   }
 
   @Patch()
@@ -90,7 +80,7 @@ export class SyncBrandController {
     @Body() updateBrandDto: UpdateBrandDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.brandsService.update(+id, updateBrandDto, file);
+    return this.brandsService.update(+id, updateBrandDto, file as any);
   }
 
   @Delete(':id')
