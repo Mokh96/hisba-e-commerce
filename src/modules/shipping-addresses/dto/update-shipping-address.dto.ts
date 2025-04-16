@@ -1,8 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsDefined, IsNumber, IsOptional, IsPositive, IsString, Length, ValidateIf } from 'class-validator';
 import { SHIPPING_ADDRESSES_LENGTHS } from '../config/shipping-addresses.config';
+import { gpsCoordinatesDto } from 'src/common/dtos/gps-coordinates/gps-coordinates.dto';
 
-export class UpdateShippingAddressDto {
+export class UpdateShippingAddressDto extends gpsCoordinatesDto {
   // Optional ID: if present, it's an update
   @IsOptional()
   @IsNumber()
@@ -24,3 +25,5 @@ export class UpdateShippingAddressDto {
   @Type(() => Number)
   townId?: number;
 }
+
+new UpdateShippingAddressDto()

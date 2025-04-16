@@ -3,9 +3,17 @@ import { Client } from 'src/modules/clients/entities/client.entity';
 import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { SHIPPING_ADDRESSES_LENGTHS } from '../config/shipping-addresses.config';
+import { WithBaseOrderItem } from 'src/common/entities/base-order-item.entity';
+import { WithTimestamp } from 'src/common/entities/timestamp.entity';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { WithSyncId } from 'src/common/entities/sync.entity';
+import { WithGpsCoordinates } from 'src/common/entities/gps-coordinates.entity';
+
+const MixedEntities = WithGpsCoordinates(WithSyncId(WithTimestamp(WithEntityAttributeUtils(BaseEntity))));
 
 @Entity()
-export class ShippingAddress extends SyncEntityCommon {
+export class ShippingAddress extends MixedEntities {
   @Column({ length: SHIPPING_ADDRESSES_LENGTHS.ADDRESS })
   address: string;
 

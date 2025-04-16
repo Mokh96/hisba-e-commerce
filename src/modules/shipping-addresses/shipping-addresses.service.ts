@@ -7,7 +7,10 @@ import { ShippingAddress } from './entities/shipping-address.entity';
 
 @Injectable()
 export class ShippingAddressesService {
-  constructor(@InjectRepository(ShippingAddress) private shippingAddressRepository: Repository<ShippingAddress>) {}
+  constructor(
+    @InjectRepository(ShippingAddress)
+    private shippingAddressRepository: Repository<ShippingAddress>) {}
+
   async create(createShippingAddressDto: CreateShippingAddressDto) {
     return await this.shippingAddressRepository.save(createShippingAddressDto);
   }
@@ -38,6 +41,8 @@ export class ShippingAddressesService {
           address: address.address,
           clientId,
           townId: address.townId,
+          latitude: address.latitude,
+          longitude: address.longitude,
         });
       }
     }
