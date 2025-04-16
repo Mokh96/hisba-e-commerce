@@ -8,22 +8,35 @@ import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { Image } from 'src/types/types.global';
-import { CreateSyncBrandDto } from './dto/create-brand.dto';
+import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
 
 @Injectable()
 export class BrandsService {
   constructor(
     @InjectRepository(Brand)
     private brandRepository: Repository<Brand>,
+    private readonly uploadManager: UploadManager,
   ) {}
 
-  async create(createBrandDto: CreateSyncBrandDto, file: Image) {
-    const brand = this.brandRepository.create(createBrandDto);
-    const newBrand = this.brandRepository.merge(brand, {
-      imgPath: file.img ? pathToFile(file.img[0]) : null,
-    });
-    await this.brandRepository.save(newBrand);
-    return newBrand;
+  async create(
+    createBrandDto: CreateBrandDto,
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    const uploadedImage = await this.uploadManager.uploadFiles(files);
+
+    try {
+      return await this.brandRepository.save({
+        ...createBrandDto,
+        imgPath: uploadedImage[0].path || null,
+      });
+    } catch (e) {
+      await this.uploadManager.cleanupFiles(uploadedImage);
+      throw e;
+    }
   }
 
   async createSyncBulk(createBrandDto: CreateSyncBrandDto[]) {

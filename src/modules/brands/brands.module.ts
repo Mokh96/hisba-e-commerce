@@ -4,10 +4,18 @@ import { BrandsController } from './brands.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Brand } from './entities/brand.entity';
 import { SyncBrandController } from './brand-sync.controller';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
+import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 
 @Module({
-  controllers: [SyncBrandController, BrandsController],
-  providers: [BrandsService],
   imports: [TypeOrmModule.forFeature([Brand])],
+  controllers: [SyncBrandController, BrandsController],
+  providers: [
+    BrandsService,
+    {
+      provide: UploadManager,
+      useFactory: () => new UploadManager(FileTypesEnum.Public, []),
+    },
+  ],
 })
 export class BrandsModule {}

@@ -28,7 +28,7 @@ export class SyncBrandController {
   @Post()
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   async createSync(@Body() createSyncBrandDto: CreateSyncBrandDto, @UploadedFiles() file: Image) {
-    return await this.brandsService.create(createSyncBrandDto, file);
+    return await this.brandsService.create(createSyncBrandDto, file as any);
   }
 
   @Post('/bulk')

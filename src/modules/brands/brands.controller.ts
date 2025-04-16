@@ -16,15 +16,30 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
+import { imageUploadRules, optionalImageUploadRules } from 'src/modules/files/config/file-upload.config';
 
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  create(@Body() createBrandDto: CreateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.create(createBrandDto as CreateSyncBrandDto, file);
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
+    new FileValidationInterceptor({
+      [FileUploadEnum.Image]: { ...optionalImageUploadRules },
+    }),
+  )
+  create(
+    @Body() createBrandDto: CreateBrandDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return this.brandsService.create(createBrandDto, files);
   }
 
   @Get()
