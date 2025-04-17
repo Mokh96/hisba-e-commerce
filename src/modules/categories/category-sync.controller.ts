@@ -22,6 +22,10 @@ import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseBulkUpload } from 'src/common/decorators/files/use-bulk-upload.decorator';
+import { CreateSyncBrandDto } from 'src/modules/brands/dto/create-brand.dto';
+import { createBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
+import { createCategoriesValidation } from 'src/modules/categories/config/category-file-validation.config';
 
 @Controller('categories/sync')
 export class SyncCategoryController {
@@ -36,25 +40,20 @@ export class SyncCategoryController {
       [FileUploadEnum.Image]: Express.Multer.File[];
     },
   ) {
-    return this.categoryService.create(createSyncCategoryDto, files );
+    return this.categoryService.create(createSyncCategoryDto, files);
   }
 
   @Post('/bulk')
-  async createSyncBulk(@Body(new IsArrayPipe()) createSyncCategoryDto: CreateSyncCategoryDto[], @Res() res: Response) {
-    const { valFailures, valSuccess } = await validateBulkDto<CreateSyncCategoryDto>(
-      createSyncCategoryDto,
-      CreateSyncCategoryDto,
-    );
-    const { successes, failures } = await this.categoryService.createBulk(valSuccess);
+  @UseBulkUpload(CreateSyncCategoryDto, createCategoriesValidation)
+  async createSyncBulk(
+    @Res() res: Response,
+    @Body() createSyncCategoryDto: CreateSyncCategoryDto[],
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const response = await this.categoryService.createSyncBulk(createSyncCategoryDto, files);
+    const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
 
-    const result = {
-      successes,
-      failures: [...valFailures, ...failures],
-    };
-
-    const status = getBulkStatus({ failures: result.failures.length, success: result.successes.length });
-
-    res.status(status).json(result);
+    res.status(status).json(response);
   }
 
   @Patch()

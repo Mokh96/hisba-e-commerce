@@ -13,6 +13,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
+import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 
 @Injectable()
 export class CategoriesService {
@@ -41,20 +42,18 @@ export class CategoriesService {
     }
   }
 
-  async createBulk(createCategoryDto: CreateSyncCategoryDto[]) {
+  async createSyncBulk(createCategoryDto: CreateSyncCategoryDto[], files: Express.Multer.File[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
     };
 
     for (const category of createCategoryDto) {
+      const categoryImage = getFilesBySyncId(files, FileUploadEnum.Image, category.syncId);
+
       try {
-        const newCategory = this.categoryRepository.create(category);
-        await this.categoryRepository.save(newCategory);
-        response.successes.push({
-          id: newCategory.id,
-          syncId: newCategory.syncId,
-        });
+        const createdCategory = await this.create(category, { [FileUploadEnum.Image]: categoryImage });
+        response.successes.push(createdCategory);
       } catch (err) {
         response.failures.push({
           syncId: category.syncId,
@@ -64,34 +63,6 @@ export class CategoriesService {
     }
 
     return response;
-  }
-
-  async createSyncBulk(createCategoryDto: CreateSyncCategoryDto[]) {
-    const { validatedData, failureData } = await validateBulkInsert<CreateSyncCategoryDto[]>(
-      createCategoryDto,
-      'category',
-    );
-
-    const successData: CreateSyncCategoryDto[] = [];
-
-    if (failureData.length === createCategoryDto.length)
-      // TODO: change validation failure message
-      throw new BadRequestException(' your body not valid ');
-
-    for (let i = 0; i < validatedData.length; i++) {
-      try {
-        const category: CreateSyncCategoryDto = this.categoryRepository.create(validatedData[i]);
-        await this.categoryRepository.save(category);
-
-        successData.push(category);
-      } catch (error) {
-        failureData.push({
-          index: createCategoryDto.findIndex((item) => item.syncId === validatedData[i].syncId),
-          message: 'insert error',
-        });
-      }
-    }
-    return { successData, failureData };
   }
 
   async findAll() {
