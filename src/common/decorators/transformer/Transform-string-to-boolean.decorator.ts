@@ -6,7 +6,7 @@ import { BadRequestException } from '@nestjs/common';
  *
  * @param props Configuration options
  * @param props.allowNull Whether to allow 'null' as a valid value (defaults to true)
- * @returns A property decorator that transforms 'true'/'false'/'null' strings to their respective types
+ * @returns A property decorators that transforms 'true'/'false'/'null' strings to their respective types
  *
  * @example
  * // Allow boolean or null (default)

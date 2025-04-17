@@ -33,18 +33,15 @@ import {
 } from 'src/modules/articles/config/article-file-validation.config';
 import { CreateSyncArticleDto } from 'src/modules/articles/dto/create-article.dto';
 import { createBrandsValidation, updateBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { UseBulkUpload } from 'src/common/decorators/files/use-bulk-upload.decorator';
 
 @Controller('brands/sync')
 export class SyncBrandController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(
-    FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({
-      [FileUploadEnum.Image]: { ...optionalImageUploadRules },
-    }),
-  )
+  @UseRequiredImageUpload()
   async createSync(
     @Body() createSyncBrandDto: CreateSyncBrandDto,
     @UploadedFiles()
@@ -56,14 +53,9 @@ export class SyncBrandController {
   }
 
   @Post('/bulk')
-  @UseInterceptors(
-    AnyFilesInterceptor(),
-    ParseFormDataArrayInterceptor,
-    new ValidateBulkDtoInterceptor(CreateSyncBrandDto),
-    createBrandsValidation,
-  )
+  @UseBulkUpload(CreateSyncBrandDto, createBrandsValidation)
   async createSyncBulk(
-    @Body(IsArrayPipe) createSyncBrandBulkDto: CreateSyncBrandDto[],
+    @Body() createSyncBrandBulkDto: CreateSyncBrandDto[],
     @Res() res: Response,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
@@ -74,12 +66,8 @@ export class SyncBrandController {
   }
 
   @Patch('/bulk')
-  @UseInterceptors(
-    AnyFilesInterceptor(),
-    ParseFormDataArrayInterceptor,
-    new ValidateBulkDtoInterceptor(UpdateSyncBrandsDto),
-    updateBrandsValidation,
-  ) async updateBulk(
+  @UseBulkUpload(UpdateSyncBrandsDto, updateBrandsValidation)
+  async updateBulk(
     @Res() res: Response,
     @Body() updateBrandDto: UpdateSyncBrandsDto[],
     @UploadedFiles() files: Express.Multer.File[],
