@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateShippingAddressDto } from './dto/create-shipping-address.dto';
+import { CreateShippingAddressDto, CreateSyncShippingAddressDto } from './dto/create-shipping-address.dto';
 import { UpdateShippingAddressDto } from './dto/update-shipping-address.dto';
 import { ShippingAddress } from './entities/shipping-address.entity';
 

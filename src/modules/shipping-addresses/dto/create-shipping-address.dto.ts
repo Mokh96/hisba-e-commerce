@@ -4,7 +4,7 @@ import { IsNumber, IsPositive, IsString, Length } from 'class-validator';
 import { SyncIdDto } from 'src/common/dtos/sync-id.dto';
 import { gpsCoordinatesDto } from 'src/common/dtos/gps-coordinates/gps-coordinates.dto';
 
-export class BaseCreateShippingAddressDto extends gpsCoordinatesDto{
+export class BaseCreateShippingAddressDto extends gpsCoordinatesDto {
   @IsString()
   @Length(2, 255)
   address: string;
@@ -13,7 +13,8 @@ export class BaseCreateShippingAddressDto extends gpsCoordinatesDto{
   @IsPositive()
   @Type(() => Number)
   townId: number;
-
+}
+export class CreateShippingAddressDto extends BaseCreateShippingAddressDto {
   @IsNumber()
   @IsPositive()
   @Type(() => Number)

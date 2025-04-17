@@ -13,6 +13,7 @@ import { ShippingAddressesService } from 'src/modules/shipping-addresses/shippin
 import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
 import { ClientFilterDto } from 'src/modules/clients/dto/client-filter.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 
 @Injectable()
 export class ClientsService {

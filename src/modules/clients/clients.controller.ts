@@ -8,6 +8,7 @@ import { ClientsService } from './clients.service';
 import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 
 @Controller('clients')
 export class ClientsController {
