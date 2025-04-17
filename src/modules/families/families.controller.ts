@@ -16,29 +16,28 @@ import { UpdateFamilyDto } from './dto/update-family.dto';
 import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
 import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 
 @Controller('families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
-  @Post()
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
-  create(
-    @Body() createFamilyDto: CreateFamilyDto,
-    @UploadedFiles() file: Image,
-  ) {
-    return this.familiesService.create(
-      createFamilyDto as CreateSyncFamilyDto,
-      file,
-    );
-  }
-
   @Get()
   findAll() {
     return this.familiesService.findAll();
+  }
+
+  @Post()
+  @UseRequiredImageUpload()
+  create(
+    @Body() createFamilyDto: CreateFamilyDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return this.familiesService.create(createFamilyDto, files);
   }
 
   @Get(':id')
@@ -47,10 +46,7 @@ export class FamiliesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(
-    new UploadInterceptor({ type: '1' }),
-    Upload([{ name: 'img', maxCount: 1 }]),
-  )
+  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFamilyDto: UpdateFamilyDto,

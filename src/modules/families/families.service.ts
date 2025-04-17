@@ -6,24 +6,31 @@ import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { validateBulkInsert } from 'src/helpers/validation/global';
 import { Image } from 'src/types/types.global';
 import { Repository } from 'typeorm';
-import { CreateSyncFamilyDto } from './dto/create-family.dto';
+import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 import { Family } from './entities/family.entity';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
 
 @Injectable()
 export class FamiliesService {
   constructor(
     @InjectRepository(Family)
     private familyRepository: Repository<Family>,
+    private readonly uploadManager: UploadManager,
   ) {}
 
-  async create(createFamilyDto: CreateSyncFamilyDto, file: Image) {
-    const family = this.familyRepository.create(createFamilyDto);
-    const newFamily = this.familyRepository.merge(family, {
-      imgPath: file.img ? pathToFile(file.img[0]) : null,
-    });
-    await this.familyRepository.save(newFamily);
-    return newFamily;
+  async create(createFamilyDto: CreateFamilyDto, files: { [FileUploadEnum.Image]: Express.Multer.File[] }) {
+    const uploadedImage = await this.uploadManager.uploadFiles(files);
+    try {
+      return await this.familyRepository.save({
+        ...createFamilyDto,
+        imgPath: uploadedImage[0].path || null,
+      });
+    } catch (e) {
+      await this.uploadManager.cleanupFiles(uploadedImage);
+      throw e;
+    }
   }
 
   async createBulk(createFamilyDto: CreateSyncFamilyDto[]) {

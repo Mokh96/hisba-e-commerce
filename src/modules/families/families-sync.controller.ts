@@ -28,7 +28,7 @@ export class SyncFamilyController {
   @Post()
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   createSync(@Body() createSyncCategotyDto: CreateSyncFamilyDto, @UploadedFiles() file: Image) {
-    return this.familiesService.create(createSyncCategotyDto, file);
+    return this.familiesService.create(createSyncCategotyDto, file as any);
   }
 
   @Post('/bulk')
