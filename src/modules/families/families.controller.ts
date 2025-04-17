@@ -7,26 +7,25 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UseInterceptors,
   UploadedFiles,
+  Query
 } from '@nestjs/common';
-import { FamiliesService } from './families.service';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { Image } from 'src/types/types.global';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
+import { FamiliesService } from 'src/modules/families/families.service';
+import { FamilyFilterDto } from 'src/modules/families/dto/family-filter.dto';
 
 @Controller('families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
   @Get()
-  findAll() {
-    return this.familiesService.findAll();
+  findMany(@Query() filterDto: FamilyFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.familiesService.findMany(filterDto, paginationDto);
   }
 
   @Post()

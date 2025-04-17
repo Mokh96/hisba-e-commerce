@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { Role } from 'src/common/decorators';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/enums/roles.enum';
 import { UpdateClientMeDto } from 'src/modules/clients/dto/update-me.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { ClientsService } from './clients.service';
+import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
@@ -19,8 +20,8 @@ export class ClientsController {
   }
 
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findMany(@Query() filterDto: ClientFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.clientsService.findMany(filterDto, paginationDto);
   }
 
   @Get(':id')

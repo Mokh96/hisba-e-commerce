@@ -1,10 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { validateBulkInsert } from 'src/helpers/validation/global';
-import { Image } from 'src/types/types.global';
+import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
+import {  removeFileIfExist } from 'src/helpers/paths';
 import { Repository } from 'typeorm';
 import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto, UpdateSyncFamiliesDto } from './dto/update-family.dto';
@@ -13,6 +12,7 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { UpdateSyncBrandsDto } from 'src/modules/brands/dto/update-brand.dto';
+import { FamilyFilterDto } from 'src/modules/families/dto/family-filter.dto';
 
 @Injectable()
 export class FamiliesService {
@@ -61,6 +61,21 @@ export class FamiliesService {
   async findAll() {
     const families = await this.familyRepository.find();
     return families;
+  }
+
+  async findMany(filterDto: FamilyFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.familyRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   async findOne(id: number) {

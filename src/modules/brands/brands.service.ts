@@ -4,14 +4,15 @@ import { Repository } from 'typeorm';
 import { UpdateBrandDto, UpdateSyncBrandsDto } from './dto/update-brand.dto';
 import { Brand } from './entities/brand.entity';
 
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive } from 'src/helpers/function.global';
-import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { Image } from 'src/types/types.global';
+import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
+import { removeFileIfExist } from 'src/helpers/paths';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
+import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
 
 @Injectable()
 export class BrandsService {
@@ -65,6 +66,21 @@ export class BrandsService {
 
   async findAll() {
     return await this.brandRepository.find();
+  }
+
+  async findMany(filterDto: BrandFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.brandRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   async findOne(id: number) {

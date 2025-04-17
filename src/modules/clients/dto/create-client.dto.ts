@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ClientCommonDto } from 'src/common-dtos/tier.common.dto';
 import {
-  CreateShippingAddressDto,
+  BaseCreateShippingAddressDto,
   CreateSyncShippingAddressDto,
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
@@ -36,8 +36,8 @@ export class CreateClientDto extends CreateClientBaseDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateShippingAddressDto)
-  shippingAddresses: CreateShippingAddressDto[];
+  @Type(() => BaseCreateShippingAddressDto)
+  shippingAddresses: BaseCreateShippingAddressDto[];
 }
 
 export class CreateClientSyncDto extends IntersectionType(OmitType(CreateClientDto, ['shippingAddresses']), SyncIdDto) {

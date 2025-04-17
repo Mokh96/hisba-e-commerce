@@ -11,6 +11,8 @@ import { merge } from 'lodash';
 import { UsersService } from 'src/modules/users/users.service';
 import { ShippingAddressesService } from 'src/modules/shipping-addresses/shipping-addresses.service';
 import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
+import { ClientFilterDto } from 'src/modules/clients/dto/client-filter.dto';
+import { fromDtoToQuery } from 'src/helpers/function.global';
 
 @Injectable()
 export class ClientsService {
@@ -71,6 +73,30 @@ export class ClientsService {
         },
       },
     });
+  }
+
+  async findMany(filterDto: ClientFilterDto, paginationDto: BasePaginationDto) {
+    const filter = fromDtoToQuery(filterDto);
+
+    const [row, count] = await this.clientRepository.findAndCount({
+      where: filter,
+      skip: paginationDto.offset,
+      take: paginationDto.limit,
+      relations: {
+        user: true,
+      },
+      select: {
+        user: {
+          id: true,
+          username: true,
+        },
+      },
+    });
+
+    return {
+      count,
+      row,
+    };
   }
 
   /**

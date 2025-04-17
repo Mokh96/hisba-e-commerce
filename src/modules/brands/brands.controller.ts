@@ -9,14 +9,17 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
 } from '@nestjs/common';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
 
 @Controller('brands')
 export class BrandsController {
@@ -35,8 +38,8 @@ export class BrandsController {
   }
 
   @Get()
-  findAll() {
-    return this.brandsService.findAll();
+  findMany(@Query() filterDto: BrandFilterDto, @Query() paginationDto: BasePaginationDto) {
+    return this.brandsService.findMany(filterDto, paginationDto);
   }
 
   @Get(':id')
