@@ -21,6 +21,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
 
 @Controller('categories')
 export class CategoriesController {
@@ -49,13 +50,13 @@ export class CategoriesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  @UseOptionalImageUpload()
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
-    @UploadedFiles() file: Image,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.categoriesService.update(+id, updateCategoryDto, file);
+    return this.categoriesService.update(id, updateCategoryDto, files);
   }
 
   @Delete(':id')

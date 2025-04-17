@@ -63,7 +63,7 @@ export class SyncCategoryController {
     @Body() updateBrandDto: UpdateCategoryDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.categoryService.update(+id, updateBrandDto, file);
+    return this.categoryService.update(+id, updateBrandDto, file as any);
   }
 
   @Delete(':id')

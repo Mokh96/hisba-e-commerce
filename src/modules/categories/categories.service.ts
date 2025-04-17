@@ -91,26 +91,49 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto, file: Image) {
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
     if (updateCategoryDto.parentId) {
       if (updateCategoryDto.parentId === id)
-        throw new BadRequestException('parent Id must be not children of this brand');
-      // TODO: edit message of this error
+        throw new BadRequestException('parent Id must be not children of this category');
       if (!checkChildrenRecursive(id, await this.findAll(), updateCategoryDto.parentId))
-        throw new BadRequestException('parent Id must be not children of this brand');
+        throw new BadRequestException('parent Id must be not children of this category');
     }
-    const { isDelete } = updateCategoryDto;
 
-    const category = await this.findOne(id);
-    const oldPath = category.imgPath;
-    const imgPath = isDelete ? null : file?.img ? pathToFile(file.img[0]) : oldPath;
-    const updatedCategory = this.categoryRepository.merge(category, updateCategoryDto, {
-      imgPath,
-    });
-    await this.categoryRepository.save(updatedCategory);
-    if (isDelete || file?.img) removeFileIfExist(oldPath);
+    const category = await this.categoryRepository.findOneByOrFail({ id });
 
-    return updatedCategory;
+    const initialImgPath = category.imgPath;
+    let uploadedFiles = [];
+    let newPath: string | undefined;
+
+    try {
+      // Upload new files if provided
+      uploadedFiles = await this.uploadManager.uploadFiles(files);
+      newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
+
+      // Merge updates
+      const updatedCategory = this.categoryRepository.merge(category, updateCategoryDto, {
+        imgPath: newPath ?? (updateCategoryDto.removeImage ? null : initialImgPath),
+      });
+
+      // Save the updated category
+      const savedCategory = await this.categoryRepository.save(updatedCategory);
+
+      // Remove old image if necessary
+      if ((newPath && initialImgPath) || updateCategoryDto.removeImage) {
+        await this.uploadManager.removeFile(initialImgPath);
+      }
+
+      return savedCategory;
+    } catch (error) {
+      await this.uploadManager.cleanupFiles(uploadedFiles);
+      throw error;
+    }
   }
 
   async remove(id: number) {
