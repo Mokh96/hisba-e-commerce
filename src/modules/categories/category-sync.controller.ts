@@ -20,15 +20,23 @@ import { CreateSyncCategoryDto } from './dto/create-category.dto';
 import { Response } from 'express';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 
 @Controller('categories/sync')
 export class SyncCategoryController {
   constructor(private readonly categoryService: CategoriesService) {}
 
   @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  createSync(@Body() createSyncCategoryDto: CreateSyncCategoryDto, @UploadedFiles() file: Image) {
-    return this.categoryService.create(createSyncCategoryDto, file as any);
+  @UseRequiredImageUpload()
+  createSync(
+    @Body() createSyncCategoryDto: CreateSyncCategoryDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return this.categoryService.create(createSyncCategoryDto, files );
   }
 
   @Post('/bulk')
