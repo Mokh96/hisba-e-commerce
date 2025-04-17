@@ -15,7 +15,7 @@ import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
 import { CategoriesService } from './categories.service';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { UpdateCategoryDto, UpdateSyncCategoryDto } from './dto/update-category.dto';
 import { CreateSyncCategoryDto } from './dto/create-category.dto';
 import { Response } from 'express';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
@@ -24,8 +24,12 @@ import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseBulkUpload } from 'src/common/decorators/files/use-bulk-upload.decorator';
 import { CreateSyncBrandDto } from 'src/modules/brands/dto/create-brand.dto';
-import { createBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
-import { createCategoriesValidation } from 'src/modules/categories/config/category-file-validation.config';
+import { createBrandsValidation, updateBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
+import {
+  createCategoriesValidation,
+  updateCategoriesValidation,
+} from 'src/modules/categories/config/category-file-validation.config';
+import { UpdateSyncBrandsDto } from 'src/modules/brands/dto/update-brand.dto';
 
 @Controller('categories/sync')
 export class SyncCategoryController {
@@ -57,13 +61,12 @@ export class SyncCategoryController {
   }
 
   @Patch()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  @UseBulkUpload(UpdateSyncCategoryDto, updateCategoriesValidation)
   updateSync(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateBrandDto: UpdateCategoryDto,
-    @UploadedFiles() file: Image,
+    @Body() updateBrandDto: UpdateSyncCategoryDto [],
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.categoryService.update(+id, updateBrandDto, file as any);
+    return this.categoryService.updateBulk(updateBrandDto, files);
   }
 
   @Delete(':id')

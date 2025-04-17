@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { UpdateCategoryDto, UpdateSyncCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
@@ -142,5 +142,28 @@ export class CategoriesService {
     if (category.imgPath) removeFileIfExist(category.imgPath);
 
     return true;
+  }
+
+  async updateBulk(updateBrandDto: UpdateSyncCategoryDto[], files: Express.Multer.File[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const updateCategory of updateBrandDto) {
+      const categoryImage = getFilesBySyncId(files, FileUploadEnum.Image, updateCategory.syncId);
+      try {
+        const category = await this.update(updateCategory.id, updateCategory, {
+          [FileUploadEnum.Image]: categoryImage,
+        });
+        response.successes.push(category);
+      } catch (error) {
+        response.failures.push({
+          syncId: updateCategory.syncId,
+          errors: error,
+        });
+      }
+    }
+    return response;
   }
 }
