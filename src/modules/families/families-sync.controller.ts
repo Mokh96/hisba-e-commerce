@@ -20,15 +20,23 @@ import { UpdateFamilyDto } from './dto/update-family.dto';
 import { CreateSyncFamilyDto } from './dto/create-family.dto';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 
 @Controller('families/sync')
 export class SyncFamilyController {
   constructor(private readonly familiesService: FamiliesService) {}
 
   @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  createSync(@Body() createSyncCategotyDto: CreateSyncFamilyDto, @UploadedFiles() file: Image) {
-    return this.familiesService.create(createSyncCategotyDto, file as any);
+  @UseRequiredImageUpload()
+  createSync(
+    @Body() createSyncFamilyDto: CreateSyncFamilyDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return this.familiesService.create(createSyncFamilyDto, files);
   }
 
   @Post('/bulk')

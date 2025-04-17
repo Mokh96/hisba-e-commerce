@@ -29,15 +29,14 @@ export class FamiliesController {
   }
 
   @Post()
-  @UseRequiredImageUpload()
-  create(
+  @UseRequiredImageUpload() async create(
     @Body() createFamilyDto: CreateFamilyDto,
     @UploadedFiles()
     files: {
       [FileUploadEnum.Image]: Express.Multer.File[];
     },
   ) {
-    return this.familiesService.create(createFamilyDto, files);
+    return await this.familiesService.create(createFamilyDto, files);
   }
 
   @Get(':id')
