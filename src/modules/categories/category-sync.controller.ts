@@ -28,7 +28,7 @@ export class SyncCategoryController {
   @Post()
   @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
   createSync(@Body() createSyncCategoryDto: CreateSyncCategoryDto, @UploadedFiles() file: Image) {
-    return this.categoryService.create(createSyncCategoryDto, file);
+    return this.categoryService.create(createSyncCategoryDto, file as any);
   }
 
   @Post('/bulk')

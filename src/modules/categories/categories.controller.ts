@@ -19,15 +19,23 @@ import { CategoriesService } from './categories.service';
 import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  create(@Body() createCategoryDto: CreateCategoryDto, @UploadedFiles() file: Image) {
-    return this.categoriesService.create(createCategoryDto as CreateCategoryDto, file);
+  @UseRequiredImageUpload()
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return await this.categoriesService.create(createCategoryDto, files);
   }
 
   @Get()

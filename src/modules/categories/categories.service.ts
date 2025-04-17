@@ -6,26 +6,39 @@ import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
 import { validateBulkInsert } from 'src/helpers/validation/global';
 import { Image } from 'src/types/types.global';
 import { Repository } from 'typeorm';
-import { BasePaginationDto } from './../../common/dtos/base-pagination.dto';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UploadManager } from 'src/modules/files/upload/upload-manager';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    private readonly uploadManager: UploadManager,
   ) {}
 
-  async create(createCategoryDto: CreateSyncCategoryDto | CreateCategoryDto, file: Image) {
-    const category = this.categoryRepository.create(createCategoryDto);
-    const newCategory = this.categoryRepository.merge(category, {
-      imgPath: file.img ? pathToFile(file.img[0]) : null,
-    });
-    await this.categoryRepository.save(newCategory);
-    return newCategory;
+  async create(
+    createCategoryDto: CreateCategoryDto,
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    const uploadedImage = await this.uploadManager.uploadFiles(files);
+
+    try {
+      return await this.categoryRepository.save({
+        ...createCategoryDto,
+        imgPath: uploadedImage[0].path || null,
+      });
+    } catch (e) {
+      await this.uploadManager.cleanupFiles(uploadedImage);
+      throw e;
+    }
   }
 
   async createBulk(createCategoryDto: CreateSyncCategoryDto[]) {
