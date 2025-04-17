@@ -1,24 +1,19 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { CurrentUser, Role } from 'src/common/decorators';
+import { Roles } from 'src/common/enums/roles.enum';
+import { User } from 'src/modules/users/entities/user.entity';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  @Role(Roles.CLIENT)
+  create(@Body() createOrderDto: CreateOrderDto, @CurrentUser('sub') userId: User['id']) {
+    return this.ordersService.create(createOrderDto, userId);
   }
 
   @Get()
@@ -32,10 +27,7 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateOrderDto: UpdateOrderDto,
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateOrderDto: UpdateOrderDto) {
     return this.ordersService.update(+id, updateOrderDto);
   }
 

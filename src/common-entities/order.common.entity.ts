@@ -1,4 +1,4 @@
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import {
   Column,
   CreateDateColumn,
@@ -11,16 +11,16 @@ export abstract class OrderCommon {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ ...defaultDecimal, name: 'amount_ht' })
+  @Column({ ...decimalColumnOptions, name: 'amount_ht' })
   amountHt: number;
 
-  @Column({ ...defaultDecimal, name: 'net_amount_ttc' })
+  @Column({ ...decimalColumnOptions, name: 'net_amount_ttc' })
   netAmountTtc: number;
 
-  @Column({ ...defaultDecimal, name: 'net_to_pay' })
+  @Column({ ...decimalColumnOptions, name: 'net_to_pay' })
   netToPay: number;
 
-  @Column({ ...defaultDecimal, name: 'total_tva' })
+  @Column({ ...decimalColumnOptions, name: 'total_tva' })
   totalTva: number;
 
   @CreateDateColumn({

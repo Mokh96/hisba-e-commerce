@@ -2,14 +2,13 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { Brand } from 'src/modules/brands/entities/brand.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Family } from 'src/modules/families/entities/family.entity';
-import { defaultDecimal } from 'src/entities-helpers/columnOptions.helper';
+import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
-
 
 @Entity()
 export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
@@ -34,10 +33,10 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.DESCRIPTION })
   description: string;
 
-  @Column({ ...defaultDecimal, name: 'min_price', default: 0 })
+  @Column({ ...decimalColumnOptions, name: 'min_price', default: 0 })
   minPrice: number;
 
-  @Column({ ...defaultDecimal, name: 'max_price', default: 0 })
+  @Column({ ...decimalColumnOptions, name: 'max_price', default: 0 })
   maxPrice: number;
 
   @Column({ name: 'is_out_stock', default: false })
@@ -64,8 +63,8 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   @OneToMany(() => Article, (article: Article) => article.product, { cascade: ['insert'] })
   articles: Article[];
 
-  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-  gallery: ProductGallery[];
+  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product, { cascade: ['insert', 'remove'] })
+  gallery: ProductGallery[]; //todo : If you use cascade when deleting, delete the files as well.
 
   @ManyToOne(() => Brand, (brand: Brand) => brand.products, {
     onDelete: 'SET NULL',
@@ -89,12 +88,11 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
     onUpdate: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'family_id'  })
+  @JoinColumn({ name: 'family_id' })
   family: Family;
-/*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-  gallery: ProductGallery[];*/
+  /*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
+    gallery: ProductGallery[];*/
 }
-
 
 class Image {
   img: string[];

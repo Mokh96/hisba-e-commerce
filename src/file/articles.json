@@ -1,0 +1,76 @@
+{
+  "cart_items": [
+    {
+      "cart_item_id": 1,
+      "quantity": 2,
+      "note": "Custom note for item 1",
+      "offset": 0,
+      "article": {
+        "article_id": 1,
+        "is_active": true,
+        "default_img_path": "https://s3.ap-southeast-2.amazonaws.com/intygrate.com/news/ecommerce-checkout.webp",
+        "ref": "ART1001",
+        "label": "Wireless Mouse",
+        "note": "Compact and ergonomic design",
+        "description": "A high-precision wireless mouse with long battery life.",
+        "is_disponible": true,
+        "price": 19.99,
+        "tva": 0.2
+      }
+    },
+    {
+      "cart_item_id": 2,
+      "quantity": 1,
+      "note": "Custom note for item 2",
+      "offset": 0,
+      "article": {
+        "article_id": 2,
+        "is_active": true,
+        "default_img_path": "https://s3.ap-southeast-2.amazonaws.com/intygrate.com/news/ecommerce-checkout.webp",
+        "ref": "ART1002",
+        "label": "Mechanical Keyboard",
+        "note": "RGB backlit keys",
+        "description": "A mechanical keyboard with customizable RGB lighting.",
+        "is_disponible": true,
+        "price": 49.99,
+        "tva": 0.2
+      }
+    },
+    {
+      "cart_item_id": 3,
+      "quantity": 1,
+      "note": "Custom note for item 3",
+      "offset": 0,
+      "article": {
+        "article_id": 3,
+        "is_active": true,
+        "default_img_path": "https://s3.ap-southeast-2.amazonaws.com/intygrate.com/news/ecommerce-checkout.webp",
+        "ref": "ART1003",
+        "label": "USB-C Hub",
+        "note": "Multiple ports for connectivity",
+        "description": "A USB-C hub with multiple ports for easy connectivity.",
+        "is_disponible": true,
+        "price": 29.99,
+        "tva": 0.2
+      }
+    },
+    {
+      "cart_item_id": 4,
+      "quantity": 1,
+      "note": "Custom note for item 4",
+      "offset": 0,
+      "article": {
+        "article_id": 4,
+        "is_active": true,
+        "default_img_path": "https://s3.ap-southeast-2.amazonaws.com/intygrate.com/news/ecommerce-checkout.webp",
+        "ref": "ART1004",
+        "label": "HDMI Cable",
+        "note": "High-speed HDMI cable",
+        "description": "A high-speed HDMI cable for 4K video.",
+        "is_disponible": true,
+        "price": 9.99,
+        "tva": 0.2
+      }
+    }
+  ]
+}

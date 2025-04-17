@@ -18,6 +18,6 @@ import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
       useFactory: () => new UploadManager(FileTypesEnum.Public, ['articles']),
     },
   ],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ArticlesService],
 })
 export class ArticlesModule {}

@@ -8,6 +8,7 @@ import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.p
 import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation.config';
 import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
 import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulkDtoInterceptor';
+import { getBulkStatus } from 'src/common/utils/bulk-status.util';
 
 @Controller('products/sync')
 export class ProductsSyncController {
@@ -26,7 +27,8 @@ export class ProductsSyncController {
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const response = await this.productsService.createBulk(createSyncProductsDto, files);
-    return res.status(207).json(response);
+    const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
+    return res.status(status).json(response);
   }
 
   @Patch('bulk')

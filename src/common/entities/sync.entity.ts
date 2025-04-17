@@ -2,7 +2,7 @@ import { Column, Index } from 'typeorm';
 import { MixinConstructor } from '../types/entities.types';
 
 interface SyncId {
-  syncId: number;
+  syncId: number | null;
 }
 
 export function WithSyncId<TBase extends MixinConstructor>(Base: TBase) {

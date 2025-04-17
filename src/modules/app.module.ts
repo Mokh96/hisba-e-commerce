@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GlobalExceptionFilter, NotFoundExceptionFilter } from 'src/error-handlers/global-handler';
-import { ArticleGalleriesModule } from './article-galleries/article-galleries.module';
 import { ArticlesModule } from './articles/articles.module';
 import { AuthModule } from './auth/auth.module';
 import { BrandsModule } from './brands/brands.module';
@@ -11,10 +10,6 @@ import { CartItemsModule } from './cart-items/cart-items.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ClientsModule } from './clients/clients.module';
 import { FamiliesModule } from './families/families.module';
-import { ProductsModule } from './products/products.module';
-import { ProductGalleriesModule } from './product-galleries/product-galleries.module';
-import { OptionsModule } from './options/options.module';
-
 import { OptionsValuesModule } from './options-values/options-values.module';
 import { OptionsModule } from './options/options.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
@@ -25,7 +20,6 @@ import { ProductGalleriesModule } from './product-galleries/product-galleries.mo
 import { ProductsModule } from './products/products.module';
 import { ShippingAddressesModule } from './shipping-addresses/shipping-addresses.module';
 import { UsersModule } from './users/users.module';
-
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FilesModule } from './files/files.module';

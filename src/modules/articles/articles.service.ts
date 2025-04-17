@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto, UpdateSyncArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, DeepPartial, EntityManager, Repository } from 'typeorm';
+import { DataSource, DeepPartial, EntityManager, FindManyOptions, In, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { QueryArticleDto } from './dto/query-article.dto';
@@ -12,6 +12,7 @@ import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
+import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -42,7 +43,7 @@ export class ArticlesService {
         // Step 2: Create the article entity
         const article = this.articleRepository.create({
           ...createArticleDto,
-          defaultImgPath: uploadedFiles[0]?.path || null,
+          imgPath: uploadedFiles[0]?.path || null,
         });
 
         // Step 3: Update product price range if necessary
@@ -91,7 +92,10 @@ export class ArticlesService {
     return await this.articleRepository.findOneOrFail({
       where: { id },
       relations: {
-        optionValues: true,
+        optionValues: {
+          option: true,
+        },
+        product: true,
       },
     });
   }
@@ -104,7 +108,7 @@ export class ArticlesService {
     },
   ) {
     let article = await this.articleRepository.findOneByOrFail({ id });
-    const initialImgPath = article.defaultImgPath; // Get the initial image path
+    const initialImgPath = article.imgPath; // Get the initial image path
 
     const uploadedFiles = await this.uploadManager.uploadFiles(files); // Upload new image
     const newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
@@ -114,7 +118,7 @@ export class ArticlesService {
         let updatedFields: DeepPartial<Article> = { ...updateArticleDto };
 
         if (newPath) {
-          updatedFields.defaultImgPath = newPath; // Update with new image
+          updatedFields.imgPath = newPath; // Update with new image
         }
 
         article = this.articleRepository.merge(article, updatedFields);
@@ -126,7 +130,7 @@ export class ArticlesService {
         }
 
         //update product price only when the article price is updated
-        if (typeof updateArticleDto.price === 'number' && article.price !== updateArticleDto.price) {
+        if (article.price !== updateArticleDto.price) {
           const product = await this.getProductById(article.productId, manager);
           await this.updateProductPricing(product, updateArticleDto.price, manager);
         }
@@ -184,6 +188,10 @@ export class ArticlesService {
         minPrice: shouldUpdateMin ? newPrice : product.minPrice,
       });
     }
+  }
+
+  public async getArticlesByIds(articleIds: Article['id'][], options: FindManyOptions<Article> = {}) {
+    return await getEntitiesByIds(this.articleRepository, articleIds, options);
   }
 
   async remove(id: number) {

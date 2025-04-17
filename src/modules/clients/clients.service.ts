@@ -2,16 +2,25 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/common/enums/roles.enum';
 
+import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { DeepPartial, Repository } from 'typeorm';
+
+
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
 import { Repository } from 'typeorm';
 import { ShippingAddressesService } from '../shipping-addresses/shipping-addresses.service';
 import { UsersService } from '../users/users.service';
 import { ClientFilterDto } from './dto/client-filter.dto';
+
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
-import { ClientBulkResponse } from './types/client-bulk-response.type';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
+import { merge } from 'lodash';
+import { UsersService } from 'src/modules/users/users.service';
+import { ShippingAddressesService } from 'src/modules/shipping-addresses/shipping-addresses.service';
+import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
 
 @Injectable()
 export class ClientsService {
@@ -162,6 +171,23 @@ export class ClientsService {
     await this.clientRepository.update(id, rest);
 
     return await this.findOne(id);
+  }
+
+  async getClientByUserId<T extends DeepPartial<Client>>(
+    userId: number,
+    options: FindOneOptions<Client> = {},
+  ): Promise<T> {
+    const requiredOptions: FindOneOptions<Client> = {
+      where: { user: { id: userId } },
+    } as const;
+
+    const mergedOptions = merge({}, options, requiredOptions);
+    return (await this.clientRepository.findOneOrFail(mergedOptions)) as T;
+  }
+
+  async getClientIdByUserId(userId: number) {
+    const client = await this.getClientByUserId<Pick<Client, 'id'>>(userId, { select: { id: true } });
+    return client.id;
   }
 
   async remove(id: number) {
