@@ -46,12 +46,12 @@ export class BrandsController {
 
   @Patch(':id')
   @UseOptionalImageUpload()
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBrandDto: UpdateBrandDto,
     @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.brandsService.update(id, updateBrandDto, files);
+    return await this.brandsService.update(id, updateBrandDto, files);
   }
 
   @Delete(':id')

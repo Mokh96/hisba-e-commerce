@@ -18,6 +18,7 @@ import { Upload } from 'src/helpers/upload/upload.global';
 import { Image } from 'src/types/types.global';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
 
 @Controller('families')
 export class FamiliesController {
@@ -46,13 +47,13 @@ export class FamiliesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  update(
+  @UseOptionalImageUpload()
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFamilyDto: UpdateFamilyDto,
-    @UploadedFiles() file: Image,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.familiesService.update(+id, updateFamilyDto, file);
+    return await this.familiesService.update(id, updateFamilyDto, files);
   }
 
   @Delete(':id')

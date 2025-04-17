@@ -63,7 +63,7 @@ export class SyncFamilyController {
     @Body() updateBrandDto: UpdateFamilyDto,
     @UploadedFiles() file: Image,
   ) {
-    return this.familiesService.update(+id, updateBrandDto, file);
+    return this.familiesService.update(+id, updateBrandDto, file as any);
   }
 
   @Delete(':id')

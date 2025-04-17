@@ -68,26 +68,43 @@ export class FamiliesService {
     return family;
   }
 
-  async update(id: number, updateFamilyDto: UpdateFamilyDto, file: Image) {
+  async update(id: number, updateFamilyDto: UpdateFamilyDto, files: { [FileUploadEnum.Image]: Express.Multer.File[] }) {
     if (updateFamilyDto.parentId) {
       if (updateFamilyDto.parentId === id)
-        throw new BadRequestException('parent Id must be not children of this brand');
-      // TODO: edit message of this error
+        throw new BadRequestException('parent Id must be not children of this family');
       if (checkChildrenRecursive(id, await this.findAll(), updateFamilyDto.parentId) === false)
-        throw new BadRequestException('parent Id must be not children of this brand');
+        throw new BadRequestException('parent Id must be not children of this family');
     }
-    const { isDelete } = updateFamilyDto;
 
-    const family = await this.findOne(id);
-    const oldPath = family.imgPath;
-    const imgPath = isDelete ? null : file?.img ? pathToFile(file.img[0]) : oldPath;
-    const updatedFamily = this.familyRepository.merge(family, updateFamilyDto, {
-      imgPath,
-    });
-    await this.familyRepository.save(updatedFamily);
-    if (isDelete || file?.img) removeFileIfExist(oldPath);
+    const family = await this.familyRepository.findOneByOrFail({ id });
 
-    return updatedFamily;
+    const initialImgPath = family.imgPath;
+    let uploadedFiles = [];
+    let newPath: string | undefined;
+
+    try {
+      // Upload new files if provided
+      uploadedFiles = await this.uploadManager.uploadFiles(files);
+      newPath = uploadedFiles.length > 0 ? uploadedFiles[0].path : undefined;
+
+      // Merge updates
+      const updatedFamily = this.familyRepository.merge(family, updateFamilyDto, {
+        imgPath: newPath ?? (updateFamilyDto.removeImage ? null : initialImgPath),
+      });
+
+      // Save the updated family
+      const savedFamily = await this.familyRepository.save(updatedFamily);
+
+      // Remove old image if necessary
+      if ((newPath && initialImgPath) || updateFamilyDto.removeImage) {
+        await this.uploadManager.removeFile(initialImgPath);
+      }
+
+      return savedFamily;
+    } catch (error) {
+      await this.uploadManager.cleanupFiles(uploadedFiles);
+      throw error;
+    }
   }
 
   async remove(id: number) {
