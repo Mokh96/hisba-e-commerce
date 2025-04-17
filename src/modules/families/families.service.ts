@@ -7,11 +7,12 @@ import { validateBulkInsert } from 'src/helpers/validation/global';
 import { Image } from 'src/types/types.global';
 import { Repository } from 'typeorm';
 import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
-import { UpdateFamilyDto } from './dto/update-family.dto';
+import { UpdateFamilyDto, UpdateSyncFamiliesDto } from './dto/update-family.dto';
 import { Family } from './entities/family.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
+import { UpdateSyncBrandsDto } from 'src/modules/brands/dto/update-brand.dto';
 
 @Injectable()
 export class FamiliesService {
@@ -105,6 +106,29 @@ export class FamiliesService {
       await this.uploadManager.cleanupFiles(uploadedFiles);
       throw error;
     }
+  }
+
+  async updateBulk(updateSyncFamiliesDto: UpdateSyncFamiliesDto[], files: Express.Multer.File[]) {
+    const response: BulkResponse = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const updateFamily of updateSyncFamiliesDto) {
+      const familyImage = getFilesBySyncId(files, FileUploadEnum.Image, updateFamily.syncId);
+      try {
+        const family = await this.update(updateFamily.id, updateFamily, {
+          [FileUploadEnum.Image]: familyImage,
+        });
+        response.successes.push(family);
+      } catch (error) {
+        response.failures.push({
+          syncId: updateFamily.syncId,
+          errors: error,
+        });
+      }
+    }
+    return response;
   }
 
   async remove(id: number) {

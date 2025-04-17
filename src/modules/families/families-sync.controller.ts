@@ -16,7 +16,7 @@ import { Image } from 'src/types/types.global';
 import { IsArrayPipe } from 'src/pipes/isArray.pipe';
 import { Response } from 'express';
 import { FamiliesService } from './families.service';
-import { UpdateFamilyDto } from './dto/update-family.dto';
+import { UpdateFamilyDto, UpdateSyncFamiliesDto } from './dto/update-family.dto';
 import { CreateSyncFamilyDto } from './dto/create-family.dto';
 import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
@@ -24,8 +24,12 @@ import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseBulkUpload } from 'src/common/decorators/files/use-bulk-upload.decorator';
 import { CreateSyncBrandDto } from 'src/modules/brands/dto/create-brand.dto';
-import { createBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
-import { createFamiliesValidation } from 'src/modules/families/config/family-file-validation.config';
+import { createBrandsValidation, updateBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
+import {
+  createFamiliesValidation,
+  updateFamiliesValidation,
+} from 'src/modules/families/config/family-file-validation.config';
+import { UpdateSyncBrandsDto } from 'src/modules/brands/dto/update-brand.dto';
 
 @Controller('families/sync')
 export class SyncFamilyController {
@@ -56,14 +60,13 @@ export class SyncFamilyController {
     res.status(status).json(response);
   }
 
-  @Patch()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
+  @Patch('/bulk')
+  @UseBulkUpload(UpdateSyncBrandsDto, updateFamiliesValidation)
   updateSync(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateBrandDto: UpdateFamilyDto,
-    @UploadedFiles() file: Image,
+    @Body() updateSyncFamiliesDto: UpdateSyncFamiliesDto [],
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.familiesService.update(+id, updateBrandDto, file as any);
+    return this.familiesService.updateBulk(updateSyncFamiliesDto, files );
   }
 
   @Delete(':id')
