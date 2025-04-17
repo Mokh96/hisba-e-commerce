@@ -11,6 +11,7 @@ import { UpdateFamilyDto } from './dto/update-family.dto';
 import { Family } from './entities/family.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
+import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 
 @Injectable()
 export class FamiliesService {
@@ -33,20 +34,18 @@ export class FamiliesService {
     }
   }
 
-  async createBulk(createFamilyDto: CreateSyncFamilyDto[]) {
+  async createSyncBulk(createFamilyDto: CreateSyncFamilyDto[], files: Express.Multer.File[]) {
     const response: BulkResponse = {
       successes: [],
       failures: [],
     };
 
     for (const family of createFamilyDto) {
+      const familyImage = getFilesBySyncId(files, FileUploadEnum.Image, family.syncId);
+
       try {
-        const newFamily = this.familyRepository.create(family);
-        await this.familyRepository.save(newFamily);
-        response.successes.push({
-          id: newFamily.id,
-          syncId: newFamily.syncId,
-        });
+        const createdBrand = await this.create(family, { [FileUploadEnum.Image]: familyImage });
+        response.successes.push(createdBrand);
       } catch (err) {
         response.failures.push({
           syncId: family.syncId,
@@ -56,31 +55,6 @@ export class FamiliesService {
     }
 
     return response;
-  }
-
-  async createSyncBulk(createFamilyDto: CreateSyncFamilyDto[]) {
-    const { validatedData, failureData } = await validateBulkInsert<CreateSyncFamilyDto[]>(createFamilyDto, 'family');
-
-    const successData: CreateSyncFamilyDto[] = [];
-
-    if (failureData.length === createFamilyDto.length)
-      // TODO: change validation failure message
-      throw new BadRequestException(' your body not valid ');
-
-    for (let i = 0; i < validatedData.length; i++) {
-      try {
-        const family = this.familyRepository.create(validatedData[i]);
-        await this.familyRepository.save(family);
-
-        successData.push(family);
-      } catch (error) {
-        failureData.push({
-          index: createFamilyDto.findIndex((item) => item.syncId === validatedData[i].syncId),
-          message: 'insert error',
-        });
-      }
-    }
-    return { successData, failureData };
   }
 
   async findAll() {

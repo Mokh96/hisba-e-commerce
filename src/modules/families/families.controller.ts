@@ -29,7 +29,8 @@ export class FamiliesController {
   }
 
   @Post()
-  @UseRequiredImageUpload() async create(
+  @UseRequiredImageUpload()
+  async create(
     @Body() createFamilyDto: CreateFamilyDto,
     @UploadedFiles()
     files: {

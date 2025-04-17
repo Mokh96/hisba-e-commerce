@@ -3,21 +3,21 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { optionalImageUploadRules, requiredImageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynamic-file-validation.interceptor';
 
-const createBrandValidationRules: ValidationRules = {
-  entity: 'brands',
+const createFamilyValidationRules: ValidationRules = {
+  entity: 'families', //main entity
   files: {
     [FileUploadEnum.Image]: requiredImageUploadRules,
   },
 };
 
-const updateBrandValidationRules: ValidationRules = {
-  entity: 'brands',
+const updateFamilyValidationRules: ValidationRules = {
+  entity: 'families', //main entity
   files: {
     [FileUploadEnum.Image]: optionalImageUploadRules,
   },
 };
 
-const createBrandsValidation = new DynamicFileValidationInterceptor(createBrandValidationRules);
-const updateBrandsValidation = new DynamicFileValidationInterceptor(updateBrandValidationRules);
+const createFamiliesValidation = new DynamicFileValidationInterceptor(createFamilyValidationRules);
+const updateFamiliesValidation = new DynamicFileValidationInterceptor(updateFamilyValidationRules);
 
-export { createBrandsValidation, updateBrandsValidation };
+export { createFamiliesValidation, updateFamiliesValidation };

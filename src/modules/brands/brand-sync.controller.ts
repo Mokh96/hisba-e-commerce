@@ -55,8 +55,8 @@ export class SyncBrandController {
   @Post('/bulk')
   @UseBulkUpload(CreateSyncBrandDto, createBrandsValidation)
   async createSyncBulk(
-    @Body() createSyncBrandBulkDto: CreateSyncBrandDto[],
     @Res() res: Response,
+    @Body() createSyncBrandBulkDto: CreateSyncBrandDto[],
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const response = await this.brandsService.createSyncBulk(createSyncBrandBulkDto, files);

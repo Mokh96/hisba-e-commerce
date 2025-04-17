@@ -22,6 +22,10 @@ import { validateBulkDto } from 'src/helpers/validation/validate-bulk-dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseBulkUpload } from 'src/common/decorators/files/use-bulk-upload.decorator';
+import { CreateSyncBrandDto } from 'src/modules/brands/dto/create-brand.dto';
+import { createBrandsValidation } from 'src/modules/brands/config/brand-file-validation.config';
+import { createFamiliesValidation } from 'src/modules/families/config/family-file-validation.config';
 
 @Controller('families/sync')
 export class SyncFamilyController {
@@ -40,21 +44,16 @@ export class SyncFamilyController {
   }
 
   @Post('/bulk')
-  async createSyncBulk(@Res() res: Response, @Body(IsArrayPipe) createFamilyDto: CreateSyncFamilyDto[]) {
-    const { valFailures, valSuccess } = await validateBulkDto<CreateSyncFamilyDto>(
-      createFamilyDto,
-      CreateSyncFamilyDto,
-    );
-    const { successes, failures } = await this.familiesService.createBulk(valSuccess);
+  @UseBulkUpload(CreateSyncBrandDto, createFamiliesValidation)
+  async createSyncBulk(
+    @Res() res: Response,
+    @Body() createFamilyDto: CreateSyncFamilyDto[],
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const response = await this.familiesService.createSyncBulk(createFamilyDto, files);
+    const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
 
-    const result = {
-      successes,
-      failures: [...valFailures, ...failures],
-    };
-
-    const status = getBulkStatus({ failures: result.failures.length, success: result.successes.length });
-
-    res.status(status).json(result);
+    res.status(status).json(response);
   }
 
   @Patch()
