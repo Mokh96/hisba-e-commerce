@@ -37,6 +37,9 @@ export class Client extends ClientSync {
   @OneToOne(() => Town, (town: Town) => town.clientSync)
   town: Town;
 
+  @Column({ name: 'user_id', type: 'int' })
+  userId: number;
+
   @OneToOne(() => User, (user: User) => user.client, {
     nullable: false,
     cascade: ['insert'],

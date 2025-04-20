@@ -170,10 +170,7 @@ export class ClientsService {
     userId: number,
     options: FindOneOptions<Client> = {},
   ): Promise<T> {
-    const requiredOptions: FindOneOptions<Client> = {
-      where: { user: { id: userId } },
-    } as const;
-
+    const requiredOptions: FindOneOptions<Client> = { where: { userId } } as const;
     const mergedOptions = merge({}, options, requiredOptions);
     return (await this.clientRepository.findOneOrFail(mergedOptions)) as T;
   }

@@ -136,7 +136,6 @@ export class OrdersService {
       netAmountTtc: productTotalTtc,
       netToPay: productTotalTtc - (productTotalTtc * discountPercentage) / 100 + stampDuty,
       totalTva: +productTotalTva.toFixed(2),
-      statusId: OrderStatus.NEW,
       orderItems,
       history: [
         {

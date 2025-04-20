@@ -16,7 +16,7 @@ import { PaymentMethod as PaymentMethodEnum } from 'src/modules/payment-methods/
 @Entity()
 export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   //base order properties
-  @Column({ nullable: true , length: ORDER_FIELD_LENGTHS.NOTE })
+  @Column({ nullable: true, length: ORDER_FIELD_LENGTHS.NOTE })
   note: string;
 
   @Column({ nullable: true, length: ORDER_FIELD_LENGTHS.REF })
@@ -71,7 +71,7 @@ export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
   @Column({ name: 'payment_method_id' })
   paymentMethodId: PaymentMethodEnum;
 
-  @Column({ name: 'status_id' })
+  @Column({ name: 'status_id', default: OrderStatusEnum.NEW })
   statusId: OrderStatusEnum;
 
   @Column({ name: 'client_id' })
