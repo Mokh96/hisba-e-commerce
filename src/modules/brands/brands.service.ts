@@ -3,11 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateBrandDto, UpdateSyncBrandsDto } from './dto/update-brand.dto';
 import { Brand } from './entities/brand.entity';
-
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
-import { removeFileIfExist } from 'src/helpers/paths';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
@@ -134,7 +132,7 @@ export class BrandsService {
   async remove(id: number) {
     const brand = await this.findOne(id);
     await this.brandRepository.remove(brand);
-    if (brand.imgPath) removeFileIfExist(brand.imgPath);
+    //if (brand.imgPath) removeFileIfExist(brand.imgPath);
     return true;
   }
 

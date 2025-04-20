@@ -2,9 +2,6 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
-import { pathToFile, removeFileIfExist } from 'src/helpers/paths';
-import { validateBulkInsert } from 'src/helpers/validation/global';
-import { Image } from 'src/types/types.global';
 import { Repository } from 'typeorm';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { CategoryFilterDto } from './dto/category-filter.dto';
@@ -139,7 +136,7 @@ export class CategoriesService {
   async remove(id: number) {
     const category = await this.findOne(id);
     await this.categoryRepository.remove(category);
-    if (category.imgPath) removeFileIfExist(category.imgPath);
+    //if (category.imgPath) removeFileIfExist(category.imgPath);
 
     return true;
   }

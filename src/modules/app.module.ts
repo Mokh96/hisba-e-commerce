@@ -9,7 +9,6 @@ import { BrandsModule } from './brands/brands.module';
 import { CartItemsModule } from './cart-items/cart-items.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ClientsModule } from './clients/clients.module';
-import { FamiliesModule } from './families/families.module';
 import { OptionsValuesModule } from './options-values/options-values.module';
 import { OptionsModule } from './options/options.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
@@ -43,7 +42,6 @@ import { SystemEntitiesModule } from './system-entities/system-entities.module';
     UsersModule,
     CategoriesModule,
     BrandsModule,
-    FamiliesModule,
     ProductsModule,
     ProductGalleriesModule,
     OptionsModule,
