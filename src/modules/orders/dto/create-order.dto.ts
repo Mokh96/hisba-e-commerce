@@ -35,7 +35,8 @@ export class CreateOrderDto {
 
   @IsString()
   @IsNotEmpty()
-  deliveryAddress: string; //is optional => if (copy from a client if not sent)
+  @MaxLength(ORDER_FIELD_LENGTHS.DELIVERY_ADDRESS)
+  deliveryAddress: string;
 
   @IsInt()
   @IsPositive()
@@ -58,4 +59,29 @@ export class CreateOrderDto {
   @Type(() => CreateOrderItemDto)
   @ArrayMinSize(1)
   orderItems?: CreateOrderItemDto[];
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FIRST_NAME)
+  clientFirstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_LAST_NAME)
+  clientLastName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_PHONE)
+  clientPhone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_MOBILE)
+  clientMobile: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FAX)
+  clientFax: string;
 }

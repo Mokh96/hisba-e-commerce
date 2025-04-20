@@ -9,7 +9,7 @@ import { ArticlesModule } from 'src/modules/articles/articles.module';
 import { ProductsModule } from 'src/modules/products/products.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order]), ClientsModule, CartItemsModule, ArticlesModule, ProductsModule],
+  imports: [TypeOrmModule.forFeature([Order]), CartItemsModule, ArticlesModule, ProductsModule],
   controllers: [OrdersController],
   providers: [OrdersService],
 })

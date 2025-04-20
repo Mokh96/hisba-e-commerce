@@ -19,9 +19,9 @@ export const MD_DESCRIPTION_LENGTH = 500;
  * */
 export const IMAGE_PATH_LENGTH = 30;
 
-export const MIN_PHONE_LENGTH = 10;
+export const MIN_PHONE_LENGTH = 9;
 export const MAX_PHONE_LENGTH = 15;
 
-export const MAX_FAX_LENGTH = 9;
+export const MAX_FAX_LENGTH = 15;
 
 export const MAX_FILE_PATH_LENGTH = 255;
