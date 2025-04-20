@@ -14,11 +14,13 @@ import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-respon
 import { ClientFilterDto } from 'src/modules/clients/dto/client-filter.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Injectable()
 export class ClientsService {
   constructor(
-    @InjectRepository(Client) private clientRepository: Repository<Client>,
+    @InjectRepository(Client)
+    private clientRepository: Repository<Client>,
     private readonly usersService: UsersService,
     private readonly shippingAddressService: ShippingAddressesService,
   ) {}
@@ -76,10 +78,10 @@ export class ClientsService {
     });
   }
 
-  async findMany(filterDto: ClientFilterDto, paginationDto: BasePaginationDto) {
+  async findMany(filterDto: ClientFilterDto, paginationDto: BasePaginationDto) : Promise<PaginatedResult> {
     const filter = fromDtoToQuery(filterDto);
 
-    const [row, count] = await this.clientRepository.findAndCount({
+    const [data , totalItems] = await this.clientRepository.findAndCount({
       where: filter,
       skip: paginationDto.offset,
       take: paginationDto.limit,
@@ -95,8 +97,7 @@ export class ClientsService {
     });
 
     return {
-      count,
-      row,
+      data , totalItems
     };
   }
 

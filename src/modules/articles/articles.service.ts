@@ -13,6 +13,8 @@ import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { Order } from 'src/modules/orders/entities/order.entity';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -83,9 +85,10 @@ export class ArticlesService {
     return response;
   }
 
-  async findAll(queryArticleDto: QueryArticleDto) {
+  async findAll(queryArticleDto: QueryArticleDto): Promise<PaginatedResult<Article>> {
     const queryArticle = fromDtoToQuery(queryArticleDto);
-    return await this.articleRepository.findBy(queryArticle);
+    const [data, totalItems] = await this.articleRepository.findAndCount(queryArticle);
+    return { data, totalItems };
   }
 
   async findOne(id: number) {
@@ -196,7 +199,7 @@ export class ArticlesService {
 
   async remove(id: number) {
     const article = await this.articleRepository.findOneByOrFail({ id });
-    await this.articleRepository.remove(article);//todo : remove related images
+    await this.articleRepository.remove(article); //todo : remove related images
     return true;
   }
 }

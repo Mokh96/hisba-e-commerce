@@ -25,7 +25,7 @@ export class CartItemsService {
   }
 
   async findAll(activeUserData: CurrentUserData) {
-    return this.cartItemRepository.find({
+    return this.cartItemRepository.findAndCount({
       where: { clientId: activeUserData.client.id },
       relations: {
         article: true,

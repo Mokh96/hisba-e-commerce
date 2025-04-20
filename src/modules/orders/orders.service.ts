@@ -15,6 +15,7 @@ import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { ArticlesService } from 'src/modules/articles/articles.service';
 import { ProductsService } from 'src/modules/products/products.service';
 import { CurrentUserData } from 'src/common/decorators';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Injectable()
 export class OrdersService {
@@ -47,19 +48,7 @@ export class OrdersService {
     });
   }
 
-  /*  async findOnes(id: number) {
-      return await this.orderRepository
-        .createQueryBuilder('order')
-        .leftJoinAndSelect('order.orderItems', 'orderItem')
-        .leftJoinAndSelect('orderItem.article', 'article')
-        .leftJoinAndSelect('order.client', 'client')
-        .leftJoinAndSelect('order.history', 'history')
-        .where('order.id = :id', { id })
-        .select(['order', 'orderItem', 'article.id', 'article.label', 'article.defaultImgPath', 'client', 'history'])
-        .getOneOrFail();
-    }*/
-
-  async findAll() {
+  async findAll(): Promise<PaginatedResult<Order>> {
     const [data, totalItems] = await this.orderRepository.findAndCount();
     return { data, totalItems };
   }
