@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/common/enums/roles.enum';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { DeepPartial, Repository } from 'typeorm';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { fromDtoToQuery } from 'src/helpers/function.global';
+import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
@@ -11,9 +13,6 @@ import { merge } from 'lodash';
 import { UsersService } from 'src/modules/users/users.service';
 import { ShippingAddressesService } from 'src/modules/shipping-addresses/shipping-addresses.service';
 import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
-import { ClientFilterDto } from 'src/modules/clients/dto/client-filter.dto';
-import { fromDtoToQuery } from 'src/helpers/function.global';
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Injectable()
@@ -143,7 +142,7 @@ export class ClientsService {
   }
 
   async update(id: number, updateClientDto: UpdateClientDto) {
-    const { user: clientuser, ...client } = await this.findOne(id, ['user', 'shippingAddresses'], {
+    const { user: clientUser, ...client } = await this.findOne(id, ['user', 'shippingAddresses'], {
       user: { id: true },
     });
 
@@ -154,7 +153,7 @@ export class ClientsService {
     const { user, shippingAddresses, ...rest } = updateClientDto;
     // update user if exists
     if (user) {
-      await this.usersService.update(clientuser.id, user);
+      await this.usersService.update(clientUser.id, user);
     }
 
     // update shipping addresses if exist
