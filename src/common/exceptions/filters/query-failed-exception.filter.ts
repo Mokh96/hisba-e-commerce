@@ -2,7 +2,10 @@ import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus } from '@nestjs/commo
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
-import { MYSQL_UNIQUE_CONSTRAINT_CODE } from 'src/common/exceptions/constants/errors-code.constant';
+import {
+  MYSQL_FOREIGN_KEY_CONSTRAINT_CODE,
+  MYSQL_UNIQUE_CONSTRAINT_CODE,
+} from 'src/common/exceptions/constants/errors-code.constant';
 import { generateUniqueConstraintError } from 'src/common/exceptions/utils/generateUniqueConstraintError';
 import { extractFieldFromMySqlMessage, extractValueFromMessage } from 'src/common/exceptions/utils/query-failed-parser';
 
@@ -13,6 +16,7 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    console.log("QueryFailedError" , exception);
     const driverError = exception.driverError;
 
 
@@ -39,6 +43,26 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
       );
     }
 
+    if (driverError?.code === MYSQL_FOREIGN_KEY_CONSTRAINT_CODE) {
+      const { field } = extractForeignKeyInfo(driverError.sqlMessage);
+
+      return response.status(HttpStatus.BAD_REQUEST).json(
+        createErrorResponse({
+          statusCode: HttpStatus.BAD_REQUEST,
+          error: 'Bad Request',
+          message: 'Foreign key constraint failed',
+          path: request.url,
+          type: 'db.foreign_key_violation',
+          errors: [
+            {
+              field,
+              message: `The provided value for '${field}' does not reference an existing record.`,
+            },
+          ],
+        }),
+      );
+    }
+
     // fallback generic response
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
       createErrorResponse({
@@ -52,3 +76,9 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
   }
 }
 
+
+export function extractForeignKeyInfo(message: string) {
+  const match = message.match(/FOREIGN KEY \(`(.+?)`\)/);
+  const field = match ? match[1] : 'unknown';
+  return { field };
+}
