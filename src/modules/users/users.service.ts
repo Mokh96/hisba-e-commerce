@@ -16,6 +16,15 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
+  async test() {
+    const createdUser = await this.usersRepository.save({
+      password: '123456',
+      roleId: 1,
+      username: 'test',
+    });
+    return createdUser
+  }
+
   async create(createUserDto: CreateUserDto & { roleId: Roles }) {
     const user = new User();
 

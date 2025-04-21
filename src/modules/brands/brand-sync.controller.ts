@@ -62,7 +62,8 @@ export class SyncBrandController {
     const response = await this.brandsService.createSyncBulk(createSyncBrandBulkDto, files);
     const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
 
-    res.status(status).json(response);
+    //res.status(status).json(response);
+    res.status(207).json(response);
   }
 
   @Patch('/bulk')

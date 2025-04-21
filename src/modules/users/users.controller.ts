@@ -25,6 +25,11 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post('test')
+  async test() {
+    return this.usersService.test();
+  }
+
   @Post()
   @Role(Roles.SUPERADMIN, Roles.ADMIN)
   async create(@Body() createUserDto: CreateUserDto, @CurrentUser('roleId') currentRole: User['roleId']) {
