@@ -1,13 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from 'src/common/enums/roles.enum';
-
 import { DeepPartial, Repository } from 'typeorm';
-
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { fromDtoToQuery } from 'src/helpers/function.global';
-import { ClientFilterDto } from './dto/client-filter.dto';
-
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
@@ -16,6 +10,9 @@ import { merge } from 'lodash';
 import { UsersService } from 'src/modules/users/users.service';
 import { ShippingAddressesService } from 'src/modules/shipping-addresses/shipping-addresses.service';
 import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
+import { ClientFilterDto } from 'src/modules/clients/dto/client-filter.dto';
+import { fromDtoToQuery } from 'src/helpers/function.global';
+import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 
 @Injectable()
 export class ClientsService {

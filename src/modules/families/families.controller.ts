@@ -1,38 +1,43 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
-  Query,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
   UploadedFiles,
-  UseInterceptors,
+  Query
 } from '@nestjs/common';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Image } from 'src/types/types.global';
 import { CreateFamilyDto, CreateSyncFamilyDto } from './dto/create-family.dto';
-import { FamilyFilterDto } from './dto/family-filter.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
-import { FamiliesService } from './families.service';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
+import { FamiliesService } from 'src/modules/families/families.service';
+import { FamilyFilterDto } from 'src/modules/families/dto/family-filter.dto';
 
 @Controller('families')
 export class FamiliesController {
   constructor(private readonly familiesService: FamiliesService) {}
 
-  @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  create(@Body() createFamilyDto: CreateFamilyDto, @UploadedFiles() file: Image) {
-    return this.familiesService.create(createFamilyDto as CreateSyncFamilyDto, file);
-  }
-
   @Get()
   findMany(@Query() filterDto: FamilyFilterDto, @Query() paginationDto: BasePaginationDto) {
     return this.familiesService.findMany(filterDto, paginationDto);
+  }
+
+  @Post()
+  @UseRequiredImageUpload()
+  async create(
+    @Body() createFamilyDto: CreateFamilyDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return await this.familiesService.create(createFamilyDto, files);
   }
 
   @Get(':id')
@@ -41,13 +46,13 @@ export class FamiliesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  update(
+  @UseOptionalImageUpload()
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateFamilyDto: UpdateFamilyDto,
-    @UploadedFiles() file: Image,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.familiesService.update(+id, updateFamilyDto, file);
+    return await this.familiesService.update(id, updateFamilyDto, files);
   }
 
   @Delete(':id')

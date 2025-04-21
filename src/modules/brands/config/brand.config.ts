@@ -1,0 +1,6 @@
+import { IMAGE_PATH_LENGTH, MAX_LABEL_LENGTH } from 'src/common/constants';
+
+export const BRAND_FIELD_LENGTHS = {
+  LABEL: MAX_LABEL_LENGTH,
+  IMAGE_PATH: IMAGE_PATH_LENGTH,
+};

@@ -14,6 +14,7 @@ type CommonInterface =
   | CreateSyncCategoryDto[]
   | CreateSyncFamilyDto[];
 
+//todo : remove this ****
 export const validateBulkInsert = async <T extends CommonInterface>(
   data: any[],
   type: 'category' | 'brand' | 'family',

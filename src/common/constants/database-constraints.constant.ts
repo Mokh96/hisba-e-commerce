@@ -3,6 +3,7 @@
  * */
 export const MAX_ADDRESS_LENGTH = 255;
 
+export const MAX_LABEL_LENGTH = 255;
 /**
  * Short description length constant. Defines the maximum length allowed for a short description field interceptors the database.
  */

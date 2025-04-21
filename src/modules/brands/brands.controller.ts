@@ -3,31 +3,38 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
   UploadedFiles,
-  UseInterceptors,
 } from '@nestjs/common';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Image } from 'src/types/types.global';
 import { BrandsService } from './brands.service';
-import { BrandFilterDto } from './dto/brand-filter.dto';
-import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
+import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
+import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
+import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
+import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
+import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
 
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 
   @Post()
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  create(@Body() createBrandDto: CreateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.create(createBrandDto as CreateSyncBrandDto, file);
+  @UseRequiredImageUpload()
+  create(
+    @Body() createBrandDto: CreateBrandDto,
+    @UploadedFiles()
+    files: {
+      [FileUploadEnum.Image]: Express.Multer.File[];
+    },
+  ) {
+    return this.brandsService.create(createBrandDto, files);
   }
 
   @Get()
@@ -41,12 +48,17 @@ export class BrandsController {
   }
 
   @Patch(':id')
-  @UseInterceptors(new UploadInterceptor({ type: '1' }), Upload([{ name: 'img', maxCount: 1 }]))
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateBrandDto: UpdateBrandDto, @UploadedFiles() file: Image) {
-    return this.brandsService.update(+id, updateBrandDto, file);
+  @UseOptionalImageUpload()
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBrandDto: UpdateBrandDto,
+    @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
+  ) {
+    return await this.brandsService.update(id, updateBrandDto, files);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.brandsService.remove(+id);
   }
