@@ -23,6 +23,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FilesModule } from './files/files.module';
 import { SystemEntitiesModule } from './system-entities/system-entities.module';
+import { ExceptionModule } from 'src/common/exceptions/exception.module';
 
 @Module({
   imports: [
@@ -57,11 +58,12 @@ import { SystemEntitiesModule } from './system-entities/system-entities.module';
     AuthModule,
     FilesModule,
     SystemEntitiesModule,
+    ExceptionModule
   ],
 
   providers: [
-    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
-    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
+/*    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },*/
     { provide: APP_GUARD, useClass: AuthGuard },
     {
       provide: APP_GUARD,
