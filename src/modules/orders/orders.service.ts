@@ -14,13 +14,14 @@ import { OrderStatus } from 'src/common/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { ArticlesService } from 'src/modules/articles/articles.service';
 import { ProductsService } from 'src/modules/products/products.service';
+import { CurrentUserData } from 'src/common/decorators';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    private readonly clientService: ClientsService,
     private readonly cartItemsService: CartItemsService,
     private readonly articlesService: ArticlesService,
     private readonly productsService: ProductsService,
@@ -47,27 +48,15 @@ export class OrdersService {
     });
   }
 
-/*  async findOnes(id: number) {
-    return await this.orderRepository
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.orderItems', 'orderItem')
-      .leftJoinAndSelect('orderItem.article', 'article')
-      .leftJoinAndSelect('order.client', 'client')
-      .leftJoinAndSelect('order.history', 'history')
-      .where('order.id = :id', { id })
-      .select(['order', 'orderItem', 'article.id', 'article.label', 'article.defaultImgPath', 'client', 'history'])
-      .getOneOrFail();
-  }*/
-
-  async findAll() {
+  async findAll(): Promise<PaginatedResult<Order>> {
     const [data, totalItems] = await this.orderRepository.findAndCount();
     return { data, totalItems };
   }
 
-  async create(createOrderDto: CreateOrderDto, userId: User['id']) {
+  async create(createOrderDto: CreateOrderDto, user: CurrentUserData) {
     //Step 1: Get client linked to the current user
-    const client = await this.clientService.getClientByUserId<Client>(userId);
-
+    //const client = await this.clientService.getClientByUserId<Client>(userId);
+    const clientId = user.client?.id;
     //Step 2: Get cart items
     const cartItems = await this.cartItemsService.getCartItems(createOrderDto.cartItemsIds);
 
@@ -121,13 +110,13 @@ export class OrdersService {
 
     //Step 4: Create and save the complete order with items in one go
     return await this.orderRepository.save({
-      clientId: client.id,
-      clientFirstName: client.firstName,
-      clientLastName: client.lastName,
-      clientPhone: client.phone,
-      clientMobile: client.mobile,
-      clientFax: client.fax,
-      deliveryAddress: createOrderDto.deliveryAddress || client.address,
+      clientId: user.client?.id,
+      clientFirstName: createOrderDto.clientFirstName,
+      clientLastName: createOrderDto.clientLastName,
+      clientPhone: createOrderDto.clientPhone,
+      clientMobile: createOrderDto.clientMobile,
+      clientFax: createOrderDto.clientFax,
+      deliveryAddress: createOrderDto.deliveryAddress,
       deliveryTownId: createOrderDto.deliveryTownId,
       ref: createOrderDto.ref,
       note: createOrderDto.note,
@@ -135,13 +124,12 @@ export class OrdersService {
       amountHt: productTotalHt,
       netAmountTtc: productTotalTtc,
       netToPay: productTotalTtc - (productTotalTtc * discountPercentage) / 100 + stampDuty,
-      totalTva: productTotalTva,
-      statusId: OrderStatus.NEW,
+      totalTva: +productTotalTva.toFixed(2),
       orderItems,
       history: [
         {
           statusId: OrderStatus.NEW,
-          creatorId: userId,
+          creatorId: user.sub,
         },
       ],
     });

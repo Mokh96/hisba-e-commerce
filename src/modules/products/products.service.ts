@@ -13,6 +13,8 @@ import { getFileBySyncId, getFilesBySyncId } from 'src/modules/files/utils/file-
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { Article } from 'src/modules/articles/entities/article.entity';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { Order } from 'src/modules/orders/entities/order.entity';
 
 @Injectable()
 export class ProductsService {
@@ -102,7 +104,7 @@ export class ProductsService {
     return response;
   }
 
-  async findAll() {
+  async findAll(): Promise<PaginatedResult<Product>> {
     const [data, totalItems] = await this.productRepository.findAndCount();
     return { data, totalItems };
   }

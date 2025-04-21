@@ -2,9 +2,8 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPip
 import { CartItemsService } from './cart-items.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { CurrentUser, Role } from 'src/common/decorators';
+import { CurrentUser, CurrentUserData, Role } from 'src/common/decorators';
 import { Roles } from 'src/common/enums/roles.enum';
-import { User } from 'src/modules/users/entities/user.entity';
 
 @Controller('cart-items')
 export class CartItemsController {
@@ -12,22 +11,24 @@ export class CartItemsController {
 
   @Post()
   @Role(Roles.CLIENT)
-  create(@Body() createCartItemDto: CreateCartItemDto, @CurrentUser('sub') userId: User['id']) {
-    return this.cartItemsService.create(createCartItemDto, userId);
+  create(@Body() createCartItemDto: CreateCartItemDto, @CurrentUser() activeUserData: CurrentUserData) {
+    return this.cartItemsService.create(createCartItemDto, activeUserData);
   }
 
   @Get()
   @Role(Roles.CLIENT)
-  findAll(@CurrentUser('sub') userId: User['id']) {
-    return this.cartItemsService.findAll(userId);
+  findAll(@CurrentUser() activeUserData: CurrentUserData) {
+    return this.cartItemsService.findAll(activeUserData);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser('sub') userId: User['id']) {
-    return this.cartItemsService.findOne(id, userId);
+  @Role(Roles.CLIENT)
+  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() activeUserData: CurrentUserData) {
+    return this.cartItemsService.findOne(id, activeUserData);
   }
 
   @Patch(':id')
+  @Role(Roles.CLIENT)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCartItemDto: UpdateCartItemDto) {
     return this.cartItemsService.update(+id, updateCartItemDto);
   }

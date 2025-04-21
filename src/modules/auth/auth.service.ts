@@ -5,10 +5,16 @@ import * as bcrypt from 'bcrypt';
 import { Roles } from 'src/common/enums/roles.enum';
 import { UsersService } from '../users/users.service';
 import { AuthDto } from './dto/auth.dto';
+import { CurrentUserData } from 'src/common/decorators';
+import { ClientsService } from 'src/modules/clients/clients.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private clientService: ClientsService,
+  ) {}
 
   async logIn(authDto: AuthDto) {
     const { username, password } = authDto;
@@ -26,11 +32,18 @@ export class AuthService {
 
     const { id, roleId } = user;
 
-    const payload = {
+    const payload: CurrentUserData = {
       username,
       sub: id,
       roleId,
     };
+
+    if (roleId === Roles.CLIENT) {
+      const clientId = await this.clientService.getClientIdByUserId(user.id);
+      payload.client = {
+        id: clientId,
+      };
+    }
 
     return {
       token: await this.jwtService.signAsync(payload),

@@ -1,7 +1,6 @@
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { Brand } from 'src/modules/brands/entities/brand.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
-import { Family } from 'src/modules/families/entities/family.entity';
 import { decimalColumnOptions } from 'src/entities-helpers/columnOptions.helper';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { PRODUCT_FIELD_LENGTHS } from '../config/products.config';
@@ -81,19 +80,4 @@ export class Product extends WithTimestamp(WithSyncId(BaseEntity)) {
   })
   @JoinColumn({ name: 'category_id' })
   category: Category;
-
-  @ManyToOne(() => Family, (family: Family) => family.products, {
-    cascade: true,
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'family_id' })
-  family: Family;
-  /*  @OneToMany(() => ProductGallery, (image: ProductGallery) => image.product)
-    gallery: ProductGallery[];*/
-}
-
-class Image {
-  img: string[];
 }

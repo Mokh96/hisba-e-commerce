@@ -22,6 +22,9 @@ import {
   productValidationRulesInterceptor,
 } from 'src/modules/products/config/file-validation.config';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { Order } from 'src/modules/orders/entities/order.entity';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -47,7 +50,7 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
+  findAll() : Promise<PaginatedResult<Product>> {
     return this.productsService.findAll();
   }
 

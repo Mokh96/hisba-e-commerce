@@ -22,6 +22,9 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { imageUploadRules, requiredImageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { UpdateProductDto } from 'src/modules/products/dto/update-product.dto';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { Order } from 'src/modules/orders/entities/order.entity';
+import { Article } from 'src/modules/articles/entities/article.entity';
 
 @Controller('articles')
 export class ArticlesController {
@@ -40,7 +43,7 @@ export class ArticlesController {
   }
 
   @Get()
-  findAll(@Query() queryArticleDto: QueryArticleDto) {
+  findAll(@Query() queryArticleDto: QueryArticleDto) : Promise<PaginatedResult<Article>> {
     return this.articlesService.findAll(queryArticleDto);
   }
 

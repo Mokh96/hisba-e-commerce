@@ -9,6 +9,7 @@ import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Controller('clients')
 export class ClientsController {
@@ -21,7 +22,7 @@ export class ClientsController {
   }
 
   @Get()
-  findMany(@Query() filterDto: ClientFilterDto, @Query() paginationDto: BasePaginationDto) {
+  findMany(@Query() filterDto: ClientFilterDto, @Query() paginationDto: BasePaginationDto): Promise<PaginatedResult> {
     return this.clientsService.findMany(filterDto, paginationDto);
   }
 

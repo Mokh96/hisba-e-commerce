@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from 
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { CurrentUser, Role } from 'src/common/decorators';
+import { CurrentUser, CurrentUserData, Role } from 'src/common/decorators';
 import { Roles } from 'src/common/enums/roles.enum';
 import { User } from 'src/modules/users/entities/user.entity';
 
@@ -12,8 +12,8 @@ export class OrdersController {
 
   @Post()
   @Role(Roles.CLIENT)
-  create(@Body() createOrderDto: CreateOrderDto, @CurrentUser('sub') userId: User['id']) {
-    return this.ordersService.create(createOrderDto, userId);
+  create(@Body() createOrderDto: CreateOrderDto, @CurrentUser() user: CurrentUserData) {
+    return this.ordersService.create(createOrderDto, user);
   }
 
   @Get()

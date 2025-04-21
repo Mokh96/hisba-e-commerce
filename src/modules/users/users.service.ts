@@ -53,7 +53,7 @@ export class UsersService {
    * @param username The username to search for.
    * @returns The user if found, or `null` if not found.
    */
-  async findUser(username: User['username']) {
+  async findUser(username: User['username']): Promise<Pick<User, 'id' | 'username' | 'password' | 'roleId'>> {
     return await this.usersRepository.findOne({
       select: ['id', 'username', 'password', 'roleId'],
       where: { username },
