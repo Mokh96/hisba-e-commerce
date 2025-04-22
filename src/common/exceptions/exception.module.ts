@@ -4,6 +4,7 @@ import { QueryFailedExceptionFilter } from './filters/query-failed-exception/que
 import { GlobalExceptionFilter } from 'src/error-handlers/global-handler';
 import { NotFoundExceptionFilter } from 'src/common/exceptions/filters/entity-not-found-exception.filter';
 import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-filter';
+import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
 
 @Module({
   providers: [
@@ -11,6 +12,7 @@ import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validat
     { provide: APP_FILTER, useClass: QueryFailedExceptionFilter },
     { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     { provide: APP_FILTER, useClass: ValidationExceptionFilter },
+    { provide: APP_FILTER, useClass: InputValidationFilter },
   ],
 })
 export class ExceptionModule {}

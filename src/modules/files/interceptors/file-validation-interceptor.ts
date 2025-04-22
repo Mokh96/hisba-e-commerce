@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { FileRules } from '../types/file-validation.type';
+import InputValidationException from 'src/common/exceptions/custom-exceptions/input-validation.exception';
 
 @Injectable()
 export class FileValidationInterceptor implements NestInterceptor {
@@ -22,14 +17,16 @@ export class FileValidationInterceptor implements NestInterceptor {
 
       // Min count validation
       if (minCount !== undefined && uploadedFiles.length < minCount) {
-        throw new BadRequestException(
-          `At least ${minCount} file(s) required for ${fieldName}, but ${uploadedFiles.length} provided.`,
+        throw new InputValidationException(
+          fieldName,
+          `Maximum ${maxCount} file(s) allowed for ${fieldName}, but ${uploadedFiles.length} provided.`,
         );
       }
 
       // Max count validation
       if (maxCount !== undefined && uploadedFiles.length > maxCount) {
-        throw new BadRequestException(
+        throw new InputValidationException(
+          fieldName,
           `Maximum ${maxCount} file(s) allowed for ${fieldName}, but ${uploadedFiles.length} provided.`,
         );
       }
@@ -37,14 +34,16 @@ export class FileValidationInterceptor implements NestInterceptor {
       uploadedFiles.forEach((file) => {
         //File type validation
         if (!allowedTypes.includes(file.mimetype)) {
-          throw new BadRequestException(
+          throw new InputValidationException(
+            fieldName,
             `Invalid file type for ${fieldName}. Allowed types: ${allowedTypes.join(', ')}`,
           );
         }
 
         //File size validation
         if (file.size > maxSize) {
-          throw new BadRequestException(
+          throw new InputValidationException(
+            fieldName,
             `File ${file.originalname} exceeds max size of ${maxSize / 1024 / 1024}MB`,
           );
         }
