@@ -4,7 +4,7 @@ import { QueryFailedError } from 'typeorm';
 import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
 import {
   MYSQL_CHECK_CONSTRAINT_CODE,
-  MYSQL_DATA_TOO_LONG_CONSTRAINT_CODE,
+  MYSQL_DATA_TOO_LONG_CONSTRAINT_CODE, MYSQL_DEADLOCK_CONSTRAINT_CODE,
   MYSQL_FOREIGN_KEY_CONSTRAINT_CODE,
   MYSQL_FOREIGN_KEY_DELETION_CODE, MYSQL_INVALID_VALUE_CODE,
   MYSQL_NON_NULL_CONSTRAINT_CODE,
@@ -23,6 +23,9 @@ import {
 import {
   handleCheckConstraintViolation
 } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-check-constraint-violation';
+import {
+  handleDeadlockViolation
+} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-deadlock-violation';
 
 @Catch(QueryFailedError)
 export class QueryFailedExceptionFilter implements ExceptionFilter {
@@ -61,6 +64,12 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
     if (driverError?.code === MYSQL_CHECK_CONSTRAINT_CODE) {
       return handleCheckConstraintViolation(exception, response, request);
     }
+
+    if (driverError?.code === MYSQL_DEADLOCK_CONSTRAINT_CODE) {
+      return handleDeadlockViolation(exception, response, request);
+    }
+
+
 
 
     // fallback generic response

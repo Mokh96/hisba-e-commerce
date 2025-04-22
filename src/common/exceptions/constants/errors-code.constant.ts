@@ -36,3 +36,6 @@ export const MYSQL_INVALID_VALUE_CODE = 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD';
  * trying to set it to a negative number will break the constraint and return this error.
  * */
 export const MYSQL_CHECK_CONSTRAINT_CODE = 'ER_CHECK_CONSTRAINT_VIOLATED';
+
+
+export const MYSQL_DEADLOCK_CONSTRAINT_CODE = 'ER_LOCK_DEADLOCK';

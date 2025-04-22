@@ -63,3 +63,14 @@
     ]
 }
 
+2. Lock wait timeout exceeded
+
+
+ER_LOCK_DEADLOCK
+ER_LOCK_WAIT_TIMEOUT
+ER_BAD_FIELD_ERROR
+
+
+
+
+
