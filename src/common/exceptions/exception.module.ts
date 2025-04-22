@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { QueryFailedExceptionFilter } from './filters/query-failed-exception.filter';
+import { QueryFailedExceptionFilter } from './filters/query-failed-exception/query-failed-exception.filter';
 import { EntityNotFoundExceptionFilter } from './filters/entity-not-found-exception.filter';
 import { GlobalExceptionFilter } from 'src/error-handlers/global-handler';
 
