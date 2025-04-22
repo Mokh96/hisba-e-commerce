@@ -47,19 +47,3 @@
 }
 
 
-#unique_violation
-{
-    "statusCode": 409,
-    "error": "Conflict",
-    "message": "Unique constraint failed",
-    "timestamp": "2025-04-22T10:16:16.234Z",
-    "path": "/api/v1/brands",
-    "type": "db.unique_violation",
-    "errors": [
-        {
-            "field": "label",
-            "message": "The label 'Nabi' is already taken"
-        }
-    ]
-}
-

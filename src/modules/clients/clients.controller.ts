@@ -16,7 +16,7 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService, private readonly usersService: UsersService) {}
 
   @Post()
-  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
+  //@Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
   create(@Body() createClientDto: CreateClientDto) {
     return this.clientsService.create(createClientDto);
   }
@@ -44,7 +44,7 @@ export class ClientsController {
   }
 
   @Delete(':id')
-  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
+  //@Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.clientsService.remove(+id);
   }
