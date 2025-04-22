@@ -4,7 +4,14 @@ import { HttpStatus } from '@nestjs/common';
 import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
 
 /**
- * Handles cases where a NOT NULL constraint is violated (e.g., column cannot be null).
+ * Handles MySQL NOT NULL constraint violations.
+ *
+ * This occurs when inserting or updating a record with a NULL value in a column defined as NOT NULL.
+ * Responds with HTTP 400 Bad Request and includes the field that violated the NOT NULL constraint.
+ *
+ * @param exception - The QueryFailedError thrown by the database.
+ * @param response - The HTTP response object to send the error response.
+ * @param request - The HTTP request object, used for context (e.g., request URL).
  */
 export function handleNotNullViolation(exception: QueryFailedError, response: Response, request: Request) {
   const field = extractNotNullField(exception.driverError.message);
