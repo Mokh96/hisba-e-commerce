@@ -22,7 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 }
 
-@Catch(EntityNotFoundError)
+/*@Catch(EntityNotFoundError)
 export class NotFoundExceptionFilter implements ExceptionFilter {
   catch(exception: QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -37,4 +37,4 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
       message: exception.message.split('"').slice(0, 2).join(''),
     });
   }
-}
+}*/
