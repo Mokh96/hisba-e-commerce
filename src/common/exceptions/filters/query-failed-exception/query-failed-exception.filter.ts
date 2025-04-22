@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
 import {
+  ER_DATA_TOO_LONG,
   MYSQL_FOREIGN_KEY_CONSTRAINT_CODE, MYSQL_NON_NULL_CONSTRAINT_CODE,
   MYSQL_UNIQUE_CONSTRAINT_CODE,
 } from 'src/common/exceptions/constants/errors-code.constant';
@@ -13,6 +14,9 @@ import {
 import {
   handleNotNullViolation
 } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-not-null-violation';
+import {
+  handleDataTooLong
+} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-data-too-long';
 
 @Catch(QueryFailedError)
 export class QueryFailedExceptionFilter implements ExceptionFilter {
@@ -34,6 +38,10 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
 
     if (driverError?.code === MYSQL_NON_NULL_CONSTRAINT_CODE){
       return handleNotNullViolation(exception, response, request);
+    }
+
+    if (driverError?.code ===ER_DATA_TOO_LONG) {
+      return handleDataTooLong(exception, response, request);
     }
 
     // fallback generic response

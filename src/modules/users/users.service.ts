@@ -20,7 +20,7 @@ export class UsersService {
     const createdUser = await this.usersRepository.save({
       password: '123456',
       roleId: 1,
-      username: null,
+      username: "test",
     });
     return createdUser
   }
