@@ -8,3 +8,5 @@ export * from './handle-check-constraint-violation';
 export * from './handle-deadlock-violation';
 export * from './handle-lock-timeout-violation';
 export * from './handle-unknown-column-error';
+export * from './handle-data-out-of-range-error';
+export * from './handle-sql-parse-error';
