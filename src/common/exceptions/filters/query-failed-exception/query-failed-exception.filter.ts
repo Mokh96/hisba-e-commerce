@@ -8,9 +8,11 @@ import {
   MYSQL_DEADLOCK_CONSTRAINT_CODE,
   MYSQL_FOREIGN_KEY_CONSTRAINT_CODE,
   MYSQL_FOREIGN_KEY_DELETION_CODE,
-  MYSQL_INVALID_VALUE_CODE, MYSQL_LOCK_WAIT_TIMEOUT,
+  MYSQL_INVALID_VALUE_CODE,
+  MYSQL_LOCK_WAIT_TIMEOUT,
   MYSQL_NON_NULL_CONSTRAINT_CODE,
   MYSQL_UNIQUE_CONSTRAINT_CODE,
+  MYSQL_UNKNOWN_COLUMN,
 } from 'src/common/exceptions/constants/errors-code.constant';
 import {
   handleForeignKeyViolation,
@@ -22,9 +24,9 @@ import { handleForeignKeyDeletionViolation } from 'src/common/exceptions/filters
 import { handleInvalidValueForField } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-invalid-value-for-field';
 import { handleCheckConstraintViolation } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-check-constraint-violation';
 import { handleDeadlockViolation } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-deadlock-violation';
-import {
-  handleLockTimeoutViolation
-} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-lock-timeout-violation';
+import { handleLockTimeoutViolation } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-lock-timeout-violation';
+import { handleUnknownColumnError } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-column-error';
+import dbErrorHandlers from 'src/common/exceptions/filters/query-failed-exception/db-handlers/db-error-handlers';
 
 @Catch(QueryFailedError)
 export class QueryFailedExceptionFilter implements ExceptionFilter {
@@ -34,9 +36,15 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     console.log('QueryFailedError', exception);
-    const driverError = exception.driverError;
 
-    if (driverError?.code === MYSQL_UNIQUE_CONSTRAINT_CODE) {
+    const code = exception.driverError?.code;
+    const handler = dbErrorHandlers[code];
+
+    if (handler) {
+      return handler(exception, response, request);
+    }
+
+    /*if (driverError?.code === MYSQL_UNIQUE_CONSTRAINT_CODE) {
       return handleUniqueViolation(exception, response, request);
     }
 
@@ -72,6 +80,10 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
       return handleLockTimeoutViolation(exception, response, request);
     }
 
+    if (driverError?.code === MYSQL_UNKNOWN_COLUMN) {
+      return handleUnknownColumnError(exception, response, request);
+    }
+*/
     // fallback generic response
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
       createErrorResponse({

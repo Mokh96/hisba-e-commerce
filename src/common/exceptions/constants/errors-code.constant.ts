@@ -1,3 +1,7 @@
+import {
+  handleUnknownColumnError
+} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-column-error';
+
 /**
  * For example, if you try to create a new user with a username that already exists,
  * the DBM will throw this error.
@@ -41,3 +45,5 @@ export const MYSQL_CHECK_CONSTRAINT_CODE = 'ER_CHECK_CONSTRAINT_VIOLATED';
 export const MYSQL_DEADLOCK_CONSTRAINT_CODE = 'ER_LOCK_DEADLOCK';
 
 export const MYSQL_LOCK_WAIT_TIMEOUT = 'ER_LOCK_WAIT_TIMEOUT';
+
+export const MYSQL_UNKNOWN_COLUMN = 'ER_UNKNOWN_COLUMN';

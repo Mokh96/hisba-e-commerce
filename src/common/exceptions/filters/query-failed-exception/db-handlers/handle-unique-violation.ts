@@ -32,3 +32,5 @@ export function handleUniqueViolation(exception: QueryFailedError, response: Res
     }),
   );
 }
+
+export default handleUniqueViolation;
