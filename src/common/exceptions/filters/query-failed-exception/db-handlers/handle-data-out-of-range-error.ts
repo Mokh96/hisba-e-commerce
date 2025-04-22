@@ -1,0 +1,38 @@
+import { QueryFailedError } from 'typeorm';
+import { extractFieldFromMySqlMessage } from 'src/common/exceptions/utils/query-failed-parser';
+import { HttpStatus } from '@nestjs/common';
+import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import { Response, Request } from 'express';
+
+/**
+ * Handles data out-of-range errors (ER_DATA_OUT_OF_RANGE).
+ *
+ * This occurs when inserting or updating a value that exceeds
+ * the allowed range for the column (e.g., tinyint, varchar).
+ * Responds with HTTP 400 Bad Request and includes a helpful message.
+ *
+ * @param exception - The QueryFailedError thrown by the database.
+ * @param response - The HTTP response object to send the error response.
+ * @param request - The HTTP request object for context.
+ */
+export function handleDataOutOfRangeError(
+  exception: QueryFailedError,
+  response: Response,
+  request: Request,
+) {
+  return response.status(HttpStatus.BAD_REQUEST).json(
+    createErrorResponse({
+      statusCode: HttpStatus.BAD_REQUEST,
+      error: 'Bad Request',
+      message: 'Provided data exceeds the allowed range.',
+      path: request.url,
+      type: 'db.data_out_of_range',
+      errors: [
+        {
+          field: 'value',
+          message: 'A value is too large or too small for its column type.',
+        },
+      ],
+    }),
+  );
+}
