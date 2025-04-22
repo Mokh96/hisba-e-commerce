@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { FileValidationRules } from 'src/modules/files/types/file-validation.type';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { SyncedEntity } from 'src/common/types/global.type';
+import InputValidationException from 'src/common/exceptions/custom-exceptions/input-validation.exception';
 
 @Injectable()
 export class DynamicFileValidationInterceptor implements NestInterceptor {
@@ -71,29 +72,38 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
       const matchingFiles = this.getFilesByType(files, fileType, entity.syncId);
 
       if (rule.required && matchingFiles.length === 0) {
-        throw new BadRequestException(`${fileType} is required for ${entityPath}`);
+        //example :image is required for [categories][1]
+        throw new InputValidationException(fileType, `${fileType} is required for ${entityPath}`);
       }
 
       if (matchingFiles.length) {
-        this.validateFiles(matchingFiles, rule, `${fileType} in ${entityPath}`);
+        //this.validateFiles(matchingFiles, rule, `${fileType} in ${entityPath}`);
+        this.validateFiles(matchingFiles, rule, fileType, entityPath);
       }
     });
   }
 
-  private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, context: string) {
+  private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, fileType: string, entityPath: string) {
+    const context = `${fileType} in ${entityPath}`;
+
+    // private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, context: string) {
     if (files.length < (rule.minCount || 0) || files.length > (rule.maxCount || Infinity)) {
-      throw new BadRequestException(
+      throw new InputValidationException(
+        fileType,
         `${context}: Expected between ${rule.minCount || 0} and ${rule.maxCount || '∞'} files, got ${files.length}`,
       );
     }
 
     files.forEach((file) => {
       if (!rule.allowedTypes.includes(file.mimetype as FileValidationRules['allowedTypes'][number])) {
-        throw new BadRequestException(`${context}: Invalid file type ${file.mimetype}`);
+        throw new InputValidationException(fileType, `${context}: Invalid file type ${file.mimetype}`);
       }
 
       if (file.size > rule.maxSize) {
-        throw new BadRequestException(`${context}: File size exceeds limit (${this.formatFileSize(rule.maxSize)}).`);;
+        throw new InputValidationException(
+          fileType,
+          `${context}: File size exceeds limit (${this.formatFileSize(rule.maxSize)}).`,
+        );
       }
     });
   }

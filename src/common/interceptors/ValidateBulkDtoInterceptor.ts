@@ -75,7 +75,7 @@ export class ValidateBulkDtoInterceptor<T extends object> implements NestInterce
         });
       }
     }
-
+    //console.log(JSON.stringify(errors ));
     if (errors.length > 0) {
       throw new BadRequestException({
         message: 'Validation failed for one or more items',
