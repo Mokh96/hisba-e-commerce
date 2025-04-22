@@ -5,7 +5,7 @@ import { createErrorResponse } from 'src/common/exceptions/helpers/error-respons
 import {
   MYSQL_DATA_TOO_LONG_CONSTRAINT_CODE,
   MYSQL_FOREIGN_KEY_CONSTRAINT_CODE,
-  MYSQL_FOREIGN_KEY_DELETION_CODE,
+  MYSQL_FOREIGN_KEY_DELETION_CODE, MYSQL_INVALID_VALUE_CODE,
   MYSQL_NON_NULL_CONSTRAINT_CODE,
   MYSQL_UNIQUE_CONSTRAINT_CODE,
 } from 'src/common/exceptions/constants/errors-code.constant';
@@ -16,6 +16,9 @@ import {
 import { handleNotNullViolation } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-not-null-violation';
 import { handleDataTooLong } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-data-too-long';
 import { handleForeignKeyDeletionViolation } from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-foreign-key-deletion-violation';
+import {
+  handleInvalidValueForField
+} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-invalid-value-for-field';
 
 @Catch(QueryFailedError)
 export class QueryFailedExceptionFilter implements ExceptionFilter {
@@ -45,6 +48,10 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
 
     if (driverError?.code === MYSQL_FOREIGN_KEY_DELETION_CODE) {
       return handleForeignKeyDeletionViolation(exception, response, request);
+    }
+
+    if (driverError?.code === MYSQL_INVALID_VALUE_CODE) {
+      return handleInvalidValueForField(exception, response, request);
     }
 
     // fallback generic response
