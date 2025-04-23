@@ -1,8 +1,9 @@
 import { QueryFailedError } from 'typeorm';
 import { extractFieldFromMySqlMessage } from 'src/common/exceptions/utils/query-failed-parser';
 import { HttpStatus } from '@nestjs/common';
-import {Request , Response} from "express"
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import { Request, Response } from 'express';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles MySQL invalid value errors for fields.
@@ -18,13 +19,14 @@ export function handleInvalidValueForField(exception: QueryFailedError, response
   const driverError = exception.driverError;
   const field = extractFieldFromMySqlMessage(driverError.sqlMessage);
 
-  return response.status(HttpStatus.BAD_REQUEST).json(
+  const status = HttpStatus.BAD_REQUEST;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Invalid value for field',
       path: request.url,
-      type: 'db.invalid_value',
+      type: ErrorType.InvalidValue,
       errors: [
         {
           field,

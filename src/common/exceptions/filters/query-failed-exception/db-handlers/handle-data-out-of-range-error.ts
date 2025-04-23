@@ -1,8 +1,9 @@
 import { QueryFailedError } from 'typeorm';
 import { extractFieldFromMySqlMessage } from 'src/common/exceptions/utils/query-failed-parser';
 import { HttpStatus } from '@nestjs/common';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { Response, Request } from 'express';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles data out-of-range errors (ER_DATA_OUT_OF_RANGE).
@@ -15,18 +16,15 @@ import { Response, Request } from 'express';
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object for context.
  */
-export function handleDataOutOfRangeError(
-  exception: QueryFailedError,
-  response: Response,
-  request: Request,
-) {
-  return response.status(HttpStatus.BAD_REQUEST).json(
+export function handleDataOutOfRangeError(exception: QueryFailedError, response: Response, request: Request) {
+  const status = HttpStatus.BAD_REQUEST;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Provided data exceeds the allowed range.',
       path: request.url,
-      type: 'db.data_out_of_range',
+      type: ErrorType.DataOutOfRange,
       errors: [
         {
           field: 'value',

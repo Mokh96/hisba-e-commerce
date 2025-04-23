@@ -1,20 +1,27 @@
 import { ApiErrorResponse, FieldError } from '../interfaces/api-error-response.interface';
+import { HttpStatus } from '@nestjs/common';
+import getErrorTitle from 'src/common/exceptions/utils/get-error-title.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
-export function createErrorResponse(params: {
-  statusCode: number;
-  error: string;
+function createErrorResponse(params: {
+  statusCode: HttpStatus;
   message: string;
   path: string;
-  type?: string;
+  meta?: any;
+  error?: string;
+  type?: ErrorType;
   errors?: FieldError[];
 }): ApiErrorResponse {
   return {
     statusCode: params.statusCode,
-    error: params.error,
+    error: params.error ?? getErrorTitle(params.statusCode),
     message: params.message,
     timestamp: new Date().toISOString(),
     path: params.path,
     type: params.type,
     errors: params.errors,
+    meta : params.meta
   };
 }
+
+export default createErrorResponse;

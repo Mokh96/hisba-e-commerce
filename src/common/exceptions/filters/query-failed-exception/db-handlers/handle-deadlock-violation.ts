@@ -1,7 +1,8 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { HttpStatus } from '@nestjs/common';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles MySQL deadlock violations.
@@ -13,18 +14,15 @@ import { HttpStatus } from '@nestjs/common';
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-export function handleDeadlockViolation(
-  exception: QueryFailedError,
-  response: Response,
-  request: Request,
-) {
-  return response.status(HttpStatus.CONFLICT).json(
+export function handleDeadlockViolation(exception: QueryFailedError, response: Response, request: Request) {
+  const status = HttpStatus.CONFLICT;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.CONFLICT,
-      error: 'Conflict',
+      statusCode: status,
       message: 'A database deadlock occurred. Please retry the operation.',
       path: request.url,
-      type: 'db.deadlock_detected',
+      type: ErrorType.DeadlockDetected,
     }),
   );
 }

@@ -1,9 +1,10 @@
 import { Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { QueryFailedError } from 'typeorm';
 import { extractForeignKeyInfo } from 'src/common/exceptions/filters/query-failed-exception/query-failed-exception.filter';
 import { Request } from 'express';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles MySQL foreign key constraint violations.
@@ -19,13 +20,15 @@ import { Request } from 'express';
 export function handleForeignKeyViolation(exception: QueryFailedError, response: Response, request: Request) {
   const driverError = exception.driverError;
   const { field } = extractForeignKeyInfo(driverError.sqlMessage);
-  return response.status(HttpStatus.BAD_REQUEST).json(
+
+  const status = HttpStatus.BAD_REQUEST;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Foreign key constraint failed',
       path: request.url,
-      type: 'db.foreign_key_violation',
+      type: ErrorType.ForeignKey,
       errors: [
         {
           field,

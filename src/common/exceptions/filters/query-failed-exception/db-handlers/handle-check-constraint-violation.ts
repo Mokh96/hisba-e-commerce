@@ -1,7 +1,8 @@
 import { QueryFailedError } from 'typeorm';
 import { Request, Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 
 /**
  * Handles MySQL CHECK constraint violations.
@@ -15,14 +16,14 @@ import { createErrorResponse } from 'src/common/exceptions/helpers/error-respons
  */
 export function handleCheckConstraintViolation(exception: QueryFailedError, response: Response, request: Request) {
   const fallbackField = extractFieldFromCheckMessage(exception.driverError.message); // fallback if no specific field is parsed
+  const status = HttpStatus.BAD_REQUEST;
 
-  return response.status(HttpStatus.BAD_REQUEST).json(
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Check constraint failed',
       path: request.url,
-      type: 'db.check_constraint_violation',
+      type: ErrorType.CheckConstraintViolation,
       errors: [
         {
           field: fallbackField,

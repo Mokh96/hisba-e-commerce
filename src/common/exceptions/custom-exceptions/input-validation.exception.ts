@@ -1,9 +1,9 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, HttpStatus } from '@nestjs/common';
 
- class InputValidationException extends BadRequestException {
+class InputValidationException extends BadRequestException {
   constructor(public readonly field: string, message: string) {
     super({
-      statusCode: 400,
+      statusCode: HttpStatus.BAD_REQUEST,
       error: 'Bad Request',
       message,
       type: 'validation_error',
@@ -11,4 +11,5 @@ import { BadRequestException } from '@nestjs/common';
     });
   }
 }
-export default InputValidationException
+
+export default InputValidationException;

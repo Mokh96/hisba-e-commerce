@@ -1,7 +1,8 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles MySQL unknown column errors.
@@ -21,13 +22,14 @@ export function handleUnknownColumnError(
   const columnMatch = exception.message.match(/Unknown column '(.+?)'/);
   const field = columnMatch?.[1];
 
-  return response.status(HttpStatus.BAD_REQUEST).json(
+  const status = HttpStatus.BAD_REQUEST;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'The request references a non-existent column.',
       path: request.url,
-      type: 'db.unknown_column',
+      type: ErrorType.UnknownColumn,
       errors: field
         ? [{ field, message: `Column '${field}' does not exist.` }]
         : [],

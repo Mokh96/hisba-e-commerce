@@ -1,7 +1,8 @@
 import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
 import { Response, Request } from 'express';
-import { createErrorResponse } from '../helpers/error-response.helper';
+import createErrorResponse from '../utils/create-error-response.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles TypeORM EntityNotFoundError.
@@ -21,14 +22,14 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const entity = extractEntityFromMessage(exception.message);
+    const status = HttpStatus.NOT_FOUND
 
-    return response.status(HttpStatus.NOT_FOUND).json(
+    return response.status(status).json(
       createErrorResponse({
-        statusCode: HttpStatus.NOT_FOUND,
-        error: 'Not Found',
+        statusCode: status,
         message: `${entity} not found`,
         path: request.url,
-        type: 'db.entity_not_found',
+        type: ErrorType.EntityNotFound,
         errors: [
           {
             field: entity.toLowerCase(),

@@ -1,7 +1,8 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles MySQL NOT NULL constraint violations.
@@ -15,14 +16,14 @@ import { createErrorResponse } from 'src/common/exceptions/helpers/error-respons
  */
 export function handleNotNullViolation(exception: QueryFailedError, response: Response, request: Request) {
   const field = extractNotNullField(exception.driverError.message);
+  const status = HttpStatus.BAD_REQUEST;
 
-  return response.status(HttpStatus.BAD_REQUEST).json(
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Not-null constraint failed',
       path: request.url,
-      type: 'db.not_null_violation',
+      type: ErrorType.NonNull,
       errors: [
         {
           field,

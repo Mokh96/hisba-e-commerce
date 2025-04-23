@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles SQL syntax parsing errors (ER_PARSE_ERROR).
@@ -18,13 +19,14 @@ export function handleSqlParseError(
   response: Response,
   request: Request,
 ) {
-  return response.status(HttpStatus.BAD_REQUEST).json(
+  const status = HttpStatus.BAD_REQUEST;
+
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
-      error: 'Bad Request',
+      statusCode: status,
       message: 'Invalid SQL syntax. Please contact the backend team.',
       path: request.url,
-      type: 'db.sql_syntax_error',
+      type: ErrorType.SqlSyntaxError,
       errors: [
         {
           field: 'query',

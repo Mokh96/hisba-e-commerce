@@ -1,7 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpStatus } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { extractFieldFromMessage } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 @Catch(BadRequestException)
 export class ValidationExceptionFilter implements ExceptionFilter {
@@ -11,16 +12,16 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const rawErrors = exception.getResponse() as any;
+    const status = HttpStatus.BAD_REQUEST
 
     //Handle single message string
     if (typeof rawErrors.message === 'string') {
-      return response.status(HttpStatus.BAD_REQUEST).json(
+      return response.status(status).json(
         createErrorResponse({
-          statusCode: HttpStatus.BAD_REQUEST,
-          error: 'Bad Request',
+          statusCode: status,
           message: rawErrors.message,
           path: request.url,
-          type: 'validation_error',
+          type: ErrorType.Validation,
           errors: [
             {
               field: '_global',
@@ -55,11 +56,10 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     return response.status(HttpStatus.BAD_REQUEST).json(
       createErrorResponse({
-        statusCode: HttpStatus.BAD_REQUEST,
-        error: 'Bad Request',
+        statusCode: status,
         message: 'Validation failed',
         path: request.url,
-        type: 'validation_error',
+        type: ErrorType.Validation,
         errors,
       }),
     );

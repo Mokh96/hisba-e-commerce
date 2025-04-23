@@ -1,8 +1,8 @@
 import { Response, Request } from 'express';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
-
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**
  * Handles unknown database errors.
@@ -18,11 +18,11 @@ function handleUnknownDbError(exception: QueryFailedError, response: Response, r
   return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
     createErrorResponse({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      error: 'Database Error',
       message: exception.message,
       path: request.url,
-      type: 'db.unknown_error',
+      type: ErrorType.DbUnknownError,
     }),
   );
 }
-export default handleUnknownDbError
+
+export default handleUnknownDbError;

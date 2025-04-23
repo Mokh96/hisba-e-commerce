@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { QueryFailedExceptionFilter } from './filters/query-failed-exception/query-failed-exception.filter';
-import { GlobalExceptionFilter } from 'src/error-handlers/global-handler';
+import { GlobalExceptionFilter } from 'src/common/exceptions/filters/global-handler';
 import { NotFoundExceptionFilter } from 'src/common/exceptions/filters/entity-not-found-exception.filter';
 import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-filter';
 import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
+import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
 
 @Module({
   providers: [
@@ -13,6 +14,7 @@ import { InputValidationFilter } from 'src/common/exceptions/filters/input-valid
     { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
     { provide: APP_FILTER, useClass: ValidationExceptionFilter },
     { provide: APP_FILTER, useClass: InputValidationFilter },
+    { provide: APP_FILTER, useClass: FileValidationFilter },
   ],
 })
 export class ExceptionModule {}

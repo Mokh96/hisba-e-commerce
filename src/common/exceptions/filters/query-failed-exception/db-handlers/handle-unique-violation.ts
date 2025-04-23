@@ -1,9 +1,19 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
 import { extractFieldFromMySqlMessage, extractValueFromMessage } from 'src/common/exceptions/utils/query-failed-parser';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
-import { generateUniqueConstraintError } from 'src/common/exceptions/utils/generateUniqueConstraintError';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
 import { QueryFailedError } from 'typeorm';
+import { SENSITIVE_FIELDS } from 'src/common/exceptions/constants/sensitive-fields.constant';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+
+interface UniqueConstraintErrorParams {
+  field: string;
+  value?: string;
+  /**
+   * This option is used to prevent sensitive data from being exposed.
+   * */
+  safeLabel?: string;
+}
 
 /**
  * Handles MySQL unique constraint violations.
@@ -20,17 +30,29 @@ export function handleUniqueViolation(exception: QueryFailedError, response: Res
   const driverError = exception.driverError;
   const field = extractFieldFromMySqlMessage(driverError.sqlMessage);
   const value = extractValueFromMessage(driverError.sqlMessage);
+  const status = HttpStatus.CONFLICT;
 
-  return response.status(HttpStatus.CONFLICT).json(
+  return response.status(status).json(
     createErrorResponse({
-      statusCode: HttpStatus.CONFLICT,
-      error: 'Conflict',
+      statusCode: status,
       message: 'Unique constraint failed',
-      path : request.url,
-      type: 'db.unique_violation',
+      path: request.url,
+      type: ErrorType.DuplicateKey,
       errors: [generateUniqueConstraintError({ field, value })],
     }),
   );
 }
 
 export default handleUniqueViolation;
+
+export function generateUniqueConstraintError({ field, value, safeLabel }: UniqueConstraintErrorParams) {
+  const isSensitive = SENSITIVE_FIELDS.includes(field);
+  const label = safeLabel ?? field;
+
+  const message = isSensitive || !value ? `This ${label} is already taken` : `The ${label} '${value}' is already taken`;
+
+  return {
+    field,
+    message,
+  };
+}
