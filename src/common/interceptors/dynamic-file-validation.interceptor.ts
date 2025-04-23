@@ -5,6 +5,7 @@ import { FileValidationRules } from 'src/modules/files/types/file-validation.typ
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { SyncedEntity } from 'src/common/types/global.type';
 import InputValidationException from 'src/common/exceptions/custom-exceptions/input-validation.exception';
+import { formatFileSize } from 'src/common/utils/file.util';
 
 @Injectable()
 export class DynamicFileValidationInterceptor implements NestInterceptor {
@@ -102,7 +103,7 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
       if (file.size > rule.maxSize) {
         throw new InputValidationException(
           fileType,
-          `${context}: File size exceeds limit (${this.formatFileSize(rule.maxSize)}).`,
+          `${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
         );
       }
     });
@@ -110,16 +111,5 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
 
   private getFilesByType(files: Express.Multer.File[], type: string, syncId: SyncedEntity['syncId']) {
     return files.filter((file) => file.fieldname === `${type}-${syncId}`);
-  }
-
-  private formatFileSize(bytes: number) {
-    const units = ['B', 'kB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 B';
-
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    const size = bytes / Math.pow(1024, i);
-    const precision = size < 10 ? 2 : size < 100 ? 1 : 0;
-
-    return `${size.toFixed(precision)} ${units[i]}`;
   }
 }
