@@ -14,6 +14,8 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     const rawErrors = exception.getResponse() as any;
     const status = HttpStatus.BAD_REQUEST
 
+    console.log(JSON.stringify(rawErrors));
+
     //Handle single message string
     if (typeof rawErrors.message === 'string') {
       return response.status(status).json(

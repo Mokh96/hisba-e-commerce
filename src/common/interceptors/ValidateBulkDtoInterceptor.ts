@@ -2,6 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestE
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
+import { allFakers } from '@faker-js/faker';
 
 /**
  * Interceptor to validate an array of DTOs in the request body.
@@ -51,35 +52,28 @@ export class ValidateBulkDtoInterceptor<T extends object> implements NestInterce
   constructor(private readonly dto: Type<T>) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
-    const request: Request = context.switchToHttp().getRequest(); //request from express
+    const request: Request = context.switchToHttp().getRequest();
     const body: T = request.body;
 
     if (!Array.isArray(body) || !body.every((item) => typeof item === 'object')) {
       throw new BadRequestException('Expected request body to be an array of objects');
     }
 
-    const errors = []; //todo : use the correct error format
+    const errors: string[] = [];
 
     for (const [index, item] of body.entries()) {
       const instance = plainToInstance(this.dto, item);
       const validationErrors = await validate(instance);
+      const flatMap = validationErrors.flatMap((error) => {
+        return error.constraints ? Object.values(error.constraints) : [];
+      });
 
-      if (validationErrors.length > 0) {
-        //errors.push({ index, errors: validationErrors });
-        errors.push({
-          index,
-          messages: validationErrors.map((e) => ({
-            property: e.property,
-            constraints: e.constraints,
-          })),
-        });
-      }
+      errors.push(...flatMap);
     }
-    //console.log(JSON.stringify(errors ));
+
     if (errors.length > 0) {
       throw new BadRequestException({
-        message: 'Validation failed for one or more items',
-        errors,
+        message: errors,
       });
     }
 

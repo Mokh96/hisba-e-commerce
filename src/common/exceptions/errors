@@ -64,5 +64,19 @@
 }
 
 
+{//if you send empty object see : form-data-parser.util
+    "statusCode": 400,
+    "error": "Bad Request",
+    "message": "Invalid request format: Expected an array structure.",
+    "timestamp": "2025-04-23T16:09:34.653Z",
+    "path": "/api/v1/categories/sync/bulk",
+    "type": "validation_error",
+    "errors": [
+        {
+            "field": "_global",
+            "message": "Invalid request format: Expected an array structure."
+        }
+    ]
+}
 
 
