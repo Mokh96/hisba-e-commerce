@@ -1,40 +1,27 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { EntityNotFoundError, QueryFailedError } from 'typeorm';
+import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
 
-//TODO : make sql exception handler
-@Catch(QueryFailedError)
+@Catch(Error)
 export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: QueryFailedError, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    //const status = exception.getStatus();
 
-    //return new BadRequestException('test test');
-    response.status(400).json({
-      statusCode: 400,
-      timestamp: new Date().toISOString(),
+    const status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    // Optional: log the error for debugging
+    console.error('Unhandled error:', exception);
+
+    const errorResponse = createErrorResponse({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Internal server error',
       path: request.url,
-      exception,
-      // host,
+      error: 'InternalServerError',
+      type: 'internal_error',
     });
+
+    response.status(status).json(errorResponse);
   }
 }
-
-/*@Catch(EntityNotFoundError)
-export class NotFoundExceptionFilter implements ExceptionFilter {
-  catch(exception: QueryFailedError, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-
-    response.status(404).json({
-      statusCode: 404,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      entity: exception.message.split('"')[1],
-      message: exception.message.split('"').slice(0, 2).join(''),
-    });
-  }
-}*/

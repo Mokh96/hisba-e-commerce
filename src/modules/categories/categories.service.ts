@@ -134,6 +134,9 @@ export class CategoriesService {
   }
 
   async remove(id: number) {
+    if (12 > 0){
+      throw new Error('test exception');
+    }
     const category = await this.categoryRepository.findOneByOrFail({ id });
     await this.uploadManager.removeFile(category.imgPath);
     return await this.categoryRepository.remove(category);
