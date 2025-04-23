@@ -134,11 +134,9 @@ export class CategoriesService {
   }
 
   async remove(id: number) {
-    const category = await this.findOne(id);
-    await this.categoryRepository.remove(category);
-    //if (category.imgPath) removeFileIfExist(category.imgPath);
-
-    return true;
+    const category = await this.categoryRepository.findOneByOrFail({ id });
+    await this.uploadManager.removeFile(category.imgPath);
+    return await this.categoryRepository.remove(category);
   }
 
   async updateBulk(updateBrandDto: UpdateSyncCategoryDto[], files: Express.Multer.File[]) {
