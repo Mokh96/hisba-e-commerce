@@ -1,6 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { createErrorResponse } from 'src/common/exceptions/helpers/error-response.helper';
+import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 @Catch(Error)
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -15,11 +16,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     console.error('Unhandled error:', exception);
 
     const errorResponse = createErrorResponse({
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: status,
       message: 'Internal server error',
       path: request.url,
-      error: 'InternalServerError',
-      type: 'internal_error',
+      type: ErrorType.Internal,
     });
 
     response.status(status).json(errorResponse);
