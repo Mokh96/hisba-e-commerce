@@ -6,6 +6,7 @@ import { NotFoundExceptionFilter } from 'src/common/exceptions/filters/entity-no
 import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-filter';
 import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
 import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
+import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception.filter';
 
 @Module({
   providers: [
@@ -15,6 +16,7 @@ import { FileValidationFilter } from 'src/common/exceptions/filters/file-validat
     { provide: APP_FILTER, useClass: ValidationExceptionFilter },
     { provide: APP_FILTER, useClass: InputValidationFilter },
     { provide: APP_FILTER, useClass: FileValidationFilter },
+    { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
   ],
 })
 export class ExceptionModule {}

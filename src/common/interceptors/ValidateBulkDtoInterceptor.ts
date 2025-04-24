@@ -2,7 +2,6 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestE
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Request } from 'express';
-import { allFakers } from '@faker-js/faker';
 
 /**
  * Interceptor to validate an array of DTOs in the request body.
