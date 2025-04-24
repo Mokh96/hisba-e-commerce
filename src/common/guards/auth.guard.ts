@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it interceptors our route handlers
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException("unauthorized access");
+      throw new UnauthorizedException();
     }
     return true;
   }
