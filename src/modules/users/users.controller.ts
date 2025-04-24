@@ -28,7 +28,6 @@ export class UsersController {
 
   @Post('test')
   async test() {
-    throw new ForbiddenException('Target user not found');
     return this.usersService.test();
   }
 

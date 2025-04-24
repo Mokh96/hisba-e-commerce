@@ -1,5 +1,6 @@
 import { FileValidationException } from 'src/common/exceptions/custom-exceptions/file-validation.exception';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { FileValidationRules } from 'src/modules/files/types/file-validation.type';
 
 export function formatFileSize(bytes: number) {
   const units = ['B', 'kB', 'MB', 'GB', 'TB'];
@@ -48,11 +49,11 @@ export function validateFileCount(params: {
 export function validateFileType(params: {
   fieldName: string;
   file: Express.Multer.File;
-  allowedTypes: string[];
+  allowedTypes: FileValidationRules['allowedTypes'];
 }): void {
   const { fieldName, file, allowedTypes } = params;
 
-  if (!allowedTypes.includes(file.mimetype)) {
+  if (!allowedTypes.includes(file.mimetype as FileValidationRules['allowedTypes'][number])) {
     throw new FileValidationException(
       fieldName,
       `Invalid file type for ${fieldName}. Allowed types: ${allowedTypes.join(', ')}`,

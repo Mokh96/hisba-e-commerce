@@ -8,7 +8,7 @@ export const createProductValidationRules: ValidationRules = {
   files: {
     [FileUploadEnum.DefaultImage]: {
       ...imageUploadRules,
-      required: true,
+      //required: true,
       minCount: 1,
     },
     [FileUploadEnum.Image]: imageUploadRules,
@@ -18,7 +18,7 @@ export const createProductValidationRules: ValidationRules = {
       files: {
         [FileUploadEnum.DefaultImage]: {
           ...imageUploadRules,
-          required: true,
+          //required: true,
         },
       },
     },
