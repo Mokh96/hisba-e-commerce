@@ -20,12 +20,12 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
         message,
         path: request.url,
         type: ErrorType.AuthForbidden,
-        errors: [
+        /*errors: [
           {
             field: '_global',
             message,
           },
-        ],
+        ],*/
       }),
     );
   }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
@@ -11,6 +11,7 @@ import { Category } from './entities/category.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
+import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 
 @Injectable()
 export class CategoriesService {
@@ -18,7 +19,9 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private readonly uploadManager: UploadManager,
-  ) {}
+  ) {
+    //console.log(rules);
+  }
 
   async create(
     createCategoryDto: CreateCategoryDto,
@@ -70,15 +73,15 @@ export class CategoriesService {
   async findMany(filterDto: CategoryFilterDto, paginationDto: BasePaginationDto) {
     const filter = fromDtoToQuery(filterDto);
 
-    const [row, count] = await this.categoryRepository.findAndCount({
+    const [data, totalItems] = await this.categoryRepository.findAndCount({
       where: filter,
       skip: paginationDto.offset,
       take: paginationDto.limit,
     });
 
     return {
-      count,
-      row,
+      data,
+      totalItems,
     };
   }
 
@@ -134,7 +137,7 @@ export class CategoriesService {
   }
 
   async remove(id: number) {
-    if (12 > 0){
+    if (12 > 0) {
       throw new Error('test exception');
     }
     const category = await this.categoryRepository.findOneByOrFail({ id });

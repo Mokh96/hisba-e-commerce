@@ -28,6 +28,7 @@ export class UsersController {
 
   @Post('test')
   async test() {
+   // throw new ForbiddenException('You do not have permission to create this user');
     return this.usersService.test();
   }
 

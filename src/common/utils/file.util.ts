@@ -75,8 +75,8 @@ export function validateFileSize(params: { fieldName: string; file: Express.Mult
       ErrorType.FileTooLarge,
       {
         fileName: file.originalname,
-        maxSize,
-        receivedSize: file.size,
+        maxSize : formatFileSize(maxSize),
+        receivedSize: formatFileSize(file.size),
       },
     );
   }

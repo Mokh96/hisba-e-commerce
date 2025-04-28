@@ -1,16 +1,30 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  NestInterceptor,
+  Scope,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { FileValidationRules } from 'src/modules/files/types/file-validation.type';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { SyncedEntity } from 'src/common/types/global.type';
-import InputValidationException from 'src/common/exceptions/custom-exceptions/input-validation.exception';
 import { formatFileSize } from 'src/common/utils/file.util';
 import { FileValidationException } from 'src/common/exceptions/custom-exceptions/file-validation.exception';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
+//export const VALIDATION_RULES = 'VALIDATION_RULES';
+
+//@Injectable({ scope: Scope.REQUEST })
 @Injectable()
 export class DynamicFileValidationInterceptor implements NestInterceptor {
+  /* constructor(@Inject(VALIDATION_RULES) private readonly rules: ValidationRules) {
+     console.log('instantiated ...');
+   }*/
+
   constructor(private readonly rules: ValidationRules) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

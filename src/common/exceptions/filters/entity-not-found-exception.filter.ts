@@ -1,4 +1,4 @@
-import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus, NotFoundException } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
 import { Response, Request } from 'express';
 import createErrorResponse from '../utils/create-error-response.util';
@@ -14,7 +14,7 @@ import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-@Catch(EntityNotFoundError)
+@Catch(EntityNotFoundError , NotFoundException)
 export class NotFoundExceptionFilter implements ExceptionFilter {
   catch(exception: EntityNotFoundError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

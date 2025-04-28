@@ -1,53 +1,50 @@
-/*export enum FileErrorType {
-  InvalidType = 'file.invalid_type',
-  TooLarge = 'file.too_large',
-  TooMany = 'file.too_many',
-  TooFew = 'file.too_few',
-}*/
-
 export enum ErrorType {
   // Validation
-  Validation = 'validation_error',
-  CheckConstraintViolation = 'check_constraint_violation',
+  Validation = 'validation.error',
 
-  // Auth.
+  // Auth
   AuthForbidden = 'auth.forbidden',
   AuthUnauthorized = 'auth.unauthorized',
-  AuthTokenExpired = 'auth.token_expired',
-  AuthInvalidToken = 'auth.invalid_token',
+  AuthTokenExpired = 'auth.token.expired',
+  AuthInvalidToken = 'auth.token.invalid',
 
   // Database
   DataTooLong = 'db.data_too_long',
-  DbUnknownError = 'db.unknown_error',
+  DbUnknownError = 'db.error_unknown',
   DeadlockDetected = 'db.deadlock_detected',
-  DuplicateKey = 'db.duplicate_key',
+  DuplicateKey = 'db.key_duplicate',
   EntityNotFound = 'db.entity_not_found',
   ForeignKey = 'db.foreign_key_violation',
   ForeignKeyDeletion = 'db.foreign_key_deletion_violation',
-  InvalidValue = 'db.invalid_value',
+  InvalidValue = 'db.value_invalid',
   LockTimeOut = 'db.lock_wait_timeout',
-  NonNull = 'db.not_null_violation',
+  NonNull = 'db.not.null_violation',
   SqlSyntaxError = 'db.sql_syntax_error',
-  UnknownColumn = 'db.unknown_column',
+  UnknownColumn = 'db.column_unknown',
   DataOutOfRange = 'db.data_out_of_range',
+  CheckConstraintViolation = 'db.check_constraint_violation',
 
   // Internal
-  Internal = 'internal_error',
+  Internal = 'internal.server_error',
 
-  //Files
-  FileInvalidType = 'file.invalid_type',
-  FileTooLarge = 'file.too_large',
+  // Files
+  FileInvalidType = 'file.type.invalid',
+  FileTooLarge = 'file.too.large',
   FileMissing = 'file.missing',
-  FileTooFew = 'file.too_few',
-  FileTooMany = 'file.too_many',
+  FileTooFew = 'file.too.few',
+  FileTooMany = 'file.too.many',
 
-  RateLimitExceeded = 'rate.limit_exceeded',
+  // Rate Limiting
+  RateLimitExceeded = 'rate.limit.exceeded',
+
+  // External
   ExternalTimeout = 'external.timeout',
   ExternalUnavailable = 'external.unavailable',
-  ExternalBadResponse = 'external.bad_response',
+  ExternalBadResponse = 'external.response.bad',
 
-  InputRequiredFieldMissing = 'input.required_field_missing',
-  InputInvalidFormat = 'input.invalid_format',
-  Conflict = 'conflict',
-  NotAllowed = 'not_allowed',
+  // Input
+  InputRequiredFieldMissing = 'input.field_required_missing',
+  InputInvalidFormat = 'input.format_invalid',
+  Conflict = 'error.conflict',
+  NotAllowed = 'error.not_allowed',
 }
