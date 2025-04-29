@@ -15,6 +15,9 @@ import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { ProductFilterDto } from './dto/product-filter.dto';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { QueryUtils } from 'src/common/utils/query.utils';
 
 @Injectable()
 export class ProductsService {
@@ -104,9 +107,30 @@ export class ProductsService {
     return response;
   }
 
-  async findAll(): Promise<PaginatedResult<Product>> {
-    const [data, totalItems] = await this.productRepository.findAndCount();
-    return { data, totalItems };
+  async findAll(paginationDto: PaginationDto, filterDto: ProductFilterDto): Promise<PaginatedResult<Product>> {
+    const alias = this.productRepository.metadata.tableName; // or just manually set 'product'
+    const queryBuilder = this.productRepository.createQueryBuilder(alias);
+    console.log({
+      filterDto: JSON.stringify(filterDto),
+      fields: filterDto.fields,
+      //paginationDto,
+    });
+
+    QueryUtils.use(queryBuilder)
+      .applySearch(filterDto.search)
+      .applyFilters(filterDto.filters)
+      .applyGtFilters(filterDto.gt)
+      .applyLtFilters(filterDto.lt)
+      .applyGteFilters(filterDto.gte)
+      .applyLteFilters(filterDto.lte)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyDateFilters({ createdAt: filterDto.createdAt, updatedAt: filterDto.updatedAt })
+      .applyPagination(paginationDto);
+
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+
+    return { totalItems, data };
   }
 
   async findOne(id: number) {

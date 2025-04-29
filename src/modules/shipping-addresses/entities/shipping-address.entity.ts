@@ -34,3 +34,5 @@ export class ShippingAddress extends MixedEntities {
   @JoinColumn({ name: 'town_id', referencedColumnName: 'id' })
   town: Town;
 }
+
+const dd = ShippingAddress.getEntityAttributes()
