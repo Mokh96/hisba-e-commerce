@@ -111,12 +111,6 @@ export class ProductFilterDto {
   @ValidateNested({ each: true })
   search?: Partial<Record<keyof SearchValidator, string>> = {};
 
-  /*  @IsOptional()
-    @IsObject()
-    @Type(() => FiltersValidator) // Create a class for search validation
-    @ValidateNested({ each: true })
-    filters?: Partial<Record<keyof FiltersValidator, string | boolean | number>> = {};*/
-
   @IsOptional()
   @Type(() => FiltersValidator)
   @ValidateNested({ each: true })

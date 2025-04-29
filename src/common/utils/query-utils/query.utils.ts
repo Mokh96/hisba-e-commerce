@@ -2,25 +2,16 @@ import { SelectQueryBuilder } from 'typeorm';
 import { DEFAULT_PAGINATION_SETTINGS, PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
 import { SEARCH_CONFIG } from 'src/common/config/search.config';
-
-type DateFields = 'createdAt' | 'updatedAt';
-
-type ExtractFilterParams<T> = {
-  [K in keyof T]?: string | number | boolean;
-};
-
-type ExtractInFilterParams<T> = {
-  [K in keyof T]?: Array<string | number | boolean>;
-};
-
-type ExtractNumberFilters<T> = {
-  [K in keyof T]?: number;
-};
-
-type BaseSelectFields = string[];
+import {
+  BaseSelectFields,
+  DateFields,
+  ExtractFilterParams,
+  ExtractInFilterParams,
+  ExtractNumberFilters,
+} from 'src/common/utils/query-utils/query-utils.types';
 
 export class QueryUtils<T> {
-  private constructor(private readonly queryBuilder: SelectQueryBuilder<T>, private readonly alias: string) {}
+  constructor(private readonly queryBuilder: SelectQueryBuilder<T>, private readonly alias: string) {}
 
   static use<T>(queryBuilder: SelectQueryBuilder<T>): QueryUtils<T> {
     return new QueryUtils(queryBuilder, queryBuilder.alias);
@@ -37,7 +28,7 @@ export class QueryUtils<T> {
   private applyNumericComparisonFilter(
     filters: ExtractNumberFilters<T> | undefined,
     operator: '>' | '>=' | '<' | '<=',
-    suffix: string = '', // _gte, _lte
+    suffix: '_gte' | '_lte' | '' = '',
   ): void {
     if (!filters) return;
 
@@ -125,34 +116,6 @@ export class QueryUtils<T> {
 
     return this;
   }
-
-  /* applyGteFilterss<T extends object>(filters?: ExtractNumberFilters<T>): this {
-    if (!filters) return this;
-
-    Object.entries(filters).forEach(([field, value]) => {
-      if (typeof value === 'number') {
-        this.queryBuilder.andWhere(`${this.alias}.${field} >= :${field}_gte`, {
-          [`${field}_gte`]: value,
-        });
-      }
-    });
-
-    return this;
-  }
-
-   applyLteFilterss<T extends object>(filters?: ExtractNumberFilters<T>): this {
-    if (!filters) return this;
-
-    Object.entries(filters).forEach(([field, value]) => {
-      if (typeof value === 'number') {
-        this.queryBuilder.andWhere(`${this.alias}.${field} <= :${field}_lte`, {
-          [`${field}_lte`]: value,
-        });
-      }
-    });
-
-    return this;
-  }*/
 
   /**
    * Applies date range filters to the query builder

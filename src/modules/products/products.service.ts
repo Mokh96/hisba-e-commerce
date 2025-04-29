@@ -17,7 +17,7 @@ import { PaginatedResult } from 'src/common/interfaces/paginated-result.interfac
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { ProductFilterDto } from './dto/product-filter.dto';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
-import { QueryUtils } from 'src/common/utils/query.utils';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 
 @Injectable()
 export class ProductsService {
