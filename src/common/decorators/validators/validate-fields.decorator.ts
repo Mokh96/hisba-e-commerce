@@ -6,9 +6,15 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-export type EntityWithAttributes = {
+/*export type EntityWithAttributes = {
   getEntityAttributes: () => string[];
+};*/
+
+
+export type EntityWithAttributes = {
+  getEntityAttributes(): string[];
 };
+
 
 @ValidatorConstraint({ async: false })
 export class IsValidFieldConstraint implements ValidatorConstraintInterface {

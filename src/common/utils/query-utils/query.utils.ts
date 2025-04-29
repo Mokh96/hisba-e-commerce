@@ -8,6 +8,7 @@ import {
   ExtractFilterParams,
   ExtractInFilterParams,
   ExtractNumberFilters,
+  ExtractSearchParams,
 } from 'src/common/utils/query-utils/query-utils.types';
 
 export class QueryUtils<T> {
@@ -40,14 +41,14 @@ export class QueryUtils<T> {
     });
   }
 
-  applySearch(search?: Record<string, string>): this {
+  applySearch<T extends object>(search?: ExtractSearchParams<T>): this {
     if (!search) return this;
 
     Object.entries(search).forEach(([field, value]) => {
       if (value) {
         // removing non-visible Unicode characters (e.g., if you deal with Arabic or RTL languages),
         // trimming and normalizing the search string:
-        const cleanedValue = value
+        const cleanedValue = (value as string)
           .trim()
           .replace(/\p{C}+/gu, '')
           .replace(/\s+/g, ' ');

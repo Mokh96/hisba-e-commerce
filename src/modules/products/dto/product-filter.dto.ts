@@ -5,18 +5,24 @@ import {
   MaxLength,
   IsString,
   IsBoolean,
-  IsObject,
-  ValidateNested,
   Min,
   IsInt,
   ArrayMaxSize,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
-import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
 import { TransformStringToBoolean } from 'src/common/decorators';
-import { IsValidFieldFor } from 'src/common/decorators/validators/validate-fields.decorator';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { createFiltersDto } from 'src/common/dtos/base/create-filters.dto';
+import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
+import { createGtDto } from 'src/common/dtos/base/create-filter.dto';
+import { createGteDto } from 'src/common/dtos/base/create-gte-filter.dto';
+import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
+import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
+import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
+import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
+import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 
 class BaseFiltersValidator {
   @IsOptional()
@@ -104,63 +110,15 @@ class InFiltersValidator {
   categoryId?: number[];
 }
 
-export class ProductFilterDto {
-  @IsOptional()
-  @IsObject()
-  @Type(() => SearchValidator) // Create a class for search validation
-  @ValidateNested({ each: true })
-  search?: Partial<Record<keyof SearchValidator, string>> = {};
 
-  @IsOptional()
-  @Type(() => FiltersValidator)
-  @ValidateNested({ each: true })
-  filters?: FiltersValidator = {};
-
-  @IsOptional()
-  @Type(() => InFiltersValidator)
-  @ValidateNested({ each: true })
-  in?: InFiltersValidator;
-
-  // Greater-than filters for fields like 'price'
-  @IsOptional()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => NumberFilterValidator)
-  gt?: NumberFilterValidator;
-
-  // Greater-than or equal filters for fields like 'price'
-  @IsOptional()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => NumberFilterValidator)
-  gte?: NumberFilterValidator;
-
-  // Less-than filters for fields like 'price'
-  @IsOptional()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => NumberFilterValidator)
-  lt?: NumberFilterValidator;
-
-  //Less-than or equal filters for fields like 'price'
-  @IsOptional()
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => NumberFilterValidator)
-  lte?: NumberFilterValidator;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => DateRangeDto)
-  createdAt?: DateRangeDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => DateRangeDto)
-  updatedAt?: DateRangeDto;
-
-  @IsOptional()
-  @IsArray()
-  @IsValidFieldFor(Product)
-  fields?: (keyof Product)[];
-}
+export class ProductFilterDto extends IntersectionType(
+  createFieldsDto(Product),
+  createSearchDto(SearchValidator),
+  createFiltersDto(FiltersValidator),
+  createInFiltersDto(InFiltersValidator),
+  createGtDto(NumberFilterValidator),
+  createGteDto(NumberFilterValidator),
+  createLtDto(NumberFilterValidator),
+  createLteDto(NumberFilterValidator),
+  DateRangeFiltersDto,
+) {}
