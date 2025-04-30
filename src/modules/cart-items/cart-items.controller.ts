@@ -4,6 +4,8 @@ import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { CurrentUser, CurrentUserData, Role } from 'src/common/decorators';
 import { Roles } from 'src/common/enums/roles.enum';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Controller('cart-items')
 export class CartItemsController {
@@ -17,7 +19,7 @@ export class CartItemsController {
 
   @Get()
   @Role(Roles.CLIENT)
-  findAll(@CurrentUser() activeUserData: CurrentUserData) {
+  findAll(@CurrentUser() activeUserData: CurrentUserData): Promise<PaginatedResult> {
     return this.cartItemsService.findAll(activeUserData);
   }
 

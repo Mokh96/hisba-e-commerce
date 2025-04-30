@@ -100,14 +100,14 @@ class InFiltersValidator {
   @Type(() => String)
   @IsString({ each: true })
   @ArrayMaxSize(100)
-  brandId?: string[];
+  brandIds?: string[];
 
   @IsOptional()
   @IsArray()
   @Type(() => Number)
   @IsInt({ each: true })
   @ArrayMaxSize(100)
-  categoryId?: number[];
+  categoryIds?: number[];
 }
 
 export class ProductFilterDto extends IntersectionType(
