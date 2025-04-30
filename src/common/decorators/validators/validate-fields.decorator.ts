@@ -6,11 +6,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-/*export type EntityWithAttributes = {
-  getEntityAttributes: () => string[];
-};*/
-
-
 export type EntityWithAttributes = {
   getEntityAttributes(): string[];
 };

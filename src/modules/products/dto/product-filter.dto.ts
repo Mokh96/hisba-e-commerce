@@ -110,7 +110,6 @@ class InFiltersValidator {
   categoryId?: number[];
 }
 
-
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
   createSearchDto(SearchValidator),
