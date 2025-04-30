@@ -8,6 +8,7 @@ import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Category])],
   controllers: [SyncCategoryController, CategoriesController],
   providers: [
     CategoriesService,
@@ -16,6 +17,6 @@ import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
       useFactory: () => new UploadManager(FileTypesEnum.Public, []),
     },
   ],
-  imports: [TypeOrmModule.forFeature([Category])],
+  exports: [CategoriesService],
 })
 export class CategoriesModule {}

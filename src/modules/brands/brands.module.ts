@@ -17,5 +17,6 @@ import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
       useFactory: () => new UploadManager(FileTypesEnum.Public, []),
     },
   ],
+  exports: [BrandsService],
 })
 export class BrandsModule {}

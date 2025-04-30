@@ -18,12 +18,16 @@ import { Order } from 'src/modules/orders/entities/order.entity';
 import { ProductFilterDto } from './dto/product-filter.dto';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { CategoriesService } from 'src/modules/categories/categories.service';
+import { BrandsService } from 'src/modules/brands/brands.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    private categoriesService: CategoriesService,
+    private brandsService: BrandsService,
     private uploadManager: UploadManager,
   ) {}
 
@@ -110,11 +114,20 @@ export class ProductsService {
   async findAll(paginationDto: PaginationDto, filterDto: ProductFilterDto): Promise<PaginatedResult<Product>> {
     const alias = this.productRepository.metadata.tableName; // or just manually set 'product'
     const queryBuilder = this.productRepository.createQueryBuilder(alias);
+
+
+
+    filterDto.in.categoryId = await this.categoriesService.getCategoryDescendants(filterDto.in.categoryId);
+    filterDto.in.brandId = await this.brandsService.getBrandDescendants(filterDto.in.brandId);
+
+/*
     console.log({
       filterDto: JSON.stringify(filterDto),
       fields: filterDto.fields,
-      //paginationDto,
+      paginationDto,
+     // brandId : filterDto.in.brandId
     });
+*/
 
     QueryUtils.use(queryBuilder)
       .applySearch(filterDto.search)

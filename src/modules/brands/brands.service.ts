@@ -11,6 +11,8 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
+import { Category } from 'src/modules/categories/entities/category.entity';
+import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
 
 @Injectable()
 export class BrandsService {
@@ -157,5 +159,8 @@ export class BrandsService {
       }
     }
     return response;
+  }
+  async getBrandDescendants(ids: Brand['id'][]) {
+    return await getAllDescendantIds(ids, this.brandRepository);
   }
 }

@@ -46,7 +46,21 @@ class BaseFiltersValidator {
   label2?: string;
 }
 
-class FiltersValidator extends BaseFiltersValidator {
+class NumberFilterValidator {
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform(({ value }) => Number(value) || undefined)
+  maxPrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform(({ value }) => Number(value) || undefined)
+  minPrice?: number;
+}
+
+class FiltersValidator extends IntersectionType(BaseFiltersValidator, NumberFilterValidator) {
   @IsBoolean()
   @IsOptional()
   @TransformStringToBoolean({ allowNull: false })
@@ -80,34 +94,20 @@ class SearchValidator extends BaseFiltersValidator {
   description?: string;
 }
 
-class NumberFilterValidator {
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Transform(({ value }) => Number(value) || undefined)
-  maxPrice?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Transform(({ value }) => Number(value) || undefined)
-  minPrice?: number;
-}
-
 class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @Type(() => String)
   @IsString({ each: true })
   @ArrayMaxSize(100)
-  brandIds?: string[];
+  brandId?: number[];
 
   @IsOptional()
   @IsArray()
   @Type(() => Number)
   @IsInt({ each: true })
   @ArrayMaxSize(100)
-  categoryIds?: number[];
+  categoryId?: number[];
 }
 
 export class ProductFilterDto extends IntersectionType(

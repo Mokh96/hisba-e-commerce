@@ -12,6 +12,7 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
+import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
 
 @Injectable()
 export class CategoriesService {
@@ -19,9 +20,7 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private readonly uploadManager: UploadManager,
-  ) {
-    //console.log(rules);
-  }
+  ) {}
 
   async create(
     createCategoryDto: CreateCategoryDto,
@@ -166,5 +165,9 @@ export class CategoriesService {
       }
     }
     return response;
+  }
+
+  async getCategoryDescendants(ids: Category['id'][]) {
+    return await getAllDescendantIds(ids, this.categoryRepository);
   }
 }

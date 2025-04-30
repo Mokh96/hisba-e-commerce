@@ -10,7 +10,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    //console.log(exception);
+    console.log("GlobalExceptionFilter" , exception);
     const status = HttpStatus.INTERNAL_SERVER_ERROR;
 
     const errorResponse = createErrorResponse({
