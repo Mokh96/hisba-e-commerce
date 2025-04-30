@@ -26,6 +26,7 @@ import { Order } from 'src/modules/orders/entities/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ProductFilterDto } from 'src/modules/products/dto/product-filter.dto';
+import { DeepPartial } from 'typeorm';
 
 @Controller('products')
 export class ProductsController {
@@ -54,7 +55,7 @@ export class ProductsController {
   findAll(
     @Query() paginationDto: PaginationDto,
     @Query() filterDto: ProductFilterDto,
-  ): Promise<PaginatedResult<Product>> {
+  ): Promise<PaginatedResult<DeepPartial<Product>>> {
     return this.productsService.findAll(paginationDto, filterDto);
   }
 

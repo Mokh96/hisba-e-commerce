@@ -3,7 +3,7 @@ import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { DeepPartial, FindManyOptions, Repository } from 'typeorm';
 import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
@@ -111,23 +111,16 @@ export class ProductsService {
     return response;
   }
 
-  async findAll(paginationDto: PaginationDto, filterDto: ProductFilterDto): Promise<PaginatedResult<Product>> {
-    const alias = this.productRepository.metadata.tableName; // or just manually set 'product'
-    const queryBuilder = this.productRepository.createQueryBuilder(alias);
-
-
+  async findAll(
+    paginationDto: PaginationDto,
+    filterDto: ProductFilterDto,
+  ): Promise<PaginatedResult<DeepPartial<Product>>> {
+    const queryBuilder = this.productRepository.createQueryBuilder(this.productRepository.metadata.tableName);
 
     filterDto.in.categoryId = await this.categoriesService.getCategoryDescendants(filterDto.in.categoryId);
     filterDto.in.brandId = await this.brandsService.getBrandDescendants(filterDto.in.brandId);
 
-/*
-    console.log({
-      filterDto: JSON.stringify(filterDto),
-      fields: filterDto.fields,
-      paginationDto,
-     // brandId : filterDto.in.brandId
-    });
-*/
+    console.log({ filterDto: JSON.stringify(filterDto) });
 
     QueryUtils.use(queryBuilder)
       .applySearch(filterDto.search)
@@ -212,12 +205,12 @@ export class ProductsService {
     return response;
   }
 
-  public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {
-    return await getEntitiesByIds(this.productRepository, articleIds, options);
-  }
-
   async remove(id: number) {
     const product = await this.productRepository.findOneByOrFail({ id });
     return this.productRepository.remove(product);
+  }
+
+  public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {
+    return await getEntitiesByIds(this.productRepository, articleIds, options);
   }
 }

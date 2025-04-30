@@ -118,6 +118,20 @@ export class QueryUtils<T> {
     return this;
   }
 
+  applyNotIn<T extends object>(notInFilters?: ExtractInFilterParams<T>) {
+    if (!notInFilters) return this;
+
+    Object.entries(notInFilters).forEach(([field, values]) => {
+      if (Array.isArray(values) && values.length > 0) {
+        this.queryBuilder.andWhere(`${this.alias}.${field} NOT IN (:...${field}NotIn)`, {
+          [`${field}NotIn`]: values,
+        });
+      }
+    });
+
+    return this;
+  }
+
   /**
    * Applies date range filters to the query builder
    * @param dateFilters - Object containing date filters (e.g., createdAt, updatedAt)
