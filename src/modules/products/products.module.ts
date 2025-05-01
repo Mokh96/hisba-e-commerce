@@ -8,10 +8,11 @@ import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 import { CategoriesModule } from 'src/modules/categories/categories.module';
 import { BrandsModule } from 'src/modules/brands/brands.module';
+import { FiltersController } from 'src/modules/products/filters.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product]), CategoriesModule, BrandsModule],
-  controllers: [ProductsSyncController, ProductsController],
+  controllers: [ProductsSyncController, ProductsController , FiltersController],
   providers: [
     ProductsService,
     {

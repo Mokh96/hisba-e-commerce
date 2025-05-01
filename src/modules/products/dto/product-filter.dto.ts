@@ -23,7 +23,6 @@ import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
-import { createNotInDto } from 'src/common/dtos/base/create-not-in.dto';
 
 class BaseFiltersValidator {
   @IsOptional()
