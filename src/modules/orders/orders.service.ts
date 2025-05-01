@@ -16,6 +16,9 @@ import { ArticlesService } from 'src/modules/articles/articles.service';
 import { ProductsService } from 'src/modules/products/products.service';
 import { CurrentUserData } from 'src/common/decorators';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { OrderFilterDto } from './dto/order-filter.dto';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 
 @Injectable()
 export class OrdersService {
@@ -48,9 +51,23 @@ export class OrdersService {
     });
   }
 
-  async findAll(): Promise<PaginatedResult<Order>> {
-    const [data, totalItems] = await this.orderRepository.findAndCount();
-    return { data, totalItems };
+  async findAll(paginationDto: PaginationDto, filterDto: OrderFilterDto): Promise<PaginatedResult<DeepPartial<Order>>> {
+    const queryBuilder = this.orderRepository.createQueryBuilder(this.orderRepository.metadata.tableName);
+
+    QueryUtils.use(queryBuilder)
+      .applySearch(filterDto.search)
+      .applyFilters(filterDto.filters)
+      .applyGtFilters(filterDto.gt)
+      .applyLtFilters(filterDto.lt)
+      .applyGteFilters(filterDto.gte)
+      .applyLteFilters(filterDto.lte)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyDateFilters({ createdAt: filterDto.createdAt, updatedAt: filterDto.updatedAt })
+      .applyPagination(paginationDto);
+
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+    return { totalItems, data };
   }
 
   async create(createOrderDto: CreateOrderDto, user: CurrentUserData) {
