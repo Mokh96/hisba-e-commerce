@@ -1,75 +1,167 @@
-import { Type } from 'class-transformer';
-import { IsEmail, IsInt, IsMobilePhone, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
+import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
+import { CLIENT_FIELD_LENGTHS } from 'src/modules/clients/config/client.config';
+import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
+import { IntersectionType } from '@nestjs/mapped-types';
+import { Client } from 'src/modules/clients/entities/client.entity';
+import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
+import { createFiltersDto } from 'src/common/dtos/base/create-filters.dto';
+import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
+import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
+import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
 
-export class ClientFilterDto {
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  readonly syncId?: number | number[];
+class FiltersValidator {
+  @IsBoolean()
+  @IsPositive()
+  @Transform(({ value }) => Number(value) || undefined)
+  syncId?: boolean;
 
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  readonly id?: number | number[];
+  @IsBoolean()
+  @IsPositive()
+  @Transform(({ value }) => Number(value) || undefined)
+  townId?: boolean;
 
-  @IsOptional()
-  @IsString()
-  readonly firstName?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly lastName?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly address?: string;
-
-  @IsOptional()
-  @IsPhoneNumber('DZ')
-  readonly phone?: string;
-
-  @IsOptional()
-  @IsMobilePhone('ar-DZ')
-  readonly mobile?: string;
-
-  @IsOptional()
-  @IsEmail()
-  readonly email?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly rc?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly agr?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly ai?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly activity?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly legalForm?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly idFiscal?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly code?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly ref?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt({ each: true })
-  readonly townId?: number | number[];
+  @IsBoolean()
+  @IsPositive()
+  @Transform(({ value }) => Number(value) || undefined)
+  userId?: boolean;
 }
+
+class SearchValidator {
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.FIRST_NAME)
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.LAST_NAME)
+  @IsString()
+  lastName?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.LAST_NAME)
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.NOTE)
+  @IsString()
+  note?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.PHONE)
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.MOBILE)
+  @IsString()
+  mobile?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.FAX)
+  @IsString()
+  fax?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.EMAIL)
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.RC)
+  @IsString()
+  rc?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.AGR)
+  @IsString()
+  agr?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.AI)
+  @IsString()
+  ai?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.ACTIVITY)
+  @IsString()
+  activity?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.LEGAL_FROM)
+  @IsString()
+  legalForm?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.ID_FISCAL)
+  @IsString()
+  idFiscal?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.CODE)
+  @IsString()
+  code?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.REF)
+  @IsString()
+  ref?: string;
+
+  @IsOptional()
+  @MaxLength(CLIENT_FIELD_LENGTHS.WEB_PAGE)
+  @IsString()
+  webPage?: string;
+}
+
+class InFiltersValidator {
+  @IsOptional()
+  @IsArray()
+  @Type(() => Number)
+  @IsString({ each: true })
+  @ArrayMaxSize(100)
+  syncId?: number[];
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => Number)
+  @IsInt({ each: true })
+  @ArrayMaxSize(100)
+  townId?: number[];
+}
+
+class DateFieldsValidator {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => DateRangeDto)
+  birthDate?: DateRangeDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => DateRangeDto)
+  createdAt?: DateRangeDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => DateRangeDto)
+  updatedAt?: DateRangeDto;
+}
+
+export class ClientFilterDto extends IntersectionType(
+  createFieldsDto(Client),
+  createSearchDto(SearchValidator),
+  createFiltersDto(FiltersValidator),
+  createInFiltersDto(InFiltersValidator),
+  createDateRangeFiltersDto(DateFieldsValidator),
+) {}

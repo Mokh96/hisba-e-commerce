@@ -5,9 +5,60 @@ import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shippin
 import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { WithTimestamp } from 'src/common/entities/timestamp.entity';
+import { WithSyncId } from 'src/common/entities/sync.entity';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+import { BaseEntity } from 'src/common/entities/base-entity.entity';
+
+const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
 
 @Entity()
-export class Client extends ClientSync {
+export class Client extends MixedEntities {
+  @Column({ name: 'first_name' })
+  firstName: string;
+
+  @Column({ name: 'last_name' })
+  lastName: string;
+
+  @Column()
+  address: string;
+
+  @Column({ name: 'birth_date', nullable: true })
+  birthDate: Date;
+
+  @Column({ nullable: true })
+  note: string;
+
+  @Column({ length: 13 })
+  phone: string;
+
+  @Column({ length: 13, nullable: true })
+  mobile: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  fax: string;
+
+  @Column({ nullable: true })
+  rc: string;
+
+  @Column({ nullable: true })
+  agr: string;
+
+  @Column({ nullable: true })
+  ai: string;
+
+  @Column({ nullable: true })
+  activity: string;
+
+  @Column({ name: 'legal_form', nullable: true })
+  legalForm: string;
+
+  @Column({ name: 'id_fiscal', nullable: true })
+  idFiscal: string;
+
   @Column({ nullable: true })
   code: string;
 

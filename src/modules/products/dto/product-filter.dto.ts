@@ -24,7 +24,7 @@ import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 
-class CommonSearchAndFiltersValidator {
+class SearchAndFiltersValidator {
   @IsOptional()
   @MaxLength(PRODUCT_FIELD_LENGTHS.CODE)
   @IsString()
@@ -60,7 +60,7 @@ class NumberFilterValidator {
   minPrice?: number;
 }
 
-class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator, NumberFilterValidator) {
+class FiltersValidator extends IntersectionType(SearchAndFiltersValidator, NumberFilterValidator) {
   @IsBoolean()
   @IsOptional()
   @TransformStringToBoolean({ allowNull: false })
@@ -82,7 +82,7 @@ class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator,
   isMultiArticle?: boolean;
 }
 
-class SearchValidator extends CommonSearchAndFiltersValidator {
+class SearchValidator extends SearchAndFiltersValidator {
   @IsOptional()
   @MaxLength(PRODUCT_FIELD_LENGTHS.NOTE)
   @IsString()
@@ -97,7 +97,7 @@ class SearchValidator extends CommonSearchAndFiltersValidator {
 class InFiltersValidator {
   @IsOptional()
   @IsArray()
-  @Type(() => String)
+  @Type(() => Number)
   @IsString({ each: true })
   @ArrayMaxSize(100)
   brandId?: number[];

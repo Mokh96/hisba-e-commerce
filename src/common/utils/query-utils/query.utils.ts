@@ -10,6 +10,7 @@ import {
   ExtractNumberFilters,
   ExtractSearchParams,
 } from 'src/common/utils/query-utils/query-utils.types';
+import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 
 export class QueryUtils<T> {
   constructor(private readonly queryBuilder: SelectQueryBuilder<T>, private readonly alias: string) {}
@@ -155,6 +156,58 @@ export class QueryUtils<T> {
         }
       }
     });
+
+    return this;
+  }
+
+  /*  applyDateFilters2(dateFilters: Partial<Record<string, DateRangeDto | undefined>>) {
+      console.log('dateFilters' , dateFilters);
+      if (!dateFilters) return this;
+  
+      for (const [field, range] of Object.entries(dateFilters)) {
+        console.log(field, range);
+  
+        if (range.from) {
+          this.queryBuilder.andWhere(`${this.alias}.${field} >= :${field}From`, {
+            [`${field}From`]: range.from,
+          });
+        }
+        if (range.to) {
+          this.queryBuilder.andWhere(`${this.alias}.${field} <= :${field}To`, {
+            [`${field}To`]: range.to,
+          });
+        }
+      }
+    }*/
+
+  applyDateFilters2(dateFilters: Record<string, DateRangeDto | undefined> | object) {
+    console.log('dateFilters', dateFilters);
+    if (!dateFilters) return this;
+
+    // Convert the input to entries we can iterate over
+    const entries = Object.entries(dateFilters);
+
+    for (const [field, range] of entries) {
+      // Skip if the range is not a valid DateRangeDto
+      if (!range || typeof range !== 'object') continue;
+
+      // Check if the object has from/to properties to ensure it's a DateRangeDto
+      if (!('from' in range) && !('to' in range)) continue;
+
+      // Type assertion since we've validated this is a DateRangeDto-like object
+      const dateRange = range as DateRangeDto;
+
+      if (dateRange.from) {
+        this.queryBuilder.andWhere(`${this.alias}.${field} >= :${field}From`, {
+          [`${field}From`]: dateRange.from,
+        });
+      }
+      if (dateRange.to) {
+        this.queryBuilder.andWhere(`${this.alias}.${field} <= :${field}To`, {
+          [`${field}To`]: dateRange.to,
+        });
+      }
+    }
 
     return this;
   }
