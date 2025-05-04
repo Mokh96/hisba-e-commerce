@@ -4,7 +4,6 @@ import { BulkResponse } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
 import { Repository } from 'typeorm';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto, UpdateSyncCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
@@ -13,6 +12,9 @@ import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
+import { CategoryFilterDto } from 'src/modules/categories/dto/category-filter.dto';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -69,19 +71,19 @@ export class CategoriesService {
     return categories;
   }
 
-  async findMany(filterDto: CategoryFilterDto, paginationDto: BasePaginationDto) {
-    const filter = fromDtoToQuery(filterDto);
+  async findMany(paginationDto: PaginationDto, filterDto: CategoryFilterDto) {
+    const queryBuilder = this.categoryRepository.createQueryBuilder(this.categoryRepository.metadata.tableName);
 
-    const [data, totalItems] = await this.categoryRepository.findAndCount({
-      where: filter,
-      skip: paginationDto.offset,
-      take: paginationDto.limit,
-    });
+    QueryUtils.use(queryBuilder)
+      .applySearch(filterDto.search)
+      .applyFilters(filterDto.filters)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyDateFilters2(filterDto.date)
+      .applyPagination(paginationDto);
 
-    return {
-      data,
-      totalItems,
-    };
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+    return { totalItems, data };
   }
 
   async findOne(id: number) {
@@ -136,9 +138,6 @@ export class CategoriesService {
   }
 
   async remove(id: number) {
-    if (12 > 0) {
-      throw new Error('test exception');
-    }
     const category = await this.categoryRepository.findOneByOrFail({ id });
     await this.uploadManager.removeFile(category.imgPath);
     return await this.categoryRepository.remove(category);

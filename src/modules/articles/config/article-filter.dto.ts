@@ -84,7 +84,6 @@ class InFiltersValidator {
   syncId?: number[];
 }
 
-
 export class ArticleFilterDto extends IntersectionType(
   createFieldsDto(Article),
   createSearchDto(SearchValidator),
@@ -95,5 +94,4 @@ export class ArticleFilterDto extends IntersectionType(
   createLtDto(NumberFilterValidator),
   createLteDto(NumberFilterValidator),
   createDateRangeFiltersDto(DateRangeFiltersDto),
-
 ) {}

@@ -1,27 +1,12 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { Upload } from 'src/helpers/upload/upload.global';
-import { UploadInterceptor } from 'src/interceptors/upload.interceptor';
-import { Image } from 'src/types/types.global';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UploadedFiles } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CategoryFilterDto } from './dto/category-filter.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { CategoryFilterDto } from 'src/modules/categories/dto/category-filter.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -40,8 +25,8 @@ export class CategoriesController {
   }
 
   @Get()
-  findMany(@Query() filterDto: CategoryFilterDto, @Query() paginationDto: BasePaginationDto) {
-    return this.categoriesService.findMany(filterDto, paginationDto);
+  findMany(@Query() paginationDto: PaginationDto, @Query() filterDto: CategoryFilterDto) {
+    return this.categoriesService.findMany(paginationDto, filterDto);
   }
 
   @Get(':id')
