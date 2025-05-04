@@ -1,4 +1,4 @@
-import { IsIn, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsPositive, IsString, Max, MaxLength, Min } from 'class-validator';
 import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
 import { ORDER_FIELD_LENGTHS } from 'src/modules/orders/config/orders.config';
 import { IntersectionType } from '@nestjs/mapped-types';
@@ -135,11 +135,13 @@ class SearchValidator extends CommonSearchAndFiltersValidator {
 
 class InFiltersValidator {
   @IsOptional()
+  @IsArray()
   @IsString()
   @IsIn(Object.values(OrderStatus))
   statusId?: OrderStatus[];
 
   @IsOptional()
+  @IsArray()
   @IsNumber()
   @IsPositive()
   clientId?: number[];

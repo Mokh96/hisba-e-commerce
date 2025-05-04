@@ -25,6 +25,8 @@ import { UpdateProductDto } from 'src/modules/products/dto/update-product.dto';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Article } from 'src/modules/articles/entities/article.entity';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { ArticleFilterDto } from 'src/modules/articles/config/article-filter.dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -33,7 +35,7 @@ export class ArticlesController {
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([{ name: FileUploadEnum.Image }]),
-    new FileValidationInterceptor({ [FileUploadEnum.Image]: { ...requiredImageUploadRules} }),
+    new FileValidationInterceptor({ [FileUploadEnum.Image]: { ...requiredImageUploadRules } }),
   )
   create(
     @Body() createArticleDto: CreateArticleDto,
@@ -43,8 +45,8 @@ export class ArticlesController {
   }
 
   @Get()
-  findAll(@Query() queryArticleDto: QueryArticleDto) : Promise<PaginatedResult<Article>> {
-    return this.articlesService.findAll(queryArticleDto);
+  findAll(@Query() paginationDto: PaginationDto, @Query() articleFilterDto: ArticleFilterDto) {
+    return this.articlesService.findAll(paginationDto, articleFilterDto);
   }
 
   @Get(':id')
@@ -62,7 +64,7 @@ export class ArticlesController {
     @Body() updateArticleDto: UpdateArticleDto,
     @UploadedFiles() files: { [FileUploadEnum.Image]: Express.Multer.File[] },
   ) {
-    return this.articlesService.update(id, updateArticleDto , files);
+    return this.articlesService.update(id, updateArticleDto, files);
   }
 
   @Delete(':id')
