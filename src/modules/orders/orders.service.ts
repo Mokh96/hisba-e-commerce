@@ -1,13 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { User } from 'src/modules/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, DeepPartial, Repository } from 'typeorm';
-import { ClientsService } from 'src/modules/clients/clients.service';
 import { Order } from 'src/modules/orders/entities/order.entity';
-import { Client } from 'src/modules/clients/entities/client.entity';
-import { Article } from 'src/modules/articles/entities/article.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
@@ -19,6 +15,9 @@ import { PaginatedResult } from 'src/common/interfaces/paginated-result.interfac
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { OrderFilterDto } from './dto/order-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { Role } from 'src/common/enums/roles.enum';
+import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
+import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 
 @Injectable()
 export class OrdersService {
@@ -28,6 +27,7 @@ export class OrdersService {
     private readonly cartItemsService: CartItemsService,
     private readonly articlesService: ArticlesService,
     private readonly productsService: ProductsService,
+    private dataSource: DataSource,
   ) {}
 
   async findOne(id: number) {
@@ -63,7 +63,7 @@ export class OrdersService {
       .applyLteFilters(filterDto.lte)
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
-      .applyDateFilters( filterDto.date)
+      .applyDateFilters(filterDto.date)
       .applyPagination(paginationDto);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
@@ -158,5 +158,36 @@ export class OrdersService {
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
     return `This action updates a #${id} order`;
+  }
+
+  private checkOwnership = (order: Order, user: CurrentUserData) => {
+    if (user.roleId === Role.CLIENT && order.clientId !== user.client?.id) {
+      throw new ForbiddenException('You do not have permission to access this order as it belongs to another client');
+    }
+  };
+
+  async changeOrderStatus(orderId: number, newStatusId: OrderStatus, user: CurrentUserData) {
+    const order = await this.orderRepository.findOneByOrFail({ id: orderId });
+    this.checkOwnership(order, user);
+
+    // Validate the status change
+    changeOrderStatus(user.roleId, order.statusId, newStatusId);
+
+    return this.dataSource.manager.transaction(async (manager) => {
+      order.statusId = newStatusId;
+      const updatedOrder = await manager.save(Order, order);
+
+      // Log the status change in order history
+      const orderHistory = await manager.save(OrderHistory, {
+        orderId,
+        statusId: newStatusId,
+        creatorId: user.sub,
+      });
+
+      return {
+        ...updatedOrder,
+        orderHistory,
+      };
+    });
   }
 }
