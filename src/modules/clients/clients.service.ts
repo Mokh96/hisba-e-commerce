@@ -93,7 +93,7 @@ export class ClientsService {
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
       .applyPagination(paginationDto)
-      .applyDateFilters2(filterDto.date);
+      .applyDateFilters(filterDto.date);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
 

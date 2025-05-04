@@ -79,7 +79,7 @@ export class CategoriesService {
       .applyFilters(filterDto.filters)
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
-      .applyDateFilters2(filterDto.date)
+      .applyDateFilters(filterDto.date)
       .applyPagination(paginationDto);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();

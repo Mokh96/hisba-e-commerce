@@ -5,11 +5,17 @@ import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { WithImgPath } from 'src/common/entities/img-path.entity';
 import { WithLabel } from 'src/common/entities/label.entity';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
+import { BRAND_FIELD_LENGTHS } from 'src/modules/brands/config/brand.config';
 
-const BrandBase = WithTimestamp(WithSyncId(WithLabel(WithImgPath(BaseEntity))));
+const MixedEntities = WithTimestamp(WithSyncId(WithImgPath(WithEntityAttributeUtils(BaseEntity))));
 
 @Entity()
-export class Brand extends BrandBase {
+export class Brand extends MixedEntities {
+  @Column({length: BRAND_FIELD_LENGTHS.LABEL })
+  label: string;
+
   @OneToMany(() => Brand, (brand: Brand) => brand.parent)
   children: Brand[];
 

@@ -101,7 +101,7 @@ export class ArticlesService {
       .applyLteFilters(articleFilterDto.lte)
       .applyInFilters(articleFilterDto.in)
       .applySelectFields(articleFilterDto.fields)
-      .applyDateFilters2(articleFilterDto.date)
+      .applyDateFilters(articleFilterDto.date)
       .applyPagination(paginationDto);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();

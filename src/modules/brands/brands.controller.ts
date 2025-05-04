@@ -20,6 +20,7 @@ import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 
 @Controller('brands')
 export class BrandsController {
@@ -38,8 +39,11 @@ export class BrandsController {
   }
 
   @Get()
-  findMany(@Query() filterDto: BrandFilterDto, @Query() paginationDto: BasePaginationDto) {
-    return this.brandsService.findMany(filterDto, paginationDto);
+  findMany(
+    @Query() paginationDto: PaginationDto,
+    @Query() filterDto: BrandFilterDto,
+  ) {
+    return this.brandsService.findMany(paginationDto ,filterDto);
   }
 
   @Get(':id')
