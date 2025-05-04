@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query 
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { CurrentUser, CurrentUserData, Role } from 'src/common/decorators';
-import { Roles } from 'src/common/enums/roles.enum';
+import { CurrentUser, CurrentUserData, Roles } from 'src/common/decorators';
+import { Role } from 'src/common/enums/roles.enum';
 import { User } from 'src/modules/users/entities/user.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ProductFilterDto } from 'src/modules/products/dto/product-filter.dto';
@@ -14,7 +14,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  @Role(Roles.CLIENT)
+  @Roles(Role.CLIENT)
   create(@Body() createOrderDto: CreateOrderDto, @CurrentUser() user: CurrentUserData) {
     return this.ordersService.create(createOrderDto, user);
   }

@@ -10,7 +10,7 @@ import { Client } from 'src/modules/clients/entities/client.entity';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { OrderStatus } from 'src/common/enums/order-status.enum';
+import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { ArticlesService } from 'src/modules/articles/articles.service';
 import { ProductsService } from 'src/modules/products/products.service';

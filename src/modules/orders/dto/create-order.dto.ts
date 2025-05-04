@@ -16,7 +16,7 @@ import { Type } from 'class-transformer';
 import { CreateOrderItemDto } from 'src/modules/order-items/dto/create-order-item.dto';
 import { OneOfFields } from 'src/common/decorators/validators/one-of-fields.decorator';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
-import { OrderStatus } from 'src/common/enums/order-status.enum';
+import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod } from 'src/modules/payment-methods/enums/payment.method';
 
 @OneOfFields(['cartItemsIds', 'orderItems'], {

@@ -3,7 +3,7 @@ import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.conf
 import { ORDER_FIELD_LENGTHS } from 'src/modules/orders/config/orders.config';
 import { IntersectionType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
-import { OrderStatus } from 'src/common/enums/order-status.enum';
+import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod } from 'src/modules/payment-methods/enums/payment.method';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { Product } from 'src/modules/products/entities/product.entity';

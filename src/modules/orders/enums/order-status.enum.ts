@@ -1,6 +1,6 @@
 export enum OrderStatus {
   /**
-   * Order is new and has not been confirmed yet.
+   * The Order is new and has not been confirmed yet.
    * This is the initial status after the order has been created.
    */
   NEW = 1,
@@ -17,6 +17,13 @@ export enum OrderStatus {
    */
   CANCELED = 4,
 }
+
+export const orderStatusesString = {
+  [OrderStatus.NEW]: 'new',
+  [OrderStatus.CONFIRMED]: 'Confirmed',
+  [OrderStatus.COMPLETED]: 'completed',
+  [OrderStatus.CANCELED]: 'canceled',
+};
 
 /**
  * Converts the OrderStatus enum to a normal object.

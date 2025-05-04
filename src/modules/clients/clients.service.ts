@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { DeepPartial, Repository } from 'typeorm';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
@@ -28,7 +28,7 @@ export class ClientsService {
 
   async create(createClientDto: CreateClientDto | CreateClientSyncDto) {
     const client = this.clientRepository.create(createClientDto);
-    client.user.roleId = Roles.CLIENT;
+    client.user.roleId = Role.CLIENT;
     await this.clientRepository.save(client);
 
     delete client.user.password;

@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role as RoleEnum } from 'src/common/enums/roles.enum';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
@@ -43,10 +43,10 @@ export class User {
 
   @ManyToOne(() => Role, (role: Role) => role.users, { nullable: false })
   @JoinColumn({ name: 'role_id' })
-  role: Role;
+  role: RoleEnum;
 
   @Column({ name: 'role_id', nullable: false })
-  roleId: Roles;
+  roleId: RoleEnum;
 
   @BeforeInsert()
   async setPassword() {

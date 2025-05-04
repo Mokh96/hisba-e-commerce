@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { UsersService } from '../users/users.service';
 import { AuthDto } from './dto/auth.dto';
 import { CurrentUserData } from 'src/common/decorators';
@@ -38,7 +38,7 @@ export class AuthService {
       roleId,
     };
 
-    if (roleId === Roles.CLIENT) {
+    if (roleId === Role.CLIENT) {
       const clientId = await this.clientService.getClientIdByUserId(user.id);
       payload.client = {
         id: clientId,
@@ -52,7 +52,7 @@ export class AuthService {
 
   async logInCompany(authDto: AuthDto) {
     const { username, password } = authDto;
-    const company = await this.usersService.findUserWhere({ username, roleId: Roles.COMPANY });
+    const company = await this.usersService.findUserWhere({ username, roleId: Role.COMPANY });
 
     if (!company) {
       throw new NotFoundException(`Company '${username}' not found`);

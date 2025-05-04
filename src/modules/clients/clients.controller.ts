@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
-import { Role } from 'src/common/decorators';
+import { Roles } from 'src/common/decorators';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { UpdateClientMeDto } from 'src/modules/clients/dto/update-me.dto';
 import { UsersService } from 'src/modules/users/users.service';
 import { ClientsService } from './clients.service';
@@ -39,7 +39,7 @@ export class ClientsController {
   }
 
   @Patch(':id')
-  @Role(Roles.ADMIN, Roles.SUPERADMIN, Roles.COMPANY)
+  @Roles(Role.ADMIN, Role.SUPERADMIN, Role.COMPANY)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateClientDto: UpdateClientDto) {
     return this.clientsService.update(+id, updateClientDto);
   }
