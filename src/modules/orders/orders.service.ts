@@ -63,7 +63,7 @@ export class OrdersService {
       .applyLteFilters(filterDto.lte)
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
-      .applyDateFilters({ createdAt: filterDto.createdAt, updatedAt: filterDto.updatedAt })
+      .applyDateFilters2( filterDto.date)
       .applyPagination(paginationDto);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
