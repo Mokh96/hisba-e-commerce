@@ -23,6 +23,7 @@ import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
+import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
 
 class SearchAndFiltersValidator {
   @IsOptional()
@@ -120,5 +121,5 @@ export class ProductFilterDto extends IntersectionType(
   createLtDto(NumberFilterValidator),
   createLteDto(NumberFilterValidator),
   //createNotInDto(InFiltersValidator),//no need for now
-  DateRangeFiltersDto,
+  createDateRangeFiltersDto(DateRangeFiltersDto),
 ) {}

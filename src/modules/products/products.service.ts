@@ -120,18 +120,16 @@ export class ProductsService {
     filterDto.in.categoryId = await this.categoriesService.getCategoryDescendants(filterDto.in.categoryId);
     filterDto.in.brandId = await this.brandsService.getBrandDescendants(filterDto.in.brandId);
 
-    console.log({ filterDto: JSON.stringify(filterDto) });
-
     QueryUtils.use(queryBuilder)
-      .applySearch(filterDto.search)
       .applyFilters(filterDto.filters)
+      .applySearch(filterDto.search)
       .applyGtFilters(filterDto.gt)
       .applyLtFilters(filterDto.lt)
       .applyGteFilters(filterDto.gte)
       .applyLteFilters(filterDto.lte)
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
-      .applyDateFilters({ createdAt: filterDto.createdAt, updatedAt: filterDto.updatedAt })
+      .applyDateFilters2(filterDto.date)
       .applyPagination(paginationDto);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
