@@ -18,6 +18,7 @@ import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { Role } from 'src/common/enums/roles.enum';
 import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
+import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
 
 @Injectable()
 export class OrdersService {
@@ -162,7 +163,7 @@ export class OrdersService {
 
   private checkOwnership = (order: Order, user: CurrentUserData) => {
     if (user.roleId === Role.CLIENT && order.clientId !== user.client?.id) {
-      throw new ForbiddenException('You do not have permission to access this order as it belongs to another client');
+      throw new ForbiddenException('You do not have permission to modify this order');
     }
   };
 
@@ -189,5 +190,23 @@ export class OrdersService {
         orderHistory,
       };
     });
+  }
+
+  async BulkChangeStatus(changeStatusDto: ChangeStatusDto[], user: CurrentUserData) {
+    const response = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const item of changeStatusDto) {
+      try {
+        const updatedOrder = await this.changeOrderStatus(item.orderId, item.newStatusId, user);
+        response.successes.push(updatedOrder);
+      } catch (e) {
+        response.failures.push(e);
+      }
+    }
+
+    return response;
   }
 }

@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -7,6 +19,10 @@ import { Role } from 'src/common/enums/roles.enum';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { OrderFilterDto } from 'src/modules/orders/dto/order-filter.dto';
 import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
+import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
+import { getBulkStatus } from 'src/common/utils/bulk-status.util';
+import { Response } from 'express';
+import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/validate-bulk-dto.Interceptor';
 
 @Controller('orders')
 export class OrdersController {
@@ -54,5 +70,19 @@ export class OrdersController {
   @Patch(':id/status/completed')
   async toCompleted(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: CurrentUserData) {
     return await this.ordersService.changeOrderStatus(id, OrderStatus.COMPLETED, user);
+  }
+
+  //@Roles(Role.COMPANY)
+  @Patch('status/bulk')
+  @UseInterceptors(new ValidateBulkDtoInterceptor(ChangeStatusDto))
+  async BulkChangeStatus(
+    @Res() res: Response,
+    @Body() changeStatusDtoBulkDto: ChangeStatusDto[],
+    @CurrentUser() user: CurrentUserData,
+  ) {
+    const response = await this.ordersService.BulkChangeStatus(changeStatusDtoBulkDto, user);
+
+    const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
+    return res.status(status).json(response);
   }
 }

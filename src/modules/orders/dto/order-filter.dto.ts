@@ -102,7 +102,6 @@ class NumberFilterValidator {
 
 class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator, NumberFilterValidator) {
   @IsOptional()
-  @IsString()
   @IsIn(Object.values(OrderStatus))
   statusId?: number;
 
