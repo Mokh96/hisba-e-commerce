@@ -23,13 +23,17 @@ import { BrandsService } from 'src/modules/brands/brands.service';
 
 @Injectable()
 export class ProductsService {
+  private alias = '';
+
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
     private categoriesService: CategoriesService,
     private brandsService: BrandsService,
     private uploadManager: UploadManager,
-  ) {}
+  ) {
+    this.alias = this.productRepository.metadata.tableName;
+  }
 
   async create(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
     const allUploadedFiles: UploadFileType[] = [];
@@ -210,5 +214,18 @@ export class ProductsService {
 
   public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {
     return await getEntitiesByIds(this.productRepository, articleIds, options);
+  }
+
+  async getPriceRange() {
+    const result = await this.productRepository
+      .createQueryBuilder(this.alias)
+      .select(`MIN(${this.alias}.minPrice)`, 'min')
+      .addSelect(`MAX(${this.alias}.maxPrice)`, 'max')
+      .getRawOne();
+
+    return {
+      min: parseFloat(result.min) || 0,
+      max: parseFloat(result.max) || 0,
+    };
   }
 }

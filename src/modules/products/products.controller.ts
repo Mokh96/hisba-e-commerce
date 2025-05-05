@@ -59,6 +59,11 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto, filterDto);
   }
 
+  @Get('price-range')
+  async getPriceRange() {
+    return await this.productsService.getPriceRange()
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(+id);
