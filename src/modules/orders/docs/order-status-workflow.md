@@ -11,5 +11,6 @@
 | NEW         | CANCELED  | Client , Company |
 | NEW         | CONFIRMED | Company          |
 | CONFIRMED   | COMPLETED | Company          |
+| CONFIRMED   | CANCELED  | Company          |
 
 ---

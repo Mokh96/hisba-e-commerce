@@ -7,8 +7,8 @@ type RoleType = Role.COMPANY | Role.CLIENT;
 // Workflow for the company
 const companyWorkFlow: Map<OrderStatus, OrderStatus[]> = new Map([
   [OrderStatus.NEW, [OrderStatus.CONFIRMED, OrderStatus.CANCELED]],
-  [OrderStatus.CONFIRMED, [OrderStatus.COMPLETED]],
-  [OrderStatus.CONFIRMED, []],
+  [OrderStatus.CONFIRMED, [OrderStatus.COMPLETED , OrderStatus.CANCELED]],
+  [OrderStatus.COMPLETED, []],
   [OrderStatus.CANCELED, []],
 ]);
 

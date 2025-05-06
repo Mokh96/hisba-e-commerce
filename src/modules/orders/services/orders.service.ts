@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { CreateOrderDto } from '../dto/create-order.dto';
+import { UpdateOrderDto } from '../dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Order } from 'src/modules/orders/entities/order.entity';
@@ -13,7 +13,7 @@ import { ProductsService } from 'src/modules/products/products.service';
 import { CurrentUserData } from 'src/common/decorators';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
-import { OrderFilterDto } from './dto/order-filter.dto';
+import { OrderFilterDto } from '../dto/order-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { Role } from 'src/common/enums/roles.enum';
 import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
@@ -157,12 +157,12 @@ export class OrdersService {
     return `This action removes a #${id} order`;
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto) {
+  async updateOrderByCompany(id: number, updateOrderDto: UpdateOrderDto) {
     return await this.dataSource.transaction(async (manager) => {
       // Step 0: Fetch the existing order along with its orderItems
       const order = await manager.findOneOrFail(Order, {
         where: { id },
-        relations: {orderItems : true},
+        relations: { orderItems: true },
       });
 
       // Only allow updates for orders that are still in NEW status
@@ -221,8 +221,8 @@ export class OrdersService {
       );
 
       // Step 4: Persist all updates
-      await manager.save(OrderItem, itemsToUpdate);   // Save updated items
-      await manager.save(OrderItem, createdItems);    // Save new items
+      await manager.save(OrderItem, itemsToUpdate); // Save updated items
+      await manager.save(OrderItem, createdItems); // Save new items
 
       // Step 5: Update the order itself (excluding orderItems fields)
       const { orderItems, newOrderItems, ...orderUpdateData } = updateOrderDto;
@@ -235,55 +235,5 @@ export class OrdersService {
         orderItems: [...itemsToUpdate, ...createdItems],
       };
     });
-  }
-
-
-  private checkOwnership = (order: Order, user: CurrentUserData) => {
-    if (user.roleId === Role.CLIENT && order.clientId !== user.client?.id) {
-      throw new ForbiddenException('You do not have permission to modify this order');
-    }
-  };
-
-  async changeOrderStatus(orderId: number, newStatusId: OrderStatus, user: CurrentUserData) {
-    const order = await this.orderRepository.findOneByOrFail({ id: orderId });
-    this.checkOwnership(order, user);
-
-    // Validate the status change
-    changeOrderStatus(user.roleId, order.statusId, newStatusId);
-
-    return this.dataSource.manager.transaction(async (manager) => {
-      order.statusId = newStatusId;
-      const updatedOrder = await manager.save(Order, order);
-
-      // Log the status change in order history
-      const orderHistory = await manager.save(OrderHistory, {
-        orderId,
-        statusId: newStatusId,
-        creatorId: user.sub,
-      });
-
-      return {
-        ...updatedOrder,
-        orderHistory,
-      };
-    });
-  }
-
-  async BulkChangeStatus(changeStatusDto: ChangeStatusDto[], user: CurrentUserData) {
-    const response = {
-      successes: [],
-      failures: [],
-    };
-
-    for (const item of changeStatusDto) {
-      try {
-        const updatedOrder = await this.changeOrderStatus(item.orderId, item.newStatusId, user);
-        response.successes.push(updatedOrder);
-      } catch (e) {
-        response.failures.push(e);
-      }
-    }
-
-    return response;
   }
 }
