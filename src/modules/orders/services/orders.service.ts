@@ -20,6 +20,7 @@ import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
 import { tr } from '@faker-js/faker';
+import { OrderCalculationService } from 'src/modules/orders/services/order-calculation.service';
 
 @Injectable()
 export class OrdersService {
@@ -31,6 +32,7 @@ export class OrdersService {
     private readonly cartItemsService: CartItemsService,
     private readonly articlesService: ArticlesService,
     private readonly productsService: ProductsService,
+    private readonly orderCalculationService: OrderCalculationService,
     private dataSource: DataSource,
   ) {}
 
@@ -78,53 +80,13 @@ export class OrdersService {
     //Step 1: Get cart items
     const cartItems = await this.cartItemsService.getCartItemsByIds(createOrderDto.cartItemsIds);
 
-    //Step 3: Calculate totals and prepare order items
-    let productTotalHt = 0;
-    let productTotalTtc = 0;
-    let productTotalTva = 0;
     const stampDuty = 0;
     const discountPercentage = 0;
 
-    const orderItems: DeepPartial<OrderItem>[] = [];
     const allOrderItems = [...cartItems, ...(createOrderDto.orderItems || [])];
 
-    const articles = await this.articlesService.getArticlesByIds(allOrderItems.map((i) => i.articleId));
-
-    const products: Pick<Product, 'id' | 'isOutStock'>[] = await this.productsService.getProductsByIds(
-      articles.map((i) => i.productId),
-      { select: { isOutStock: true, id: true } },
-    );
-
-    for (const cartAndOrderItem of allOrderItems) {
-      const article = articles.find((a) => a.id === cartAndOrderItem.articleId);
-      const product = products.find((p) => p.id === article.productId);
-
-      const unitePriceHt = article.price;
-      const tvaPercentage = article.tvaPercentage;
-      const unitePriceTtc = unitePriceHt * (1 + tvaPercentage / 100);
-      const totalHt = unitePriceHt * cartAndOrderItem.quantity;
-      const totalTtc = unitePriceTtc * cartAndOrderItem.quantity;
-      const netAmountHt = totalHt - (totalHt * discountPercentage) / 100;
-      const netAmountTtc = totalTtc - (totalTtc * discountPercentage) / 100;
-      const totalTva = netAmountTtc - netAmountHt;
-
-      orderItems.push({
-        isOutStock: product.isOutStock,
-        quantity: cartAndOrderItem.quantity,
-        note: cartAndOrderItem.note,
-        offset: cartAndOrderItem.offset,
-        articleId: article.id,
-        articleRef: article.ref,
-        articleLabel: article.label,
-        discountPercentage,
-        unitePriceHt,
-        unitePriceTtc,
-      });
-
-      productTotalHt += totalHt;
-      productTotalTtc += totalTtc;
-      productTotalTva += totalTva;
-    }
+    const { orderItems, productTotalTva, productTotalTtc, productTotalHt } =
+      await this.orderCalculationService.calculateOrderItems(allOrderItems);
 
     //Step 4: Create and save the complete order with items in one go
     return await this.orderRepository.save({

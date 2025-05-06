@@ -11,10 +11,11 @@ import { OrderItemsModule } from 'src/modules/order-items/order-items.module';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { OrderStatusController } from 'src/modules/orders/controllers/order-status.controller';
 import { OrderStatusService } from 'src/modules/orders/services/order-status.service';
+import { OrderCalculationService } from 'src/modules/orders/services/order-calculation.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Order, OrderItem]), CartItemsModule, ArticlesModule, ProductsModule],
   controllers: [OrdersController, OrderStatusController],
-  providers: [OrdersService , OrderStatusService],
+  providers: [OrdersService , OrderStatusService , OrderCalculationService],
 })
 export class OrdersModule {}
