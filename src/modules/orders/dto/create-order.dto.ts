@@ -19,10 +19,7 @@ import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod } from 'src/modules/payment-methods/enums/payment.method';
 
-@OneOfFields(['cartItemsIds', 'orderItems'], {
-  message: 'You must provide at least one of cartItemsIds or orderItems.',
-})
-export class CreateOrderDto {
+export class BaseCreateOrder {
   @IsOptional()
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.NOTE)
@@ -46,19 +43,6 @@ export class CreateOrderDto {
   @IsPositive()
   @IsEnum(OrderStatus, { message: 'paymentMethodId must be a valid paymentMethodId value.' })
   paymentMethodId: PaymentMethod;
-
-  @ValidateIf((o: CreateOrderDto) => o.orderItems?.length === 0 || o.cartItemsIds?.length > 0)
-  @IsArray()
-  @IsInt({ each: true })
-  @ArrayMinSize(1)
-  cartItemsIds?: CartItem['id'][];
-
-  @ValidateIf((o: CreateOrderDto) => o.cartItemsIds?.length === 0 || o.orderItems?.length > 0)
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateOrderItemDto)
-  @ArrayMinSize(1)
-  orderItems?: CreateOrderItemDto[];
 
   @IsNotEmpty()
   @IsString()
@@ -84,4 +68,22 @@ export class CreateOrderDto {
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FAX)
   clientFax: string;
+}
+
+@OneOfFields(['cartItemsIds', 'orderItems'], {
+  message: 'You must provide at least one of cartItemsIds or orderItems.',
+})
+export class CreateOrderDto extends BaseCreateOrder {
+  @ValidateIf((o: CreateOrderDto) => o.orderItems?.length === 0 || o.cartItemsIds?.length > 0)
+  @IsArray()
+  @IsInt({ each: true })
+  @ArrayMinSize(1)
+  cartItemsIds?: CartItem['id'][];
+
+  @ValidateIf((o: CreateOrderDto) => o.cartItemsIds?.length === 0 || o.orderItems?.length > 0)
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderItemDto)
+  @ArrayMinSize(1)
+  orderItems?: CreateOrderItemDto[];
 }

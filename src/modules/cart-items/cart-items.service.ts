@@ -54,7 +54,7 @@ export class CartItemsService {
    * @param options - Additional options for the find operation.
    * @returns An array of found CartItem entities.
    */
-  public async getCartItems(cartItemsIds: CartItem['id'][], options: FindManyOptions<CartItem> = {}) {
+  public async getCartItemsByIds(cartItemsIds: CartItem['id'][], options: FindManyOptions<CartItem> = {}) {
     return await getEntitiesByIds(this.cartItemRepository, cartItemsIds, options);
   }
 

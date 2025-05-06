@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +6,7 @@ import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
+import { OrderStatus, orderStatusesString } from 'src/modules/orders/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { ArticlesService } from 'src/modules/articles/articles.service';
 import { ProductsService } from 'src/modules/products/products.service';
@@ -19,12 +19,15 @@ import { Role } from 'src/common/enums/roles.enum';
 import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
+import { tr } from '@faker-js/faker';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
     private readonly cartItemsService: CartItemsService,
     private readonly articlesService: ArticlesService,
     private readonly productsService: ProductsService,
@@ -72,11 +75,8 @@ export class OrdersService {
   }
 
   async create(createOrderDto: CreateOrderDto, user: CurrentUserData) {
-    //Step 1: Get client linked to the current user
-    //const client = await this.clientService.getClientByUserId<Client>(userId);
-    const clientId = user.client?.id;
-    //Step 2: Get cart items
-    const cartItems = await this.cartItemsService.getCartItems(createOrderDto.cartItemsIds);
+    //Step 1: Get cart items
+    const cartItems = await this.cartItemsService.getCartItemsByIds(createOrderDto.cartItemsIds);
 
     //Step 3: Calculate totals and prepare order items
     let productTotalHt = 0;
@@ -157,9 +157,86 @@ export class OrdersService {
     return `This action removes a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
+    return await this.dataSource.transaction(async (manager) => {
+      // Step 0: Fetch the existing order along with its orderItems
+      const order = await manager.findOneOrFail(Order, {
+        where: { id },
+        relations: {orderItems : true},
+      });
+
+      // Only allow updates for orders that are still in NEW status
+      if (order.statusId !== OrderStatus.NEW) {
+        throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be updated`);
+      }
+
+      const existingItems = order.orderItems;
+      const updatedItemsDto = updateOrderDto.orderItems ?? [];
+      const newItemsDto = updateOrderDto.newOrderItems ?? [];
+
+      const incomingUpdateIds = new Set<number>();
+      const itemsToUpdate = [];
+
+      // Step 1: Update existing items
+      // - Each item in `orderItems` must contain an `id`.
+      // - We trust the client app and overwrite fields (except articleId which is immutable).
+      // - If an existing item is not present in this list, it will be deleted in Step 2.
+      for (const item of updatedItemsDto) {
+        if (!item.id) continue;
+
+        const existing = existingItems.find((ei) => ei.id === item.id);
+        if (!existing) continue;
+
+        incomingUpdateIds.add(item.id);
+
+        itemsToUpdate.push({
+          ...existing,
+          quantity: item.quantity,
+          offset: item.offset,
+          note: item.note,
+        });
+      }
+
+      // Step 2: Delete missing items
+      // - Any existing orderItem not found in the `orderItems` list will be removed.
+      const itemsToDelete = existingItems.filter((ei) => !incomingUpdateIds.has(ei.id));
+      await manager.remove(OrderItem, itemsToDelete);
+
+      // Step 3: Create new items
+      // - Items in `newOrderItems` are treated as new and must include all required fields.
+      // - New items must not include an ID.
+      const createdItems = newItemsDto.map((item) =>
+        manager.create(OrderItem, {
+          orderId: id,
+          quantity: item.quantity,
+          offset: item.offset,
+          note: item.note,
+          unitePriceHt: item.unitePriceHt,
+          unitePriceTtc: item.unitePriceTtc,
+          discount: item.discount,
+          articleId: item.articleId,
+          articleLabel: item.articleLabel,
+          articleRef: item.articleRef,
+        }),
+      );
+
+      // Step 4: Persist all updates
+      await manager.save(OrderItem, itemsToUpdate);   // Save updated items
+      await manager.save(OrderItem, createdItems);    // Save new items
+
+      // Step 5: Update the order itself (excluding orderItems fields)
+      const { orderItems, newOrderItems, ...orderUpdateData } = updateOrderDto;
+      await manager.update(Order, id, orderUpdateData);
+
+      // Step 6: Return updated order summary (does not re-fetch from DB)
+      return {
+        ...order,
+        ...orderUpdateData,
+        orderItems: [...itemsToUpdate, ...createdItems],
+      };
+    });
   }
+
 
   private checkOwnership = (order: Order, user: CurrentUserData) => {
     if (user.roleId === Role.CLIENT && order.clientId !== user.client?.id) {

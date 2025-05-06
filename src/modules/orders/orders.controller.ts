@@ -46,7 +46,7 @@ export class OrdersController {
 
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+    return this.ordersService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
