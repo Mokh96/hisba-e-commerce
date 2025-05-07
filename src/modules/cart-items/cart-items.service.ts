@@ -6,6 +6,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { CurrentUserData } from 'src/common/decorators';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
+import { IdCommonDto } from 'src/common/dtos/id.common.dto';
 
 @Injectable()
 export class CartItemsService {
@@ -64,8 +65,29 @@ export class CartItemsService {
     return await this.cartItemRepository.save(cartItem);
   }
 
-  async remove(id: number) {
-    const cartItem = await this.cartItemRepository.findOneByOrFail({ id });
+  async remove(id: number, user: CurrentUserData) {
+    const cartItem = await this.cartItemRepository.findOneByOrFail({ id, clientId: user.client.id });
     return this.cartItemRepository.remove(cartItem);
+  }
+
+  async removeMany(cartItemsIds: IdCommonDto[], user: CurrentUserData) {
+    const result = {
+      successes: [],
+      failures: [],
+    };
+
+    for (const cartItem of cartItemsIds) {
+      try {
+        await this.remove(cartItem.id, user);
+        result.successes.push({ id: cartItem.id });
+      } catch (e) {
+        result.failures.push({
+          id: cartItem.id,
+          error: e.message,
+        });
+      }
+    }
+
+    return result;
   }
 }

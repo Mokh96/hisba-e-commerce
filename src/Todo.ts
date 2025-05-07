@@ -2,7 +2,8 @@
 
 //TODO: Null check for query parameters start with lot dto ps null is 'null'
 
-
 //i18 with full typesafe
 //config module
+//exception filter (fn)
+//startup
 
