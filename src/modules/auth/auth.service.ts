@@ -7,6 +7,9 @@ import { UsersService } from '../users/users.service';
 import { AuthDto } from './dto/auth.dto';
 import { CurrentUserData } from 'src/common/decorators';
 import { ClientsService } from 'src/modules/clients/clients.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Client } from 'src/modules/clients/entities/client.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +17,8 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private clientService: ClientsService,
+    @InjectRepository(Client)
+    private clientRepository: Repository<Client>,
   ) {}
 
   async logIn(authDto: AuthDto) {
@@ -73,6 +78,21 @@ export class AuthService {
 
     return {
       token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async getUserDetails(user: CurrentUserData) {
+    const existUser = await this.usersService.findOne(user.sub);
+    const toClient = {
+      ...existUser,
+    };
+
+    if (existUser.roleId === Role.CLIENT) {
+      toClient['client'] = await this.clientRepository.findOneByOrFail({ id: user.client.id });
+    }
+
+    return {
+      ...toClient
     };
   }
 }

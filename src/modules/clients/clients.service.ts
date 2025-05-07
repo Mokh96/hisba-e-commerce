@@ -83,8 +83,6 @@ export class ClientsService {
     const alias = this.clientRepository.metadata.tableName;
     const queryBuilder = this.clientRepository.createQueryBuilder(alias);
 
-    console.log(JSON.stringify(filterDto));
-
     queryBuilder.leftJoinAndSelect(`${alias}.user`, 'user').select([`${alias}`, 'user.id', 'user.username']);
 
     QueryUtils.use(queryBuilder)

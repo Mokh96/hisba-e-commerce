@@ -22,7 +22,7 @@ export class UsersService {
       roleId: Role.SUPERADMIN,
       username: null,
     });
-    return createdUser
+    return createdUser;
   }
 
   async create(createUserDto: CreateUserDto & { roleId: Role }) {
@@ -50,9 +50,6 @@ export class UsersService {
 
   async findOne(id: User['id']) {
     const user = await this.usersRepository.findOneByOrFail({ id });
-    if (!user) {
-      throw new NotFoundException(`User '${id}' not found`);
-    }
     return user;
   }
 
