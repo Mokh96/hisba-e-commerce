@@ -7,7 +7,7 @@ import { Role } from 'src/common/enums/roles.enum';
 import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
 import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
-import { changeOrderStatus } from 'src/modules/orders/util/order-workflow.util';
+import { changeOrderStatus } from 'src/modules/orders/helpers/order-workflow.helper';
 
 @Injectable()
 export class OrderStatusService {

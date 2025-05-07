@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { IntersectionType, OmitType, PartialType } from '@nestjs/mapped-types';
 import { BaseCreateOrder, CreateOrderDto } from './create-order.dto';
 import {
   ArrayMinSize,
@@ -16,12 +16,30 @@ import {
 import { Type } from 'class-transformer';
 import { CreateOrderItemDto } from 'src/modules/order-items/dto/create-order-item.dto';
 import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
+import { UpdateOrderItemDto } from 'src/modules/order-items/dto/update-order-item.dto';
 
-class OrderItemDto extends OmitType(PartialType(CreateOrderItemDto), ['articleId']) {
+class OrderItemDto extends OmitType(UpdateOrderItemDto, ['articleId']) {
+//class OrderItemDto extends UpdateOrderItemDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
   id: number;
+}
+
+/**
+ * used to update existing order items
+ * - Each item **must include an `id`** to match an existing record.
+ * - If an existing item is **not included** in this list, it will be considered **deleted**.
+ * - All fields are editable **except `articleId`**, which is immutable for existing items.
+ * - The `articleId` field is omitted from this DTO to prevent accidental updates.
+ * - The `articleId` field is immutable for existing items.
+ * */
+export class OrderItemsDto {
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OrderItemDto)
+  orderItems?: OrderItemDto[]; //updated /deleted order items
 }
 
 class ToCreateOrderItemDto extends CreateOrderItemDto {
@@ -51,11 +69,11 @@ class ToCreateOrderItemDto extends CreateOrderItemDto {
   articleRef: string;
 }
 
-export class UpdateOrderDto extends PartialType(BaseCreateOrder) {
+export class UpdateOrderDto extends IntersectionType(PartialType(BaseCreateOrder)) {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  syncId: number;// The ID from the desktop application (external source of truth)
+  syncId: number; // The ID from the desktop application (external source of truth)
 
   @IsOptional()
   @IsNumber()
@@ -96,12 +114,6 @@ export class UpdateOrderDto extends PartialType(BaseCreateOrder) {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItemDto)
-  /**
-   * Existing items to update.
-   * - Each item **must include an `id`** to match an existing record.
-   * - If an existing item is **not included** in this list, it will be considered **deleted**.
-   * - All fields are editable **except `articleId`**, which is immutable for existing items.
-   */
   orderItems?: OrderItemDto[]; //updated /deleted order items
 
   @IsOptional()

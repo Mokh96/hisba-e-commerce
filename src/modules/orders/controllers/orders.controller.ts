@@ -23,6 +23,7 @@ import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
 import { Response } from 'express';
 import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/validate-bulk-dto.Interceptor';
+import { UpdateOrderByClientDto } from 'src/modules/orders/dto/update-order-by-client.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -52,8 +53,12 @@ export class OrdersController {
 
   @Roles(Role.CLIENT)
   @Patch(':id/client')
-  updateOrderByClient(@Param('id', ParseIntPipe) id: number, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.updateOrderByCompany(id, updateOrderDto);
+  updateOrderByClient(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderByClientDto: UpdateOrderByClientDto,
+    @CurrentUser() user: CurrentUserData,
+  ) {
+    return this.ordersService.updateOrderByClient(id, updateOrderByClientDto, user);
   }
 
   @Delete(':id')
