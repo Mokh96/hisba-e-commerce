@@ -117,10 +117,6 @@ export class OrdersService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
-  }
-
   async updateOrderByCompany(id: number, updateOrderDto: UpdateOrderDto) {
     return await this.dataSource.transaction(async (manager) => {
       // Step 0: Fetch the existing existingOrder along with its orderItems
@@ -245,5 +241,13 @@ export class OrdersService {
         orderItems,
       });
     });
+  }
+
+  async remove(id: number, user: CurrentUserData) {
+    const order = await this.orderRepository.findOneByOrFail({ id, clientId: user.client?.id });
+    if (order.statusId !== OrderStatus.NEW ) {
+      throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be deleted`);
+    }
+    await this.orderRepository.remove(order);
   }
 }

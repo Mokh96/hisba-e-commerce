@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -61,8 +63,10 @@ export class OrdersController {
     return this.ordersService.updateOrderByClient(id, updateOrderByClientDto, user);
   }
 
+  @Roles(Role.CLIENT)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.remove(id);
+  @HttpCode(HttpStatus.OK)
+  removeByClient(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: CurrentUserData) {
+    return this.ordersService.remove(id , user);
   }
 }
