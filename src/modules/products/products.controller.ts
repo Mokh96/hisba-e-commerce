@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,13 +19,14 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { imageUploadRules } from 'src/modules/files/config/file-upload.config';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
-import {
-  productValidationRulesInterceptor,
-} from 'src/modules/products/config/file-validation.config';
+import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation.config';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { ProductFilterDto } from 'src/modules/products/dto/product-filter.dto';
+import { DeepPartial } from 'typeorm';
 
 @Controller('products')
 export class ProductsController {
@@ -50,8 +52,16 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() : Promise<PaginatedResult<Product>> {
-    return this.productsService.findAll();
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() filterDto: ProductFilterDto,
+  ): Promise<PaginatedResult<DeepPartial<Product>>> {
+    return this.productsService.findAll(paginationDto, filterDto);
+  }
+
+  @Get('price-range')
+  async getPriceRange() {
+    return await this.productsService.getPriceRange()
   }
 
   @Get(':id')

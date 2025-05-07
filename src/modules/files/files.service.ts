@@ -11,7 +11,7 @@ export class FilesService {
     const filePath = join(UPLOAD_ROOT_DIR, normalizedPath);
 
     if (!existsSync(filePath)) {
-      throw new NotFoundException('File not found');//todo use i 18n
+      throw new NotFoundException('File not found');//todo use i 18n and custom exception
     }
 
     const fileStream = createReadStream(filePath);

@@ -15,6 +15,9 @@ import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { ArticleFilterDto } from './config/article-filter.dto';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -25,7 +28,8 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
     private uploadManager: UploadManager,
     private dataSource: DataSource,
-  ) {}
+  ) {
+  }
 
   async create(
     createArticleDto: CreateArticleDto,
@@ -85,10 +89,23 @@ export class ArticlesService {
     return response;
   }
 
-  async findAll(queryArticleDto: QueryArticleDto): Promise<PaginatedResult<Article>> {
-    const queryArticle = fromDtoToQuery(queryArticleDto);
-    const [data, totalItems] = await this.articleRepository.findAndCount(queryArticle);
-    return { data, totalItems };
+  async findAll(paginationDto: PaginationDto, articleFilterDto: ArticleFilterDto): Promise<PaginatedResult<DeepPartial<Article>>> {
+    const queryBuilder = this.articleRepository.createQueryBuilder(this.articleRepository.metadata.tableName);
+
+    QueryUtils.use(queryBuilder)
+      .applySearch(articleFilterDto.search)
+      .applyFilters(articleFilterDto.filters)
+      .applyGtFilters(articleFilterDto.gt)
+      .applyLtFilters(articleFilterDto.lt)
+      .applyGteFilters(articleFilterDto.gte)
+      .applyLteFilters(articleFilterDto.lte)
+      .applyInFilters(articleFilterDto.in)
+      .applySelectFields(articleFilterDto.fields)
+      .applyDateFilters(articleFilterDto.date)
+      .applyPagination(paginationDto);
+
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+    return { totalItems, data };
   }
 
   async findOne(id: number) {

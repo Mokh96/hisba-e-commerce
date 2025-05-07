@@ -2,11 +2,14 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { UsersService } from '../users/users.service';
 import { AuthDto } from './dto/auth.dto';
 import { CurrentUserData } from 'src/common/decorators';
 import { ClientsService } from 'src/modules/clients/clients.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Client } from 'src/modules/clients/entities/client.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +17,8 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private clientService: ClientsService,
+    @InjectRepository(Client)
+    private clientRepository: Repository<Client>,
   ) {}
 
   async logIn(authDto: AuthDto) {
@@ -38,7 +43,7 @@ export class AuthService {
       roleId,
     };
 
-    if (roleId === Roles.CLIENT) {
+    if (roleId === Role.CLIENT) {
       const clientId = await this.clientService.getClientIdByUserId(user.id);
       payload.client = {
         id: clientId,
@@ -52,7 +57,7 @@ export class AuthService {
 
   async logInCompany(authDto: AuthDto) {
     const { username, password } = authDto;
-    const company = await this.usersService.findUserWhere({ username, roleId: Roles.COMPANY });
+    const company = await this.usersService.findUserWhere({ username, roleId: Role.COMPANY });
 
     if (!company) {
       throw new NotFoundException(`Company '${username}' not found`);
@@ -73,6 +78,21 @@ export class AuthService {
 
     return {
       token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async getUserDetails(user: CurrentUserData) {
+    const existUser = await this.usersService.findOne(user.sub);
+    const toClient = {
+      ...existUser,
+    };
+
+    if (existUser.roleId === Role.CLIENT) {
+      toClient['client'] = await this.clientRepository.findOneByOrFail({ id: user.client.id });
+    }
+
+    return {
+      ...toClient
     };
   }
 }

@@ -1,8 +1,9 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { FilesService } from './files.service';
+import { Public } from 'src/common/decorators';
 
-//@Auth(AuthType.None)
+@Public()
 @Controller('files')
 export class PublicFilesController {
   constructor(private readonly fileService: FilesService) {}

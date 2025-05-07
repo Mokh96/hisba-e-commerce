@@ -11,6 +11,10 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
+import { Category } from 'src/modules/categories/entities/category.entity';
+import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 
 @Injectable()
 export class BrandsService {
@@ -66,19 +70,19 @@ export class BrandsService {
     return await this.brandRepository.find();
   }
 
-  async findMany(filterDto: BrandFilterDto, paginationDto: BasePaginationDto) {
-    const filter = fromDtoToQuery(filterDto);
+  async findMany(paginationDto: PaginationDto, filterDto: BrandFilterDto) {
+    const queryBuilder = this.brandRepository.createQueryBuilder(this.brandRepository.metadata.tableName);
 
-    const [row, count] = await this.brandRepository.findAndCount({
-      where: filter,
-      skip: paginationDto.offset,
-      take: paginationDto.limit,
-    });
+    QueryUtils.use(queryBuilder)
+      .applySearch(filterDto.search)
+      .applyFilters(filterDto.filters)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyDateFilters(filterDto.date)
+      .applyPagination(paginationDto);
 
-    return {
-      count,
-      row,
-    };
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+    return { totalItems, data };
   }
 
   async findOne(id: number) {
@@ -157,5 +161,9 @@ export class BrandsService {
       }
     }
     return response;
+  }
+
+  async getBrandDescendants(ids: Brand['id'][]) {
+    return await getAllDescendantIds(ids, this.brandRepository);
   }
 }

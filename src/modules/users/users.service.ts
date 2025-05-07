@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { RoleVisibilityMap } from 'src/common/constants';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { UpdateMeDto } from 'src/modules/users/dto/update-me.dto';
 import { FindOptionsWhere, FindOptionsWhereProperty, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,7 +16,16 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto & { roleId: Roles }) {
+  async test() {
+    const createdUser = await this.usersRepository.save({
+      password: '123456',
+      roleId: Role.SUPERADMIN,
+      username: null,
+    });
+    return createdUser;
+  }
+
+  async create(createUserDto: CreateUserDto & { roleId: Role }) {
     const user = new User();
 
     Object.assign(user, createUserDto);
@@ -24,7 +33,7 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async findAll(currentRoleId: User['roleId'], roleId?: Roles) {
+  async findAll(currentRoleId: User['roleId'], roleId?: Role) {
     const where: FindOptionsWhereProperty<User> = {};
 
     const visibleRoles = RoleVisibilityMap[currentRoleId] || [];
@@ -41,9 +50,6 @@ export class UsersService {
 
   async findOne(id: User['id']) {
     const user = await this.usersRepository.findOneByOrFail({ id });
-    if (!user) {
-      throw new NotFoundException(`User '${id}' not found`);
-    }
     return user;
   }
 
@@ -83,7 +89,7 @@ export class UsersService {
       updatedUser.password = await bcrypt.hash(updateUserDto.password, salt);
     }
 
-    if (user.roleId === Roles.COMPANY) user.isActive = true; //Company users are always active
+    if (user.roleId === Role.COMPANY) user.isActive = true; //Company users are always active
 
     await this.usersRepository.save(updatedUser);
     return updatedUser;

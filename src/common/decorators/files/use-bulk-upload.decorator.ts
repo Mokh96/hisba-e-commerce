@@ -1,7 +1,7 @@
 import { applyDecorators, Type, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
-import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulkDtoInterceptor';
+import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/validate-bulk-dto.Interceptor';
 import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynamic-file-validation.interceptor';
 
 /**

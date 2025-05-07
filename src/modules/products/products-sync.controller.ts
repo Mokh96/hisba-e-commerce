@@ -7,7 +7,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.pipe';
 import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation.config';
 import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
-import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulkDtoInterceptor';
+import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/validate-bulk-dto.Interceptor';
 import { getBulkStatus } from 'src/common/utils/bulk-status.util';
 
 @Controller('products/sync')

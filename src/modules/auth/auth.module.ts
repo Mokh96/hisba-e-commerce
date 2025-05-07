@@ -6,11 +6,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { JWT_EXPIRES_IN, JWT_SECRET } from 'src/common/constants/jwt.contant';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ClientsModule } from 'src/modules/clients/clients.module';
+import { Client } from 'src/modules/clients/entities/client.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, AuthGuard],
   imports: [
+    TypeOrmModule.forFeature([Client]),
     UsersModule,
     ClientsModule,
     JwtModule.register({

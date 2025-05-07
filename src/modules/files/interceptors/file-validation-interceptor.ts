@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { FileRules } from '../types/file-validation.type';
+import { validateFileCount, validateFileSize, validateFileType } from 'src/common/utils/file.util';
 
 @Injectable()
 export class FileValidationInterceptor implements NestInterceptor {
@@ -20,34 +15,11 @@ export class FileValidationInterceptor implements NestInterceptor {
       const { allowedTypes, maxSize, minCount, maxCount } = this.rules[fieldName];
       const uploadedFiles = files[fieldName] || []; // Default to an empty array if no files are uploaded
 
-      // Min count validation
-      if (minCount !== undefined && uploadedFiles.length < minCount) {
-        throw new BadRequestException(
-          `At least ${minCount} file(s) required for ${fieldName}, but ${uploadedFiles.length} provided.`,
-        );
-      }
-
-      // Max count validation
-      if (maxCount !== undefined && uploadedFiles.length > maxCount) {
-        throw new BadRequestException(
-          `Maximum ${maxCount} file(s) allowed for ${fieldName}, but ${uploadedFiles.length} provided.`,
-        );
-      }
+      validateFileCount({ fieldName, uploadedFiles, minCount, maxCount });
 
       uploadedFiles.forEach((file) => {
-        //File type validation
-        if (!allowedTypes.includes(file.mimetype)) {
-          throw new BadRequestException(
-            `Invalid file type for ${fieldName}. Allowed types: ${allowedTypes.join(', ')}`,
-          );
-        }
-
-        //File size validation
-        if (file.size > maxSize) {
-          throw new BadRequestException(
-            `File ${file.originalname} exceeds max size of ${maxSize / 1024 / 1024}MB`,
-          );
-        }
+        validateFileType({ fieldName, file, allowedTypes });
+        validateFileSize({ fieldName, file, maxSize });
       });
     }
 

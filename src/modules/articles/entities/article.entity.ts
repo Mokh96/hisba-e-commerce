@@ -8,9 +8,12 @@ import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.conf
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+
+const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
 
 @Entity()
-export class Article extends WithTimestamp(WithSyncId(BaseEntity)) {
+export class Article extends MixedEntities {
   @Column({length: ARTICLE_FIELD_LENGTHS.LABEL })
   label: string;
 

@@ -10,11 +10,14 @@ import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ORDER_FIELD_LENGTHS } from 'src/modules/orders/config/orders.config';
 import { Town } from 'src/modules/system-entities/entities/town.entity';
-import { OrderStatus as OrderStatusEnum } from 'src/common/enums/order-status.enum';
+import { OrderStatus as OrderStatusEnum } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod as PaymentMethodEnum } from 'src/modules/payment-methods/enums/payment.method';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+
+const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
 
 @Entity()
-export class Order extends WithTimestamp(WithSyncId(BaseEntity)) {
+export class Order extends MixedEntities {
   //base order properties
   @Column({ nullable: true, length: ORDER_FIELD_LENGTHS.NOTE })
   note: string;

@@ -3,7 +3,7 @@ import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto
 import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { DeepPartial, FindManyOptions, Repository } from 'typeorm';
 import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
@@ -15,14 +15,25 @@ import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { Order } from 'src/modules/orders/entities/order.entity';
+import { ProductFilterDto } from './dto/product-filter.dto';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { CategoriesService } from 'src/modules/categories/categories.service';
+import { BrandsService } from 'src/modules/brands/brands.service';
 
 @Injectable()
 export class ProductsService {
+  private alias = '';
+
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    private categoriesService: CategoriesService,
+    private brandsService: BrandsService,
     private uploadManager: UploadManager,
-  ) {}
+  ) {
+    this.alias = this.productRepository.metadata.tableName;
+  }
 
   async create(createProductDto: CreateProductDto, files: Express.Multer.File[]) {
     const allUploadedFiles: UploadFileType[] = [];
@@ -104,9 +115,30 @@ export class ProductsService {
     return response;
   }
 
-  async findAll(): Promise<PaginatedResult<Product>> {
-    const [data, totalItems] = await this.productRepository.findAndCount();
-    return { data, totalItems };
+  async findAll(
+    paginationDto: PaginationDto,
+    filterDto: ProductFilterDto,
+  ): Promise<PaginatedResult<DeepPartial<Product>>> {
+    const queryBuilder = this.productRepository.createQueryBuilder(this.productRepository.metadata.tableName);
+
+    filterDto.in.categoryId = await this.categoriesService.getCategoryDescendants(filterDto.in.categoryId);
+    filterDto.in.brandId = await this.brandsService.getBrandDescendants(filterDto.in.brandId);
+
+    QueryUtils.use(queryBuilder)
+      .applyFilters(filterDto.filters)
+      .applySearch(filterDto.search)
+      .applyGtFilters(filterDto.gt)
+      .applyLtFilters(filterDto.lt)
+      .applyGteFilters(filterDto.gte)
+      .applyLteFilters(filterDto.lte)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyDateFilters(filterDto.date)
+      .applyPagination(paginationDto);
+
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+
+    return { totalItems, data };
   }
 
   async findOne(id: number) {
@@ -175,12 +207,25 @@ export class ProductsService {
     return response;
   }
 
+  async remove(id: number) {
+    const product = await this.productRepository.findOneByOrFail({ id });
+    return this.productRepository.remove(product);
+  }
+
   public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {
     return await getEntitiesByIds(this.productRepository, articleIds, options);
   }
 
-  async remove(id: number) {
-    const product = await this.productRepository.findOneByOrFail({ id });
-    return this.productRepository.remove(product);
+  async getPriceRange() {
+    const result = await this.productRepository
+      .createQueryBuilder(this.alias)
+      .select(`MIN(${this.alias}.minPrice)`, 'min')
+      .addSelect(`MAX(${this.alias}.maxPrice)`, 'max')
+      .getRawOne();
+
+    return {
+      min: parseFloat(result.min) || 0,
+      max: parseFloat(result.max) || 0,
+    };
   }
 }

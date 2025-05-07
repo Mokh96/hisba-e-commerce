@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { orderStatusObject } from 'src/common/enums/order-status.enum';
-import { Roles, rolesObject } from 'src/common/enums/roles.enum';
+import { orderStatusObject } from 'src/modules/orders/enums/order-status.enum';
+import { Role as RoleEnum, rolesObject } from 'src/common/enums/roles.enum';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
@@ -82,21 +82,21 @@ export class SystemEntitiesService implements OnApplicationBootstrap {
     if (exist) return;
 
     const password = '123456';
-    const defaultUsers: (CreateUserDto & { roleId: Roles })[] = [
+    const defaultUsers: (CreateUserDto & { roleId: RoleEnum })[] = [
       {
         username: 'superadmin',
         password,
-        roleId: Roles.SUPERADMIN,
+        roleId: RoleEnum.SUPERADMIN,
       },
       {
         username: 'admin',
         password,
-        roleId: Roles.ADMIN,
+        roleId: RoleEnum.ADMIN,
       },
       {
         username: 'company',
         password,
-        roleId: Roles.COMPANY,
+        roleId: RoleEnum.COMPANY,
       },
     ];
 

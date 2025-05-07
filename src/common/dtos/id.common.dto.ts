@@ -3,8 +3,8 @@ import { Type } from 'class-transformer';
 
 export class IdCommonDto {
   @Type(() => Number)
-  @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNotEmpty({ each: true })
+  @IsPositive({ each: true })
+  @IsInt({ each: true })
   id: number;
 }

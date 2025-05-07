@@ -1,10 +1,17 @@
 // enums interceptors typescript are dangerous !!!
-export enum Roles {
+export enum Role {
   SUPERADMIN = 1,
   ADMIN = 2,
   COMPANY = 3,
   CLIENT = 4,
 }
+
+export const RoleString = {
+  [Role.SUPERADMIN]: 'superAdmin',
+  [Role.ADMIN]: 'Admin',
+  [Role.COMPANY]: 'company',
+  [Role.CLIENT]: 'client',
+} as const;
 
 /**
  * Converts the Roles enum to a normal object.
@@ -12,10 +19,10 @@ export enum Roles {
  * we need to filter out numeric keys.
  * @returns {Object} The Roles enum as an object
  */
-export const rolesObject = Object.keys(Roles)
+export const rolesObject = Object.keys(Role)
   .filter((key) => isNaN(Number(key))) // Filter out numeric keys
   .reduce((acc, key) => {
-    acc[key] = Roles[key as keyof typeof Roles];
+    acc[key] = Role[key as keyof typeof Role];
     return acc;
   }, {} as Record<string, number>);
 

@@ -1,4 +1,4 @@
-// utils/form-data-parser.util.ts
+// utils/form-data-parser.helpers.ts
 import { BadRequestException } from '@nestjs/common';
 
 /**
@@ -39,7 +39,6 @@ import { BadRequestException } from '@nestjs/common';
  */
 export function parseFormDataToArray<T = any>(body: Record<string, any>): T[] {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
-
     throw new BadRequestException('The request must be form data (object format).');
   }
 

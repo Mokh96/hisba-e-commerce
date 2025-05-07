@@ -24,3 +24,16 @@ export function getMaxAndMinPrices(target: { price: number }[]): { minPrice: num
   const prices = target.map(({ price }) => price);
   return { minPrice: Math.min(...prices), maxPrice: Math.max(...prices) };
 }
+
+/**
+ * Rounds a given number to a specified number of decimal places.
+ *
+ * @param {number} value - The number to be rounded.
+ * @param {number} [decimals=2] - The number of decimal places to round to. Default to 2.
+ * @returns {number} The rounded number.
+ */
+export function roundMoney(value: number, decimals = 2): number {
+  const factor = Math.pow(10, decimals);
+  return Math.round(value * factor) / factor;
+}
+

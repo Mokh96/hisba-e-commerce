@@ -5,13 +5,22 @@ import { WithSyncId } from 'src/common/entities/sync.entity';
 import { WithLabel } from 'src/common/entities/label.entity';
 import { WithImgPath } from 'src/common/entities/img-path.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+import { BRAND_FIELD_LENGTHS } from 'src/modules/brands/config/brand.config';
+import { CATEGORY_FIELD_LENGTHS } from 'src/modules/categories/config/category.config';
 
-const CategoryBase = WithTimestamp(WithSyncId(WithLabel(WithImgPath(BaseEntity))));
+const MixedEntities = WithTimestamp(WithSyncId(WithImgPath(WithEntityAttributeUtils(BaseEntity))));
 
 @Entity()
-export class Category extends CategoryBase {
+export class Category extends MixedEntities {
+  @Column({ length: CATEGORY_FIELD_LENGTHS.LABEL })
+  label: string;
+
   @OneToMany(() => Category, (category: Category) => category.parent)
   children: Category[];
+
+  @Column({ name: 'parent_id', nullable: true })
+  parentId: number;
 
   @ManyToOne(() => Category, (category: Category) => category.children, {
     onDelete: 'SET NULL',
@@ -23,7 +32,4 @@ export class Category extends CategoryBase {
 
   @OneToMany(() => Product, (product: Product) => product.category)
   products: Product[];
-
-  @Column({ name: 'parent_id', nullable: true })
-  parentId: number;
 }

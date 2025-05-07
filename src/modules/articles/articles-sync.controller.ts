@@ -14,7 +14,7 @@ import { CreateSyncArticleDto } from './dto/create-article.dto';
 import { UpdateSyncArticleDto } from './dto/update-article.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayInterceptor } from 'src/common/interceptors/parse-form-data-array.interceptor';
-import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/ValidateBulkDtoInterceptor';
+import { ValidateBulkDtoInterceptor } from 'src/common/interceptors/validate-bulk-dto.Interceptor';
 import {
   createArticlesValidation,
   updateArticlesValidation,

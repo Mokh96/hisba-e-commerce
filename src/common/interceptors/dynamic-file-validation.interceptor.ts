@@ -1,12 +1,30 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  NestInterceptor,
+  Scope,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { FileValidationRules } from 'src/modules/files/types/file-validation.type';
 import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { SyncedEntity } from 'src/common/types/global.type';
+import { formatFileSize } from 'src/common/utils/file.util';
+import { FileValidationException } from 'src/common/exceptions/custom-exceptions/file-validation.exception';
+import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
+//export const VALIDATION_RULES = 'VALIDATION_RULES';
+
+//@Injectable({ scope: Scope.REQUEST })
 @Injectable()
 export class DynamicFileValidationInterceptor implements NestInterceptor {
+  /* constructor(@Inject(VALIDATION_RULES) private readonly rules: ValidationRules) {
+     console.log('instantiated ...');
+   }*/
+
   constructor(private readonly rules: ValidationRules) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -69,47 +87,92 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
     Object.keys(fileRules).forEach((fileType) => {
       const rule = fileRules[fileType];
       const matchingFiles = this.getFilesByType(files, fileType, entity.syncId);
+      const isRequired = rule.minCount > 0;
 
-      if (rule.required && matchingFiles.length === 0) {
-        throw new BadRequestException(`${fileType} is required for ${entityPath}`);
+      if (isRequired && matchingFiles.length === 0) {
+        //example :image is required for [categories][1]
+        //throw new InputValidationException(fileType, `${fileType} is required for ${entityPath}`);
+
+        throw new FileValidationException(
+          entityPath,
+          `${fileType} is required for ${entityPath}`,
+          ErrorType.FileTooFew,
+          {
+            fileType,
+            entityPath,
+          },
+        );
       }
 
       if (matchingFiles.length) {
-        this.validateFiles(matchingFiles, rule, `${fileType} in ${entityPath}`);
+        //this.validateFiles(matchingFiles, rule, `${fileType} in ${entityPath}`);
+        this.validateFiles(matchingFiles, rule, fileType, entityPath);
       }
     });
   }
 
-  private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, context: string) {
+  private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, fileType: string, entityPath: string) {
+    const context = `${fileType} in ${entityPath}`;
+
+    // private validateFiles(files: Express.Multer.File[], rule: FileValidationRules, context: string) {
     if (files.length < (rule.minCount || 0) || files.length > (rule.maxCount || Infinity)) {
-      throw new BadRequestException(
+      /* throw new InputValidationException(
+         fileType,
+         `${context}: Expected between ${rule.minCount || 0} and ${rule.maxCount || '∞'} files, got ${files.length}`,
+       );*/
+
+      throw new FileValidationException(
+        entityPath,
         `${context}: Expected between ${rule.minCount || 0} and ${rule.maxCount || '∞'} files, got ${files.length}`,
+        ErrorType.FileTooFew,
+        {
+          fileType,
+          entityPath,
+          minCount: rule.minCount,
+          maxCount: rule.maxCount,
+          receivedCount: files.length,
+        },
       );
     }
 
     files.forEach((file) => {
       if (!rule.allowedTypes.includes(file.mimetype as FileValidationRules['allowedTypes'][number])) {
-        throw new BadRequestException(`${context}: Invalid file type ${file.mimetype}`);
+        //throw new InputValidationException(fileType, `${context}: Invalid file type ${file.mimetype}`);
+        throw new FileValidationException(
+          entityPath,
+          `${context}: Invalid file type ${file.mimetype}. Allowed types: ${rule.allowedTypes.join(', ')}`,
+          ErrorType.FileInvalidType,
+          {
+            fileType,
+            entityPath,
+            receivedType: file.mimetype,
+            allowedTypes: rule.allowedTypes,
+          },
+        );
       }
 
       if (file.size > rule.maxSize) {
-        throw new BadRequestException(`${context}: File size exceeds limit (${this.formatFileSize(rule.maxSize)}).`);;
+        /*   throw new InputValidationException(
+             fileType,
+             `${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
+           );*/
+
+        throw new FileValidationException(
+          entityPath,
+          `${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
+          ErrorType.FileTooLarge,
+          {
+            fileType,
+            entityPath,
+            receivedSize: formatFileSize(file.size),
+            maxSize: formatFileSize(rule.maxSize),
+          },
+        );
       }
     });
   }
 
   private getFilesByType(files: Express.Multer.File[], type: string, syncId: SyncedEntity['syncId']) {
     return files.filter((file) => file.fieldname === `${type}-${syncId}`);
-  }
-
-  private formatFileSize(bytes: number) {
-    const units = ['B', 'kB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 B';
-
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    const size = bytes / Math.pow(1024, i);
-    const precision = size < 10 ? 2 : size < 100 ? 1 : 0;
-
-    return `${size.toFixed(precision)} ${units[i]}`;
   }
 }

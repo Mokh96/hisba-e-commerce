@@ -1,53 +1,9 @@
 import { Column, CreateDateColumn, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
+//todo : remove this file
 export abstract class ClientCommon {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ name: 'first_name' })
-  firstName: string;
-
-  @Column({ name: 'last_name' })
-  lastName: string;
-
-  @Column()
-  address: string;
-
-  @Column({ name: 'birth_date', nullable: true })
-  birthDate: Date;
-
-  @Column({ nullable: true })
-  note: string;
-
-  @Column({ length: 13 })
-  phone: string;
-
-  @Column({ length: 13, nullable: true })
-  mobile: string;
-
-  @Column({ nullable: true })
-  email: string;
-
-  @Column({ nullable: true })
-  fax: string;
-
-  @Column({ nullable: true })
-  rc: string;
-
-  @Column({ nullable: true })
-  agr: string;
-
-  @Column({ nullable: true })
-  ai: string;
-
-  @Column({ nullable: true })
-  activity: string;
-
-  @Column({ name: 'legal_form', nullable: true })
-  legalForm: string;
-
-  @Column({ name: 'id_fiscal', nullable: true })
-  idFiscal: string;
 
   @CreateDateColumn({
     name: 'created_at',

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Roles } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums/roles.enum';
 import { DeepPartial, Repository } from 'typeorm';
 import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { fromDtoToQuery } from 'src/helpers/function.global';
@@ -14,6 +14,8 @@ import { UsersService } from 'src/modules/users/users.service';
 import { ShippingAddressesService } from 'src/modules/shipping-addresses/shipping-addresses.service';
 import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-response.type';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 
 @Injectable()
 export class ClientsService {
@@ -26,7 +28,7 @@ export class ClientsService {
 
   async create(createClientDto: CreateClientDto | CreateClientSyncDto) {
     const client = this.clientRepository.create(createClientDto);
-    client.user.roleId = Roles.CLIENT;
+    client.user.roleId = Role.CLIENT;
     await this.clientRepository.save(client);
 
     delete client.user.password;
@@ -77,27 +79,23 @@ export class ClientsService {
     });
   }
 
-  async findMany(filterDto: ClientFilterDto, paginationDto: BasePaginationDto) : Promise<PaginatedResult> {
-    const filter = fromDtoToQuery(filterDto);
+  async findMany(filterDto: ClientFilterDto, paginationDto: PaginationDto): Promise<DeepPartial<PaginatedResult>> {
+    const alias = this.clientRepository.metadata.tableName;
+    const queryBuilder = this.clientRepository.createQueryBuilder(alias);
 
-    const [data , totalItems] = await this.clientRepository.findAndCount({
-      where: filter,
-      skip: paginationDto.offset,
-      take: paginationDto.limit,
-      relations: {
-        user: true,
-      },
-      select: {
-        user: {
-          id: true,
-          username: true,
-        },
-      },
-    });
+    queryBuilder.leftJoinAndSelect(`${alias}.user`, 'user').select([`${alias}`, 'user.id', 'user.username']);
 
-    return {
-      data , totalItems
-    };
+    QueryUtils.use(queryBuilder)
+      .applySearch(filterDto.search)
+      .applyFilters(filterDto.filters)
+      .applyInFilters(filterDto.in)
+      .applySelectFields(filterDto.fields)
+      .applyPagination(paginationDto)
+      .applyDateFilters(filterDto.date);
+
+    const [data, totalItems] = await queryBuilder.getManyAndCount();
+
+    return { totalItems, data };
   }
 
   /**

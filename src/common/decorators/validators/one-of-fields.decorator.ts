@@ -5,6 +5,9 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import {
+  createFieldPrefixedMessage
+} from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
 
 
 /**
@@ -35,7 +38,8 @@ export class OneOfFieldsConstraint implements ValidatorConstraintInterface {
 
   defaultMessage(args: ValidationArguments) {
     const [fields] = args.constraints as [string[]];
-    return `At least one of [${fields.join(', ')}] must be provided.`;
+    const baseMessage = `You must provide at least one of ${fields.join(' or ')}.`;
+    return createFieldPrefixedMessage(fields, baseMessage);
   }
 }
 
@@ -44,9 +48,15 @@ export class OneOfFieldsConstraint implements ValidatorConstraintInterface {
  * Ensures that at least one of the given fields is defined and non-empty.
  *
  * @param fields - Array of field names to check.
- * @param validationOptions - Optional validation options including custom message.
+ * @param validationOptions - Optional validation options including a custom message.
  */
 export function OneOfFields(fields: string[], validationOptions?: ValidationOptions) {
+  // If a custom message is provided, prefix it with field information
+  if (validationOptions?.message && typeof validationOptions.message === 'string'
+    && !validationOptions.message.startsWith('__')) {
+    validationOptions.message = createFieldPrefixedMessage(fields, validationOptions.message);
+  }
+
   return function (constructor: Function) {
     registerDecorator({
       name: 'OneOfFields',
