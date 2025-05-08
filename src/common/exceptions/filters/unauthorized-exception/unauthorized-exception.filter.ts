@@ -2,6 +2,8 @@ import { ExceptionFilter, Catch, ArgumentsHost, UnauthorizedException, HttpStatu
 import { Request, Response } from 'express';
 import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import generateUnauthorizedErrorMsg from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-error-msg.generator';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 @Catch(UnauthorizedException)
 export class UnauthorizedExceptionFilter implements ExceptionFilter {
@@ -10,17 +12,13 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const status = HttpStatus.UNAUTHORIZED
-    const raw = exception.getResponse() as any;
-    const message = typeof raw === 'string' ? raw : raw?.message || 'Unauthorized access';
+    const status = HttpStatus.UNAUTHORIZED;
 
-    return response.status(status).json(
-      createErrorResponse({
-        statusCode: status,
-        message,
-        path: request.url,
-        type: ErrorType.AuthUnauthorized,
-      }),
-    );
+    const unauthorizedErrorMsg = generateUnauthorizedErrorMsg(exception);
+    const toClient: ApiErrorResponse = {
+      ...unauthorizedErrorMsg,
+      path: request.url,
+    };
+    return response.status(status).json(toClient);
   }
 }

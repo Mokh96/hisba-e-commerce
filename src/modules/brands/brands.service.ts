@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateBrandDto, UpdateSyncBrandsDto } from './dto/update-brand.dto';
@@ -45,7 +51,8 @@ export class BrandsService {
   }
 
   async createSyncBulk(createBrandDto: CreateSyncBrandDto[], files: Express.Multer.File[]) {
-    const response = {//BulkResponse
+    const response = {
+      //BulkResponse
       successes: [],
       failures: [],
     };
@@ -54,6 +61,9 @@ export class BrandsService {
       const brandImage = getFilesBySyncId(files, FileUploadEnum.Image, brand.syncId);
 
       try {
+        if (12 > 0) {
+          throw new ForbiddenException('Unauthorized access');
+        }
         const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
         response.successes.push(createdBrand);
       } catch (error) {
@@ -61,13 +71,13 @@ export class BrandsService {
 
         response.failures.push({
           syncId: brand.syncId,
-          error: formattedError as any,
+          error: formattedError ,
         });
 
-       /* response.failures.push({
-          syncId: brand.syncId,
-          errors: [err.sqlMessage],
-        });*/
+        /* response.failures.push({
+           syncId: brand.syncId,
+           errors: [err.sqlMessage],
+         });*/
       }
     }
 

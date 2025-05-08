@@ -15,7 +15,7 @@ import { extractDataTooLongField } from 'src/common/exceptions/helpers/mysql-par
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-export function handleDataTooLong(exception: QueryFailedError, response: Response, request: Request) {
+export function handleDataTooLongErrorMsg(exception: QueryFailedError, response: Response, request: Request) {
   const field = extractDataTooLongField(exception.driverError.message);
   const status = HttpStatus.BAD_REQUEST;
 

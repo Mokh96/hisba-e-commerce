@@ -6,7 +6,7 @@ import { NotFoundExceptionFilter } from 'src/common/exceptions/filters/entity-no
 import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-filter';
 import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
 import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
-import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception.filter';
+import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-exception.filter';
 import { ForbiddenExceptionFilter } from 'src/common/exceptions/filters/forbidden-exception.filter';
 
 @Module({
