@@ -1,30 +1,23 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { UpdateOrderDto } from '../dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
-import { Product } from 'src/modules/products/entities/product.entity';
 import { OrderStatus, orderStatusesString } from 'src/modules/orders/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
-import { ArticlesService } from 'src/modules/articles/articles.service';
-import { ProductsService } from 'src/modules/products/products.service';
 import { CurrentUserData } from 'src/common/decorators';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { OrderFilterDto } from '../dto/order-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
-import { Role } from 'src/common/enums/roles.enum';
-import { changeOrderStatus } from 'src/modules/orders/helpers/order-workflow.helper';
-import { OrderHistory } from 'src/modules/order-history/entities/order-history.entity';
-import { ChangeStatusDto } from 'src/modules/orders/dto/change-status.dto';
-import { tr } from '@faker-js/faker';
 import { OrderCalculationService } from 'src/modules/orders/services/order-calculation.service';
 import { UpdateOrderByClientDto } from 'src/modules/orders/dto/update-order-by-client.dto';
 import { mergeOrderItems } from 'src/modules/orders/helpers/order.helpers';
 import { roundMoney } from 'src/common/utils/pricing-utils.util';
 import { findDeletedEntityIds } from 'src/common/utils/find-deleted-entity-ids.util';
+import { Role } from 'src/common/enums/roles.enum';
 
 @Injectable()
 export class OrdersService {
@@ -59,8 +52,17 @@ export class OrdersService {
     });
   }
 
-  async findAll(paginationDto: PaginationDto, filterDto: OrderFilterDto): Promise<PaginatedResult<DeepPartial<Order>>> {
+  async findAll(
+    paginationDto: PaginationDto,
+    filterDto: OrderFilterDto,
+    user: CurrentUserData,
+  ): Promise<PaginatedResult<DeepPartial<Order>>> {
     const queryBuilder = this.orderRepository.createQueryBuilder(this.orderRepository.metadata.tableName);
+
+    if (user.roleId === Role.CLIENT) {
+      filterDto.filters.clientId = user.client?.id; // Automatically set clientId in filters for client users
+      filterDto.in.clientId = []; // Exclude clientId from the 'in' filter to avoid conflicts
+    }
 
     QueryUtils.use(queryBuilder)
       .applySearch(filterDto.search)
@@ -245,7 +247,7 @@ export class OrdersService {
 
   async remove(id: number, user: CurrentUserData) {
     const order = await this.orderRepository.findOneByOrFail({ id, clientId: user.client?.id });
-    if (order.statusId !== OrderStatus.NEW ) {
+    if (order.statusId !== OrderStatus.NEW) {
       throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be deleted`);
     }
     await this.orderRepository.remove(order);

@@ -38,8 +38,12 @@ export class OrdersController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto, @Query() filterDto: OrderFilterDto) {
-    return this.ordersService.findAll(paginationDto, filterDto);
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() filterDto: OrderFilterDto,
+    @CurrentUser() user: CurrentUserData,
+  ) {
+    return this.ordersService.findAll(paginationDto, filterDto , user);
   }
 
   @Get(':id')
@@ -67,6 +71,6 @@ export class OrdersController {
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   removeByClient(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: CurrentUserData) {
-    return this.ordersService.remove(id , user);
+    return this.ordersService.remove(id, user);
   }
 }
