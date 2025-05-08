@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/common/enums/roles.enum';
@@ -32,26 +31,27 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Invalid password');
     }
-
-    const { id, roleId } = user;
 
     const payload: CurrentUserData = {
       username,
-      sub: id,
-      roleId,
+      sub: user.id,
+      roleId : user.roleId,
     };
 
-    if (roleId === Role.CLIENT) {
+    if (user.roleId === Role.CLIENT) {
       const clientId = await this.clientService.getClientIdByUserId(user.id);
       payload.client = {
         id: clientId,
       };
     }
 
+    delete user.password;
+
     return {
       token: await this.jwtService.signAsync(payload),
+      user,
     };
   }
 
@@ -92,7 +92,7 @@ export class AuthService {
     }
 
     return {
-      ...toClient
+      ...toClient,
     };
   }
 }
