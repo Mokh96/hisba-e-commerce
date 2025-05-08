@@ -2,7 +2,7 @@ import { QueryFailedError } from 'typeorm';
 import { Request, Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 
 /**
  * Handles MySQL CHECK constraint violations.

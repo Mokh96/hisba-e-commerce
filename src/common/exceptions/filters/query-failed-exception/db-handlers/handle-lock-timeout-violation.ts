@@ -1,8 +1,9 @@
 import { Response, Request } from 'express';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles MySQL lock wait timeout violations.
@@ -26,3 +27,14 @@ export function handleLockTimeoutViolation(exception: QueryFailedError, response
     }),
   );
 }
+
+export function generateLockTimeoutViolationErrorMsg(exception: QueryFailedError): ApiErrorResponse {
+  const status = HttpStatus.REQUEST_TIMEOUT;
+  return createErrorResponse({
+    statusCode: status,
+    message: 'The database operation timed out while waiting for a lock.',
+    type: ErrorType.LockTimeOut,
+  });
+}
+
+export default generateLockTimeoutViolationErrorMsg;

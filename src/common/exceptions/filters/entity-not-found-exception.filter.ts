@@ -1,7 +1,7 @@
 import { Catch, ExceptionFilter, ArgumentsHost, HttpStatus, NotFoundException } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
 import { Response, Request } from 'express';
-import createErrorResponse from '../utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 /**

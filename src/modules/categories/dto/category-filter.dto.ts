@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsInt, IsNumber, IsOptional, IsPositive, IsString, MaxLength, ValidateIf } from 'class-validator';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { IntersectionType } from '@nestjs/mapped-types';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
@@ -16,9 +16,9 @@ class FiltersValidator {
   syncId?: number;
 
   @IsOptional()
+  @IsInt()
   @IsNumber()
-  @IsPositive()
-  parentId?: number;
+  parentId?: number | null;
 }
 
 class SearchValidator {

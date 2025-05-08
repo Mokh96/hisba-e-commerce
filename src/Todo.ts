@@ -6,4 +6,6 @@
 //config module
 //exception filter (fn)
 //startup
+//apply mixin
+//add more functionality to query utils
 

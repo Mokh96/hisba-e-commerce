@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, ForbiddenException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 @Catch(ForbiddenException)

@@ -1,8 +1,10 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractUnknownColumnField } from 'src/common/exceptions/helpers/mysql-parser.helper';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles MySQL unknown column errors.
@@ -14,13 +16,8 @@ import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-export function handleUnknownColumnError(
-  exception: QueryFailedError,
-  response: Response,
-  request: Request,
-) {
-  const columnMatch = exception.message.match(/Unknown column '(.+?)'/);
-  const field = columnMatch?.[1];
+export function handleUnknownColumnError(exception: QueryFailedError, response: Response, request: Request) {
+  const field = extractUnknownColumnField(exception.message);
 
   const status = HttpStatus.BAD_REQUEST;
 
@@ -30,9 +27,21 @@ export function handleUnknownColumnError(
       message: 'The request references a non-existent column.',
       path: request.url,
       type: ErrorType.UnknownColumn,
-      errors: field
-        ? [{ field, message: `Column '${field}' does not exist.` }]
-        : [],
+      errors: field ? [{ field, message: `Column '${field}' does not exist.` }] : [],
     }),
   );
 }
+
+export function generateUnknownColumnErrorMsg(exception: QueryFailedError): ApiErrorResponse {
+  const field = extractUnknownColumnField(exception.message);
+  const status = HttpStatus.BAD_REQUEST;
+
+  return createErrorResponse({
+    statusCode: status,
+    message: 'The request references a non-existent column.',
+    type: ErrorType.UnknownColumn,
+    errors: field ? [{ field, message: `Column '${field}' does not exist.` }] : [],
+  });
+}
+
+export default generateUnknownColumnErrorMsg;

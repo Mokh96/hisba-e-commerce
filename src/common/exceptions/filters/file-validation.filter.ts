@@ -1,7 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { FileValidationException } from 'src/common/exceptions/custom-exceptions/file-validation.exception';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 
 @Catch(FileValidationException)

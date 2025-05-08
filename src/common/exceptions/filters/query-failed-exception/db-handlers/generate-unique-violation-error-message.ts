@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import { extractFieldFromMySqlMessage, extractValueFromMessage } from 'src/common/exceptions/utils/query-failed-parser';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { QueryFailedError } from 'typeorm';
 import { SENSITIVE_FIELDS } from 'src/common/exceptions/constants/sensitive-fields.constant';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractDuplicateEntryValue, extractUniqueField } from 'src/common/exceptions/helpers/mysql-parser.helper';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 interface UniqueConstraintErrorParams {
   field: string;
@@ -26,10 +27,10 @@ interface UniqueConstraintErrorParams {
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-export function handleUniqueViolation(exception: QueryFailedError, response: Response, request: Request) {
+function handleUniqueViolation(exception: QueryFailedError, response: Response, request: Request) {
   const driverError = exception.driverError;
-  const field = extractFieldFromMySqlMessage(driverError.sqlMessage);
-  const value = extractValueFromMessage(driverError.sqlMessage);
+  const field = extractUniqueField(driverError.sqlMessage);
+  const value = extractDuplicateEntryValue(driverError.sqlMessage);
   const status = HttpStatus.CONFLICT;
 
   return response.status(status).json(
@@ -43,9 +44,9 @@ export function handleUniqueViolation(exception: QueryFailedError, response: Res
   );
 }
 
-export default handleUniqueViolation;
+//export default handleUniqueViolation;
 
-export function generateUniqueConstraintError({ field, value, safeLabel }: UniqueConstraintErrorParams) {
+function generateUniqueConstraintError({ field, value, safeLabel }: UniqueConstraintErrorParams) {
   const isSensitive = SENSITIVE_FIELDS.includes(field);
   const label = safeLabel ?? field;
 
@@ -56,3 +57,28 @@ export function generateUniqueConstraintError({ field, value, safeLabel }: Uniqu
     message,
   };
 }
+
+/**
+ * Handles MySQL unique constraint violations.
+ *
+ * This occurs when attempting to insert or update a record with a value that must be unique
+ * (e.g., duplicate username or email). Returns an error object with the conflicting field and value.
+ *
+ * @param exception - The QueryFailedError thrown by the database.
+ * @param RequestUrl - The URL of the request that caused the error.
+ */
+function generateUniqueViolationErrorMsg(exception: QueryFailedError): ApiErrorResponse {
+  const driverError = exception.driverError;
+  const field = extractUniqueField(driverError.sqlMessage);
+  const value = extractDuplicateEntryValue(driverError.sqlMessage);
+  const status = HttpStatus.CONFLICT;
+
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Unique constraint failed',
+    type: ErrorType.DuplicateKey,
+    errors: [generateUniqueConstraintError({ field, value })],
+  });
+}
+
+export default generateUniqueViolationErrorMsg;

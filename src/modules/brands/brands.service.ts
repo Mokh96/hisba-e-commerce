@@ -15,6 +15,7 @@ import { Category } from 'src/modules/categories/entities/category.entity';
 import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class BrandsService {
@@ -44,7 +45,7 @@ export class BrandsService {
   }
 
   async createSyncBulk(createBrandDto: CreateSyncBrandDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+    const response = {//BulkResponse
       successes: [],
       failures: [],
     };
@@ -55,11 +56,18 @@ export class BrandsService {
       try {
         const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
         response.successes.push(createdBrand);
-      } catch (err) {
+      } catch (error) {
+        const formattedError = formatCaughtException(error, '/api/v1/brands/sync/bulk');
+
         response.failures.push({
           syncId: brand.syncId,
-          errors: [err.sqlMessage],
+          error: formattedError as any,
         });
+
+       /* response.failures.push({
+          syncId: brand.syncId,
+          errors: [err.sqlMessage],
+        });*/
       }
     }
 

@@ -1,8 +1,10 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractNotNullField } from 'src/common/exceptions/helpers/mysql-parser.helper';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles MySQL NOT NULL constraint violations.
@@ -34,10 +36,21 @@ export function handleNotNullViolation(exception: QueryFailedError, response: Re
   );
 }
 
-/**
- * Extracts the field name from a NOT NULL constraint error.
- */
-export function extractNotNullField(message: string): string {
-  const match = message.match(/Column '(.+?)' cannot be null/);
-  return match ? match[1] : 'unknown';
+export function generateNotNullViolationErrorMsg(exception: QueryFailedError): ApiErrorResponse {
+  const field = extractNotNullField(exception.driverError.message);
+  const status = HttpStatus.BAD_REQUEST;
+
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Not-null constraint failed',
+    type: ErrorType.NonNull,
+    errors: [
+      {
+        field,
+        message: `The field '${field}' is required and cannot be null.`,
+      },
+    ],
+  });
 }
+
+export default generateNotNullViolationErrorMsg;

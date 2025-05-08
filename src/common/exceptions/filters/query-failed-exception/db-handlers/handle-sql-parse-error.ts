@@ -1,8 +1,9 @@
 import { Response, Request } from 'express';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles SQL syntax parsing errors (ER_PARSE_ERROR).
@@ -36,3 +37,20 @@ export function handleSqlParseError(
     }),
   );
 }
+
+export function generateSqlParseErrorMsg(exception: QueryFailedError) : ApiErrorResponse {
+  const status = HttpStatus.BAD_REQUEST;
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Invalid SQL syntax. Please contact the backend team.',
+    type: ErrorType.SqlSyntaxError,
+    errors: [
+      {
+        field: 'query',
+        message: 'SQL parsing failed due to malformed syntax.',
+      },
+    ],
+  })
+}
+
+export default generateSqlParseErrorMsg;

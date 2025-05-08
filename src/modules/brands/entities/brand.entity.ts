@@ -1,5 +1,5 @@
 import { Product } from 'src/modules/products/entities/product.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
@@ -13,6 +13,7 @@ const MixedEntities = WithTimestamp(WithSyncId(WithImgPath(WithEntityAttributeUt
 
 @Entity()
 export class Brand extends MixedEntities {
+  @Index('label', { unique: true })
   @Column({length: BRAND_FIELD_LENGTHS.LABEL })
   label: string;
 

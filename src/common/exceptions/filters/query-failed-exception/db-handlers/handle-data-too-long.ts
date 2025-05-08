@@ -1,8 +1,9 @@
 import { QueryFailedError } from 'typeorm';
 import { Response, Request } from 'express';
 import { HttpStatus } from '@nestjs/common';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractDataTooLongField } from 'src/common/exceptions/helpers/mysql-parser.helper';
 
 /**
  * Handles MySQL data too long constraint violations.
@@ -34,10 +35,19 @@ export function handleDataTooLong(exception: QueryFailedError, response: Respons
   );
 }
 
-/**
- * Extracts the field name from a DATA TOO LONG constraint error.
- */
-export function extractDataTooLongField(message: string): string {
-  const match = message.match(/Data too long for column '(.+?)'/);
-  return match ? match[1] : 'unknown';
+export function generateDataTooLongErrorMsg(exception: QueryFailedError) {
+  const field = extractDataTooLongField(exception.driverError.message);
+  const status = HttpStatus.BAD_REQUEST;
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Data too long for column',
+    type: ErrorType.DataTooLong,
+    errors: [
+      {
+        field,
+        message: `The value for '${field}' is too long and exceeds the allowed limit.`,
+      },
+    ],
+  });
 }
+export default generateDataTooLongErrorMsg;

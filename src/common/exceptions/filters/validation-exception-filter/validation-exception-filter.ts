@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpStatus } from '@nestjs/common';
 import { Response, Request } from 'express';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { extractFieldFromMessage } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 

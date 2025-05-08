@@ -1,31 +1,32 @@
-import {
-  handleUniqueViolation,
-  handleForeignKeyViolation,
-  handleForeignKeyDeletionViolation,
-  handleDataTooLong,
-  handleNotNullViolation,
-  handleInvalidValueForField,
-  handleDeadlockViolation,
-  handleLockTimeoutViolation,
-  handleUnknownColumnError,
-  handleDataOutOfRangeError,
-  handleSqlParseError,
-} from 'src/common/exceptions/filters/query-failed-exception/db-handlers';
 import { QueryFailedError } from 'typeorm';
-import { Request, Response } from 'express';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
-const dbErrorHandlers: Record<string, (exception: QueryFailedError, response: Response, request: Request) => any> = {
-  ER_DUP_ENTRY: handleUniqueViolation,//
-  ER_NO_REFERENCED_ROW_2: handleForeignKeyViolation,//
-  ER_ROW_IS_REFERENCED_2: handleForeignKeyDeletionViolation,//
-  ER_DATA_TOO_LONG: handleDataTooLong,//
-  ER_BAD_NULL_ERROR: handleNotNullViolation,//
-  ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: handleInvalidValueForField,//
-  ER_DATA_OUT_OF_RANGE: handleDataOutOfRangeError,//
-  ER_PARSE_ERROR: handleSqlParseError,//
-  ER_LOCK_DEADLOCK: handleDeadlockViolation,//
-  ER_LOCK_WAIT_TIMEOUT: handleLockTimeoutViolation,//
-  ER_BAD_FIELD_ERROR: handleUnknownColumnError,//
+import {
+  generateForeignKeyViolationMessage,
+  generateLockTimeoutViolationErrorMsg,
+  generateForeignKeyDeletionErrorMessage,
+  generateDataTooLongErrorMsg,
+  generateNotNullViolationErrorMsg,
+  generateInvalidValueForFieldErrorMsg,
+  generateDataOutOfRangeErrorMsg,
+  generateSqlParseErrorMsg,
+  generateDeadlockViolationErrorMsg,
+  generateUnknownColumnErrorMsg,
+} from 'src/common/exceptions/filters/query-failed-exception/db-handlers';
+import generateUniqueViolationErrorMsg from 'src/common/exceptions/filters/query-failed-exception/db-handlers/generate-unique-violation-error-message';
+
+const dbErrorHandlers: Record<string, (exception: QueryFailedError) => ApiErrorResponse> = {
+  ER_DUP_ENTRY: generateUniqueViolationErrorMsg,
+  ER_NO_REFERENCED_ROW_2: generateForeignKeyViolationMessage,
+  ER_ROW_IS_REFERENCED_2: generateForeignKeyDeletionErrorMessage,
+  ER_DATA_TOO_LONG: generateDataTooLongErrorMsg,
+  ER_BAD_NULL_ERROR: generateNotNullViolationErrorMsg,
+  ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: generateInvalidValueForFieldErrorMsg,
+  ER_DATA_OUT_OF_RANGE: generateDataOutOfRangeErrorMsg,
+  ER_PARSE_ERROR: generateSqlParseErrorMsg,
+  ER_LOCK_DEADLOCK: generateDeadlockViolationErrorMsg,
+  ER_LOCK_WAIT_TIMEOUT: generateLockTimeoutViolationErrorMsg,
+  ER_BAD_FIELD_ERROR: generateUnknownColumnErrorMsg,
 };
 
 export default dbErrorHandlers;

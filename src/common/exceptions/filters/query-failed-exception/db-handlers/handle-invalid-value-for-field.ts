@@ -1,9 +1,10 @@
 import { QueryFailedError } from 'typeorm';
-import { extractFieldFromMySqlMessage } from 'src/common/exceptions/utils/query-failed-parser';
 import { HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractFieldFromKeyMessage } from 'src/common/exceptions/helpers/mysql-parser.helper';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles MySQL invalid value errors for fields.
@@ -17,7 +18,7 @@ import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
  */
 export function handleInvalidValueForField(exception: QueryFailedError, response: Response, request: Request) {
   const driverError = exception.driverError;
-  const field = extractFieldFromMySqlMessage(driverError.sqlMessage);
+  const field = extractFieldFromKeyMessage(driverError.sqlMessage);
 
   const status = HttpStatus.BAD_REQUEST;
 
@@ -36,3 +37,23 @@ export function handleInvalidValueForField(exception: QueryFailedError, response
     }),
   );
 }
+
+export function generateInvalidValueForFieldErrorMsg(exception: QueryFailedError): ApiErrorResponse {
+  const driverError = exception.driverError;
+  const field = extractFieldFromKeyMessage(driverError.sqlMessage);
+
+  const status = HttpStatus.BAD_REQUEST;
+
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Invalid value for field',
+    type: ErrorType.InvalidValue,
+    errors: [
+      {
+        field,
+        message: `The provided value for '${field}' is invalid or of incorrect type.`,
+      },
+    ],
+  });
+}
+export default generateInvalidValueForFieldErrorMsg;

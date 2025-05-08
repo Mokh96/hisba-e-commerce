@@ -1,9 +1,9 @@
 import { QueryFailedError } from 'typeorm';
-import { extractFieldFromMySqlMessage } from 'src/common/exceptions/utils/query-failed-parser';
 import { HttpStatus } from '@nestjs/common';
-import createErrorResponse from 'src/common/exceptions/utils/create-error-response.util';
+import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { Response, Request } from 'express';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import { extractForeignKeyField } from 'src/common/exceptions/helpers/mysql-parser.helper';
 
 /**
  * Handles MySQL foreign key deletion constraint violations.
@@ -17,9 +17,9 @@ import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
  */
 export function handleForeignKeyDeletionViolation(exception: QueryFailedError, response: Response, request: Request) {
   const driverError = exception.driverError;
-  const field = extractFieldFromMySqlMessage(driverError.sqlMessage);
+  const field = extractForeignKeyField(driverError.sqlMessage);
 
-  const status = HttpStatus.BAD_REQUEST
+  const status = HttpStatus.BAD_REQUEST;
 
   return response.status(status).json(
     createErrorResponse({
@@ -36,3 +36,24 @@ export function handleForeignKeyDeletionViolation(exception: QueryFailedError, r
     }),
   );
 }
+
+export function generateForeignKeyDeletionErrorMessage(exception: QueryFailedError) {
+  const driverError = exception.driverError;
+  const field = extractForeignKeyField(driverError.sqlMessage);
+
+  const status = HttpStatus.BAD_REQUEST;
+  return createErrorResponse({
+    statusCode: status,
+    message: 'Foreign key deletion constraint failed',
+    //path: request.url,
+    type: ErrorType.ForeignKeyDeletion,
+    errors: [
+      {
+        field,
+        message: `Cannot delete or update '${field}' because it is still referenced by other records.`,
+      },
+    ],
+  });
+}
+
+export default generateForeignKeyDeletionErrorMessage

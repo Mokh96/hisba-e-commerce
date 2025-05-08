@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
 import dbErrorHandlers from 'src/common/exceptions/filters/query-failed-exception/db-handlers/db-error-handlers';
-import handleUnknownDbError from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-db-error';
+import generateUnknownDbErrorMsg from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-db-error';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 @Catch(QueryFailedError)
 export class QueryFailedExceptionFilter implements ExceptionFilter {
@@ -14,14 +15,15 @@ export class QueryFailedExceptionFilter implements ExceptionFilter {
 
     console.log('QueryFailedError', exception);
     const code = exception.driverError?.code;
-    const handler = dbErrorHandlers[code] || handleUnknownDbError;
+    const generatorErrorMsg: (exception: QueryFailedError) => ApiErrorResponse =
+      dbErrorHandlers[code] || generateUnknownDbErrorMsg;
 
-    return handler(exception, response, request);
+    const errorMessage = generatorErrorMsg(exception);
+    const toClientErrorMessage : ApiErrorResponse = {
+      ...errorMessage,
+      path: request.url,
+    }
+
+    return response.status(errorMessage.statusCode).json(toClientErrorMessage);
   }
-}
-
-export function extractForeignKeyInfo(message: string) {
-  const match = message.match(/FOREIGN KEY \(`(.+?)`\)/);
-  const field = match ? match[1] : 'unknown';
-  return { field };
 }
