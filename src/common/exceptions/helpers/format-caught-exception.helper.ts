@@ -20,19 +20,8 @@ import generateNotFoundErrorMsg from 'src/common/exceptions/filters/not-found-ex
 import generateServerErrorMsg from 'src/common/exceptions/filters/server-exception/server-error-msg.generator';
 import generateBadRequestErrorMsg from 'src/common/exceptions/filters/bad-request-exception/bad-request-error-msg.generator';
 
-export function formatCaughtException(exception: any, path: string): ApiErrorResponse {
-  let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-  let message = 'Internal server error';
-  let type = ErrorType.Internal;
-  let errors: FieldError[] | undefined;
-
+export function formatCaughtException(exception: unknown): ApiErrorResponse {
   console.log('formatCaughtException', exception);
-
-  console.log('test TypeORMError', exception instanceof TypeORMError);
-  console.log('test QueryFailedError', exception instanceof QueryFailedError);
-  console.log('test HttpException', exception instanceof HttpException);
-  console.log('test UnauthorizedException', exception instanceof UnauthorizedException);
-  console.log('test ForbiddenException', exception instanceof ForbiddenException);
 
   if (exception instanceof QueryFailedError) {
     const driverError = exception.driverError;
@@ -42,28 +31,17 @@ export function formatCaughtException(exception: any, path: string): ApiErrorRes
     return generatorErrorMsg(exception);
   }
 
-  if (exception instanceof HttpException) {
-    const raw = exception.getResponse() as any;
-
-    statusCode = exception.getStatus();
-    message = typeof raw === 'string' ? raw : raw?.message || message;
-
-    console.log('raw', raw);
-    console.log('statusCode', statusCode);
-    console.log('message', message);
-
-    if (exception instanceof UnauthorizedException) {
-      return generateUnauthorizedErrorMsg(exception);
-    }
-    if (exception instanceof ForbiddenException) {
-      return generateForbiddenErrorMsg(exception);
-    }
-    if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
-      generateNotFoundErrorMsg(exception);
-    }
-    if (exception instanceof BadRequestException) {
-      return generateBadRequestErrorMsg(exception);
-    }
+  if (exception instanceof UnauthorizedException) {
+    return generateUnauthorizedErrorMsg(exception);
+  }
+  if (exception instanceof ForbiddenException) {
+    return generateForbiddenErrorMsg(exception);
+  }
+  if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
+    generateNotFoundErrorMsg(exception);
+  }
+  if (exception instanceof BadRequestException) {
+    return generateBadRequestErrorMsg(exception);
   }
 
   return generateServerErrorMsg(exception); //fallback message

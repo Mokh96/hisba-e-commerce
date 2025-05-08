@@ -57,26 +57,14 @@ export class BrandsService {
       failures: [],
     };
 
-    let c = 0
-
     for (const brand of createBrandDto) {
       const brandImage = getFilesBySyncId(files, FileUploadEnum.Image, brand.syncId);
 
       try {
-        c++;
-        //throw new BadRequestException('Unauthorized access');
-
-        if (c % 2 === 0) {
-          throw new BadRequestException('Unauthorized access');
-        }
-        if (c % 2 !== 0) {
-          throw new ForbiddenException('Forbidden access');
-        }
-
         const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
         response.successes.push(createdBrand);
       } catch (error) {
-        const formattedError = formatCaughtException(error, '/api/v1/brands/sync/bulk');
+        const formattedError = formatCaughtException(error);
 
         response.failures.push({
           syncId: brand.syncId,
