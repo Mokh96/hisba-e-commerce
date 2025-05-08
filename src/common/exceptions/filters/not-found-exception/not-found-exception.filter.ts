@@ -3,6 +3,8 @@ import { EntityNotFoundError } from 'typeorm';
 import { Response, Request } from 'express';
 import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import generateNotFoundErrorMsg from 'src/common/exceptions/filters/not-found-exception/not-found-error-msg.generator';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 /**
  * Handles TypeORM EntityNotFoundError.
@@ -14,38 +16,20 @@ import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
  * @param response - The HTTP response object to send the error response.
  * @param request - The HTTP request object, used for context (e.g., request URL).
  */
-@Catch(EntityNotFoundError , NotFoundException)
+@Catch(EntityNotFoundError, NotFoundException)
 export class NotFoundExceptionFilter implements ExceptionFilter {
   catch(exception: EntityNotFoundError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const entity = extractEntityFromMessage(exception.message);
-    const status = HttpStatus.NOT_FOUND
+    const notFoundErrorMsg = generateNotFoundErrorMsg(exception);
 
-    return response.status(status).json(
-      createErrorResponse({
-        statusCode: status,
-        message: `${entity} not found`,
-        path: request.url,
-        type: ErrorType.EntityNotFound,
-        errors: [
-          {
-            field: entity.toLowerCase(),
-            message: `${entity} does not exist.`,
-          },
-        ],
-      }),
-    );
+    const toClientErrorMessage: ApiErrorResponse = {
+      ...notFoundErrorMsg,
+      path: request.url,
+    };
+
+    return response.status(toClientErrorMessage.statusCode || HttpStatus.NOT_FOUND).json(toClientErrorMessage);
   }
-}
-
-/**
- * Extracts the entity name from the exception message.
- * Example message: "No entity found for query; Entity \"User\" was not found"
- */
-function extractEntityFromMessage(message: string): string {
-  const match = message.match(/"(.+?)"/);
-  return match?.[1] ?? 'Entity';
 }

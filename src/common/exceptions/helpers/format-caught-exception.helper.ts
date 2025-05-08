@@ -1,14 +1,21 @@
-import { ForbiddenException, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { FieldError, ApiErrorResponse } from '../interfaces/api-error-response.interface';
 import { extractFieldFromMessage } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
-import { QueryFailedError } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError } from 'typeorm';
 import { TypeORMError } from 'typeorm/error/TypeORMError';
 import dbErrorHandlers from 'src/common/exceptions/filters/query-failed-exception/db-handlers/db-error-handlers';
 import generateUnknownDbErrorMsg from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-db-error';
 import generateUnauthorizedErrorMsg from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-error-msg.generator';
 import generateForbiddenErrorMsg from 'src/common/exceptions/filters/forbidden-exception/forbidden-error-msg.generator';
+import generateNotFoundErrorMsg from 'src/common/exceptions/filters/not-found-exception/not-found-error-msg.generator';
 
 export function formatCaughtException(exception: any, path: string): ApiErrorResponse {
   let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -44,6 +51,8 @@ export function formatCaughtException(exception: any, path: string): ApiErrorRes
       return generateUnauthorizedErrorMsg(exception);
     } else if (exception instanceof ForbiddenException) {
       return generateForbiddenErrorMsg(exception);
+    } else if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
+      generateNotFoundErrorMsg(exception);
     } else {
       // Assume validation or other known HttpExceptions
       type = ErrorType.Validation;
