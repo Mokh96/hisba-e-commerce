@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -6,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { FieldError, ApiErrorResponse } from '../interfaces/api-error-response.interface';
-import { extractFieldFromMessage } from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
+import { extractFieldFromMessage } from 'src/common/exceptions/filters/bad-request-exception/validation-exception-util';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { EntityNotFoundError, QueryFailedError } from 'typeorm';
@@ -16,6 +17,8 @@ import generateUnknownDbErrorMsg from 'src/common/exceptions/filters/query-faile
 import generateUnauthorizedErrorMsg from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-error-msg.generator';
 import generateForbiddenErrorMsg from 'src/common/exceptions/filters/forbidden-exception/forbidden-error-msg.generator';
 import generateNotFoundErrorMsg from 'src/common/exceptions/filters/not-found-exception/not-found-error-msg.generator';
+import generateServerErrorMsg from 'src/common/exceptions/filters/server-exception/server-error-msg.generator';
+import generateBadRequestErrorMsg from 'src/common/exceptions/filters/bad-request-exception/bad-request-error-msg.generator';
 
 export function formatCaughtException(exception: any, path: string): ApiErrorResponse {
   let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -25,9 +28,11 @@ export function formatCaughtException(exception: any, path: string): ApiErrorRes
 
   console.log('formatCaughtException', exception);
 
-  console.log('test', exception instanceof TypeORMError);
-  console.log('test', exception instanceof QueryFailedError);
-  console.log('test', exception instanceof HttpException);
+  console.log('test TypeORMError', exception instanceof TypeORMError);
+  console.log('test QueryFailedError', exception instanceof QueryFailedError);
+  console.log('test HttpException', exception instanceof HttpException);
+  console.log('test UnauthorizedException', exception instanceof UnauthorizedException);
+  console.log('test ForbiddenException', exception instanceof ForbiddenException);
 
   if (exception instanceof QueryFailedError) {
     const driverError = exception.driverError;
@@ -49,35 +54,17 @@ export function formatCaughtException(exception: any, path: string): ApiErrorRes
 
     if (exception instanceof UnauthorizedException) {
       return generateUnauthorizedErrorMsg(exception);
-    } else if (exception instanceof ForbiddenException) {
+    }
+    if (exception instanceof ForbiddenException) {
       return generateForbiddenErrorMsg(exception);
-    } else if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
+    }
+    if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
       generateNotFoundErrorMsg(exception);
-    } else {
-      // Assume validation or other known HttpExceptions
-      type = ErrorType.Validation;
-
-      if (Array.isArray(raw?.message)) {
-        errors = raw.message.map((msg: string) => ({
-          field: extractFieldFromMessage(msg).field,
-          message: extractFieldFromMessage(msg).message,
-        }));
-      } else {
-        errors = [
-          {
-            field: '_global',
-            message,
-          },
-        ];
-      }
+    }
+    if (exception instanceof BadRequestException) {
+      return generateBadRequestErrorMsg(exception);
     }
   }
 
-  return createErrorResponse({
-    statusCode,
-    message,
-    path,
-    type,
-    errors,
-  });
+  return generateServerErrorMsg(exception); //fallback message
 }

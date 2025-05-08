@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import {
   createFieldPrefixedMessage
-} from 'src/common/exceptions/filters/validation-exception-filter/validation-exception-util';
+} from 'src/common/exceptions/filters/bad-request-exception/validation-exception-util';
 
 
 /**

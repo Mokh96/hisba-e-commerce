@@ -57,13 +57,22 @@ export class BrandsService {
       failures: [],
     };
 
+    let c = 0
+
     for (const brand of createBrandDto) {
       const brandImage = getFilesBySyncId(files, FileUploadEnum.Image, brand.syncId);
 
       try {
-        if (12 > 0) {
-          throw new ForbiddenException('Unauthorized access');
+        c++;
+        //throw new BadRequestException('Unauthorized access');
+
+        if (c % 2 === 0) {
+          throw new BadRequestException('Unauthorized access');
         }
+        if (c % 2 !== 0) {
+          throw new ForbiddenException('Forbidden access');
+        }
+
         const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
         response.successes.push(createdBrand);
       } catch (error) {
@@ -71,13 +80,8 @@ export class BrandsService {
 
         response.failures.push({
           syncId: brand.syncId,
-          error: formattedError ,
+          error: formattedError,
         });
-
-        /* response.failures.push({
-           syncId: brand.syncId,
-           errors: [err.sqlMessage],
-         });*/
       }
     }
 
