@@ -7,6 +7,8 @@ import { QueryFailedError } from 'typeorm';
 import { TypeORMError } from 'typeorm/error/TypeORMError';
 import dbErrorHandlers from 'src/common/exceptions/filters/query-failed-exception/db-handlers/db-error-handlers';
 import generateUnknownDbErrorMsg from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-db-error';
+import generateUnauthorizedErrorMsg from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-error-msg.generator';
+import generateForbiddenErrorMsg from 'src/common/exceptions/filters/forbidden-exception/forbidden-error-msg.generator';
 
 export function formatCaughtException(exception: any, path: string): ApiErrorResponse {
   let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -39,9 +41,9 @@ export function formatCaughtException(exception: any, path: string): ApiErrorRes
     console.log('message', message);
 
     if (exception instanceof UnauthorizedException) {
-      type = ErrorType.AuthUnauthorized;
+      return generateUnauthorizedErrorMsg(exception);
     } else if (exception instanceof ForbiddenException) {
-      type = ErrorType.AuthForbidden;
+      return generateForbiddenErrorMsg(exception);
     } else {
       // Assume validation or other known HttpExceptions
       type = ErrorType.Validation;

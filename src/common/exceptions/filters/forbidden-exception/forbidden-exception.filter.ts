@@ -2,6 +2,8 @@ import { ExceptionFilter, Catch, ArgumentsHost, ForbiddenException, HttpStatus }
 import { Request, Response } from 'express';
 import createErrorResponse from 'src/common/exceptions/helpers/create-error-response.helper';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
+import generateForbiddenErrorMsg from 'src/common/exceptions/filters/forbidden-exception/forbidden-error-msg.generator';
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
 @Catch(ForbiddenException)
 export class ForbiddenExceptionFilter implements ExceptionFilter {
@@ -10,23 +12,11 @@ export class ForbiddenExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const raw = exception.getResponse() as any;
-
-    const message = typeof raw === 'string' ? raw : raw?.message || 'Access forbidden';
-
-    return response.status(HttpStatus.FORBIDDEN).json(
-      createErrorResponse({
-        statusCode: HttpStatus.FORBIDDEN,
-        message,
-        path: request.url,
-        type: ErrorType.AuthForbidden,
-        /*errors: [
-          {
-            field: '_global',
-            message,
-          },
-        ],*/
-      }),
-    );
+    const forbiddenErrorMsg = generateForbiddenErrorMsg(exception);
+    const toClientErrorMessage: ApiErrorResponse = {
+      ...forbiddenErrorMsg,
+      path: request.url,
+    };
+    return response.status(toClientErrorMessage.statusCode || HttpStatus.FORBIDDEN).json(toClientErrorMessage);
   }
 }

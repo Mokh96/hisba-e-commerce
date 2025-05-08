@@ -7,7 +7,7 @@ import { ValidationExceptionFilter } from 'src/common/exceptions/filters/validat
 import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
 import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
 import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-exception.filter';
-import { ForbiddenExceptionFilter } from 'src/common/exceptions/filters/forbidden-exception.filter';
+import { ForbiddenExceptionFilter } from 'src/common/exceptions/filters/forbidden-exception/forbidden-exception.filter';
 
 @Module({
   providers: [
