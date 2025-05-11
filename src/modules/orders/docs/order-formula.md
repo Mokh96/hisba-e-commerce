@@ -1,26 +1,27 @@
-for order items
+For order items:
 
-Qte : entered by user
-discount :  (optional fixed value): entered
-discountPercentage :  (optional fixed value): entered
-unitePriceHt : fetched from article
-tvaPercentage: from the article
+* Qte: entered by user
+* Discount: optional fixed value, entered by user
+* Discount percentage: optional fixed value, entered by user
+* Unite price HT: fetched from article
+* TVA percentage: fetched from article
 
-totalHt = unitePriceHt * qte
-unitePriceTtc = unitePriceHt * (1+tvaPercentage /100)
-totalTtc = unitePriceTtc * qte
+Formulas:
 
-netAmountHt = totalHt - (totalHt * discountPercentage / 100)
-netAmountTtc = totalTtc - (totalTtc * discountPercentage / 100)
+* Total HT = unite price HT \* qte
+* Unite price TTC = unite price HT \* (1 + TVA percentage / 100)
+* Total TTC = unite price TTC \* qte
+* Net amount HT = total HT - (total HT \* discount percentage / 100)
+* Net amount TTC = total TTC - (total TTC \* discount percentage / 100)
+* Total TVA = unite price HT \* (TVA percentage / 100) \* qte || net amount TTC - net amount HT
 
-totalTva = unitePriceHt * (tvaPercentage / 100) * qte ||  netAmountTtc - netAmountHt
+For order:
 
-for order :
-totalHt = sum(netAmountHt for orderItems)
-totalTtc = sum(netAmountTtc for orderItems)
-totalTva = sum(totalTva for orderItems)
+* Total HT = sum(net amount HT for order items)
+* Total TTC = sum(net amount TTC for order items)
+* Total TVA = sum(total TVA for order items)
 
-netAmountHt = totalHt - (totalHt * discountPercentage / 100)
-netAmountTtc = totalTtc - (totalTtc * discountPercentage / 100)
+Formulas:
 
+* Net amount HT = total HT - (total HT \* discount percentage / 100)
 netToPay = netAmountTtc + stampDuty
