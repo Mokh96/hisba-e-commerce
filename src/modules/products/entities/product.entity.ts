@@ -8,7 +8,6 @@ import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
-import { WithGpsCoordinates } from 'src/common/entities/gps-coordinates.entity';
 import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
 import { Filterable, FilterType } from 'src/common/decorators/metadata/filterable.decorator';
 
@@ -21,7 +20,7 @@ export class Product extends MixedEntities {
   code: string;
 
   @Column({ name: 'default_img_path', nullable: true, length: PRODUCT_FIELD_LENGTHS.IMG_PATH })
-  defaultImgPath: string;
+  defaultImgPath: string | null;
 
   @Filterable(FilterType.SEARCH, FilterType.FILTERS)
   @Column({ nullable: true, length: PRODUCT_FIELD_LENGTHS.REF })

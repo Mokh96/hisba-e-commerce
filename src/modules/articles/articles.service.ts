@@ -5,19 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, DeepPartial, EntityManager, FindManyOptions, In, Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
-import { QueryArticleDto } from './dto/query-article.dto';
-import { fromDtoToQuery } from 'src/helpers/function.global';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
+import { BulkResponseType } from 'src/common/types/bulk-response.type';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
-import { Order } from 'src/modules/orders/entities/order.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ArticleFilterDto } from './config/article-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -28,8 +26,7 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
     private uploadManager: UploadManager,
     private dataSource: DataSource,
-  ) {
-  }
+  ) {}
 
   async create(
     createArticleDto: CreateArticleDto,
@@ -52,7 +49,7 @@ export class ArticlesService {
           imgPath: uploadedFiles[0]?.path || null,
         });
 
-        // Step 3: Update product price range if necessary
+        // Step 3: Update the product price range if necessary
         await this.updateProductPricing(product, article.price, manager);
 
         // Step 4: Save the article and return it
@@ -65,8 +62,7 @@ export class ArticlesService {
   }
 
   async createBulk(createSyncArticlesDto: CreateSyncArticleDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
-      //todo : Group products by their ID.
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -79,17 +75,21 @@ export class ArticlesService {
         response.successes.push(article);
         //response.successes.push({ id: article.id, syncId: article.syncId });
       } catch (error) {
+        const formattedError = formatCaughtException(error);
+
         response.failures.push({
-          index: i,
           syncId: createSyncArticlesDto[i].syncId,
-          errors: error,
+          error: formattedError,
         });
       }
     }
     return response;
   }
 
-  async findAll(paginationDto: PaginationDto, articleFilterDto: ArticleFilterDto): Promise<PaginatedResult<DeepPartial<Article>>> {
+  async findAll(
+    paginationDto: PaginationDto,
+    articleFilterDto: ArticleFilterDto,
+  ): Promise<PaginatedResult<DeepPartial<Article>>> {
     const queryBuilder = this.articleRepository.createQueryBuilder(this.articleRepository.metadata.tableName);
 
     QueryUtils.use(queryBuilder)
@@ -144,12 +144,12 @@ export class ArticlesService {
         article = this.articleRepository.merge(article, updatedFields);
         await this.articleRepository.save(article);
 
-        // remove the old image if new one is uploaded
+        // remove the old image if a new one is uploaded
         if (newPath && initialImgPath) {
           await this.uploadManager.removeFile(initialImgPath);
         }
 
-        //update product price only when the article price is updated
+        //update the product price only when the article price is updated
         if (article.price !== updateArticleDto.price) {
           const product = await this.getProductById(article.productId, manager);
           await this.updateProductPricing(product, updateArticleDto.price, manager);
@@ -166,7 +166,7 @@ export class ArticlesService {
   }
 
   async updateBulk(updateSyncArticlesDto: UpdateSyncArticleDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -180,10 +180,11 @@ export class ArticlesService {
         response.successes.push(article);
         //response.successes.push({ id: article.id, syncId: article.syncId });
       } catch (error) {
+        const formattedError = formatCaughtException(error);
+
         response.failures.push({
-          index: i,
           syncId: updateSyncArticlesDto[i].syncId,
-          errors: error,
+          error: formattedError,
         });
       }
     }
@@ -216,7 +217,9 @@ export class ArticlesService {
 
   async remove(id: number) {
     const article = await this.articleRepository.findOneByOrFail({ id });
-    await this.articleRepository.remove(article); //todo : remove related images
+    await this.articleRepository.remove(article);
+    await this.uploadManager.removeFile(article.imgPath);
+
     return true;
   }
 }

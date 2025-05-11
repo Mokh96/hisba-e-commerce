@@ -149,12 +149,13 @@ export class UploadManager implements OnModuleInit {
     try {
       await fs.unlink(fullPath);
     } catch (error) {
-      if (process.env.NODE_ENV === 'production') return;//todo : use config module to access the env values
+      if (process.env.NODE_ENV === 'production') return; //todo : use config module to access the env values
       console.warn(`Failed to delete file: ${fullPath}`, error);
     }
   }
 
-  public async removeFile(fullPath: string) {
+  public async removeFile(fullPath: string | null) {
+    if (!fullPath) return;
     await this.cleanupFile(UPLOAD_ROOT_DIR + '/' + fullPath);
   }
 

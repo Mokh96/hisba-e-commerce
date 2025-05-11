@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
+import {  BulkResponseType } from 'src/common/types/bulk-response.type';
 import { Repository } from 'typeorm';
 import { CreateOptionDto, CreateOptionSyncDto } from './dto/create-option.dto';
 import { UpdateOptionDto } from './dto/update-option.dto';
 import { Option } from './entities/option.entity';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class OptionsService {
@@ -20,7 +21,7 @@ export class OptionsService {
   }
 
   async createBulk(createOptionDto: CreateOptionSyncDto[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -33,10 +34,11 @@ export class OptionsService {
           id: newOption.id,
           syncId: newOption.syncId,
         });
-      } catch (err) {
+      } catch (error : unknown) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: option.syncId,
-          errors: [err.sqlMessage],
+          error: formattedError,
         });
       }
     }

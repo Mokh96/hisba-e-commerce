@@ -1,6 +1,6 @@
-type ErrorType = string // TODO : change to error type
+import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
 
-export interface BulkResponse <T = any>{
+export interface BulkResponseType {
   successes: {
     id: number;
     syncId: number;
@@ -8,17 +8,6 @@ export interface BulkResponse <T = any>{
   failures: {
     index?: number;
     syncId: number;
-    errors: ErrorType[];
-  }[];
-}
-
-export interface UpdateBulkResponse {
-  successes: {
-    id: number;
-  }[];
-  failures: {
-    index: number;
-    id: number;
-    errors: ErrorType[];
+    error: ApiErrorResponse;
   }[];
 }

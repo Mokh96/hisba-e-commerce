@@ -1,20 +1,19 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
+import {  BulkResponseType } from 'src/common/types/bulk-response.type';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { Repository } from 'typeorm';
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto, UpdateSyncCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
-import { ValidationRules } from 'src/modules/files/types/validation-rules.type';
 import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
 import { CategoryFilterDto } from 'src/modules/categories/dto/category-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class CategoriesService {
@@ -44,7 +43,7 @@ export class CategoriesService {
   }
 
   async createSyncBulk(createCategoryDto: CreateSyncCategoryDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -55,10 +54,11 @@ export class CategoriesService {
       try {
         const createdCategory = await this.create(category, { [FileUploadEnum.Image]: categoryImage });
         response.successes.push(createdCategory);
-      } catch (err) {
+      } catch (error) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: category.syncId,
-          errors: [err.sqlMessage],
+          error: formattedError,
         });
       }
     }
@@ -143,13 +143,13 @@ export class CategoriesService {
     return await this.categoryRepository.remove(category);
   }
 
-  async updateBulk(updateBrandDto: UpdateSyncCategoryDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+  async updateBulk(updateCategoryDto: UpdateSyncCategoryDto[], files: Express.Multer.File[]) {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
 
-    for (const updateCategory of updateBrandDto) {
+    for (const updateCategory of updateCategoryDto) {
       const categoryImage = getFilesBySyncId(files, FileUploadEnum.Image, updateCategory.syncId);
       try {
         const category = await this.update(updateCategory.id, updateCategory, {
@@ -157,9 +157,10 @@ export class CategoriesService {
         });
         response.successes.push(category);
       } catch (error) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: updateCategory.syncId,
-          errors: error,
+          error: formattedError,
         });
       }
     }

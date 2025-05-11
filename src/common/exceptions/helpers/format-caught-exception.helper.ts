@@ -21,7 +21,7 @@ import generateServerErrorMsg from 'src/common/exceptions/filters/server-excepti
 import generateBadRequestErrorMsg from 'src/common/exceptions/filters/bad-request-exception/bad-request-error-msg.generator';
 
 export function formatCaughtException(exception: unknown): ApiErrorResponse {
-  console.log('formatCaughtException', exception);
+  //console.log('formatCaughtException', exception);
 
   if (exception instanceof QueryFailedError) {
     const driverError = exception.driverError;

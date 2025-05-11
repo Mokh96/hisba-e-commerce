@@ -8,18 +8,18 @@ import { getMaxAndMinPrices } from 'src/common/utils/pricing-utils.util';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadFileType } from 'src/modules/files/types/upload-file.type';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
-import { BulkResponse, UpdateBulkResponse } from 'src/common/types/bulk-response.type';
+import { BulkResponseType } from 'src/common/types/bulk-response.type';
 import { getFileBySyncId, getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 import { getEntitiesByIds } from 'src/common/utils/entity.utils';
 import { Article } from 'src/modules/articles/entities/article.entity';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
-import { Order } from 'src/modules/orders/entities/order.entity';
 import { ProductFilterDto } from './dto/product-filter.dto';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { CategoriesService } from 'src/modules/categories/categories.service';
 import { BrandsService } from 'src/modules/brands/brands.service';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class ProductsService {
@@ -75,7 +75,7 @@ export class ProductsService {
       // Step 4: Calculate Prices
       const { minPrice, maxPrice } = getMaxAndMinPrices(articles);
 
-      // Step 5: Save product with cascade relations
+      // Step 5: Save the product with cascade relations
       const product = this.productRepository.create({
         ...createProductDto,
         defaultImgPath,
@@ -93,7 +93,7 @@ export class ProductsService {
   }
 
   async createBulk(createSyncProductsDto: CreateSyncProductDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -103,11 +103,11 @@ export class ProductsService {
         const product = await this.create(createSyncProductsDto[i], files);
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
-      } catch (error) {
+      } catch (error: unknown) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
-          index: i,
           syncId: createSyncProductsDto[i].syncId,
-          errors: error,
+          error: formattedError,
         });
       }
     }
@@ -182,7 +182,7 @@ export class ProductsService {
   }
 
   async updateBulk(updateSyncProductDto: UpdateSyncProductDto[], files: Express.Multer.File[]) {
-    const response: UpdateBulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -196,10 +196,10 @@ export class ProductsService {
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
       } catch (error) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
-          index: i,
-          id: updateSyncProductDto[i].id,
-          errors: error,
+          syncId: updateSyncProductDto[i].syncId,
+          error: formattedError,
         });
       }
     }
@@ -209,7 +209,8 @@ export class ProductsService {
 
   async remove(id: number) {
     const product = await this.productRepository.findOneByOrFail({ id });
-    return this.productRepository.remove(product);
+    await this.productRepository.remove(product);
+    await this.uploadManager.removeFile(product.defaultImgPath);
   }
 
   public async getProductsByIds(articleIds: Product['id'][], options: FindManyOptions<Product> = {}) {

@@ -7,7 +7,7 @@
 //exception filter (fn)
 //startup
 //apply mixin
-//add more functionality to query utils
+//add more functionality to query utils (sw,ew)
 //security
 //logs
 //filter: auto inject

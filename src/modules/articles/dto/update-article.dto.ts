@@ -11,5 +11,5 @@ export class UpdateSyncArticleDto extends IntersectionType(IdCommonDto, UpdateAr
   @IsOptional()
   @IsPositive()
   @IsInt()
-  syncId: number | undefined;
+  syncId?: number;
 }

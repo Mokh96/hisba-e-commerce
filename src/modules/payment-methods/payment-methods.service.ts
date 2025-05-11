@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
+import {  BulkResponseType } from 'src/common/types/bulk-response.type';
 import { Repository } from 'typeorm';
 import { CreatePaymentMethodDto, CreateSyncPaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
 import { PaymentMethod } from './entities/payment-method.entity';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class PaymentMethodsService {
@@ -14,7 +15,7 @@ export class PaymentMethodsService {
   }
 
   async createBulk(createOptionValueSyncDto: CreateSyncPaymentMethodDto[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -27,10 +28,11 @@ export class PaymentMethodsService {
           id: newMethod.id,
           syncId: newMethod.syncId,
         });
-      } catch (err) {
+      } catch (error) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: option.syncId,
-          errors: [err.sqlMessage],
+          error: formattedError,
         });
       }
     }

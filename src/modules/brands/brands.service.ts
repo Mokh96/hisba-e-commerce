@@ -1,23 +1,15 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateBrandDto, UpdateSyncBrandsDto } from './dto/update-brand.dto';
 import { Brand } from './entities/brand.entity';
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { BulkResponse } from 'src/common/types/bulk-response.type';
-import { checkChildrenRecursive, fromDtoToQuery } from 'src/helpers/function.global';
+import { BulkResponseType } from 'src/common/types/bulk-response.type';
+import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { CreateBrandDto, CreateSyncBrandDto } from './dto/create-brand.dto';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UploadManager } from 'src/modules/files/upload/upload-manager';
 import { getFilesBySyncId } from 'src/modules/files/utils/file-lookup.util';
 import { BrandFilterDto } from 'src/modules/brands/dto/brand-filter.dto';
-import { Category } from 'src/modules/categories/entities/category.entity';
 import { getAllDescendantIds } from 'src/common/utils/tree/get-all-descendant-Ids.util';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
@@ -51,8 +43,7 @@ export class BrandsService {
   }
 
   async createSyncBulk(createBrandDto: CreateSyncBrandDto[], files: Express.Multer.File[]) {
-    const response = {
-      //BulkResponse
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -63,7 +54,7 @@ export class BrandsService {
       try {
         const createdBrand = await this.create(brand, { [FileUploadEnum.Image]: brandImage });
         response.successes.push(createdBrand);
-      } catch (error) {
+      } catch (error: unknown) {
         const formattedError = formatCaughtException(error);
 
         response.failures.push({
@@ -151,7 +142,7 @@ export class BrandsService {
   }
 
   async updateBulk(updateBrandDto: UpdateSyncBrandsDto[], files: Express.Multer.File[]) {
-    const response: BulkResponse = {
+    const response: BulkResponseType = {
       successes: [],
       failures: [],
     };
@@ -163,10 +154,12 @@ export class BrandsService {
           [FileUploadEnum.Image]: brandImage,
         });
         response.successes.push(brand);
-      } catch (error) {
+      } catch (error: unknown) {
+        const formattedError = formatCaughtException(error);
+
         response.failures.push({
           syncId: updateBrand.syncId,
-          errors: error,
+          error: formattedError,
         });
       }
     }

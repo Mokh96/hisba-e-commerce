@@ -16,6 +16,7 @@ import { ClientBulkResponse } from 'src/modules/clients/types/client-bulk-respon
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
+import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
 
 @Injectable()
 export class ClientsService {
@@ -54,10 +55,11 @@ export class ClientsService {
             syncId: address.syncId,
           })),
         });
-      } catch (err) {
+      } catch (error : unknown) {
+        const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: client.syncId,
-          errors: [err.sqlMessage],
+          error: formattedError,
         });
       }
     }
