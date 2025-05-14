@@ -1,9 +1,7 @@
-import { SyncEntityCommon } from 'src/common-entities/sync.entity';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { SHIPPING_ADDRESSES_LENGTHS } from '../config/shipping-addresses.config';
-import { WithBaseOrderItem } from 'src/common/entities/base-order-item.entity';
 import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
@@ -34,5 +32,3 @@ export class ShippingAddress extends MixedEntities {
   @JoinColumn({ name: 'town_id', referencedColumnName: 'id' })
   town: Town;
 }
-
-const dd = ShippingAddress.getEntityAttributes()

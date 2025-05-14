@@ -34,7 +34,7 @@ export class CategoriesService {
     try {
       return await this.categoryRepository.save({
         ...createCategoryDto,
-        imgPath: uploadedImage[0].path || null,
+        imgPath: uploadedImage[0]?.path || null,
       });
     } catch (e) {
       await this.uploadManager.cleanupFiles(uploadedImage);

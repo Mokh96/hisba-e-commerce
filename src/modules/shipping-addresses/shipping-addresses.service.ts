@@ -4,15 +4,21 @@ import { Repository } from 'typeorm';
 import { CreateShippingAddressDto, CreateSyncShippingAddressDto } from './dto/create-shipping-address.dto';
 import { UpdateShippingAddressDto } from './dto/update-shipping-address.dto';
 import { ShippingAddress } from './entities/shipping-address.entity';
+import { CurrentUser, CurrentUserData } from 'src/common/decorators';
 
 @Injectable()
 export class ShippingAddressesService {
   constructor(
     @InjectRepository(ShippingAddress)
-    private shippingAddressRepository: Repository<ShippingAddress>) {}
+    private shippingAddressRepository: Repository<ShippingAddress>,
+  ) {}
 
-  async create(createShippingAddressDto: CreateShippingAddressDto) {
-    return await this.shippingAddressRepository.save(createShippingAddressDto);
+  async create(createShippingAddressDto: CreateShippingAddressDto, user: CurrentUserData) {
+    const clientId = user.client.id;
+    return await this.shippingAddressRepository.save({
+      ...createShippingAddressDto,
+      clientId,
+    });
   }
 
   async update(id: number, updateShippingAddressDto: UpdateShippingAddressDto) {
@@ -37,13 +43,13 @@ export class ShippingAddressesService {
         incomingIds.add(address.id);
       } else {
         // Create new address
-        await this.create({
+        /*await this.create({
           address: address.address,
           clientId,
           townId: address.townId,
           latitude: address.latitude,
           longitude: address.longitude,
-        });
+        });*/
       }
     }
 

@@ -37,7 +37,7 @@ export class AuthService {
     const payload: CurrentUserData = {
       username,
       sub: user.id,
-      roleId : user.roleId,
+      roleId: user.roleId,
     };
 
     if (user.roleId === Role.CLIENT) {
@@ -88,7 +88,10 @@ export class AuthService {
     };
 
     if (existUser.roleId === Role.CLIENT) {
-      toClient['client'] = await this.clientRepository.findOneByOrFail({ id: user.client.id });
+      toClient['client'] = await this.clientRepository.findOneOrFail({
+        where: { id: user.client.id },
+        relations: { shippingAddresses: true },
+      });
     }
 
     return {

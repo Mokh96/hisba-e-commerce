@@ -12,6 +12,7 @@ export class ServerExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    console.log('ServerExceptionFilter', exception);
     const serverErrorMsg = generateServerErrorMsg(exception);
 
     const toClientErrorMessage: ApiErrorResponse = {

@@ -34,7 +34,7 @@ export class BrandsService {
     try {
       return await this.brandRepository.save({
         ...createBrandDto,
-        imgPath: uploadedImage[0].path || null,
+        imgPath: uploadedImage[0]?.path || null,
       });
     } catch (e) {
       await this.uploadManager.cleanupFiles(uploadedImage);

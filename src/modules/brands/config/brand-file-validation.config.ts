@@ -6,7 +6,7 @@ import { DynamicFileValidationInterceptor } from 'src/common/interceptors/dynami
 const createBrandValidationRules: ValidationRules = {
   entity: 'brands',
   files: {
-    [FileUploadEnum.Image]: requiredImageUploadRules,
+    [FileUploadEnum.Image]: optionalImageUploadRules,
   },
 };
 
