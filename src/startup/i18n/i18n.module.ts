@@ -9,13 +9,7 @@ import i18nConfig, { I18N_CONFIG_KEY } from 'src/core/config/i18n.config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const i18nConfigSettings = configService.get<ConfigType<typeof i18nConfig>>(I18N_CONFIG_KEY);
-        return {
-          fallbackLanguage: i18nConfigSettings.fallbackLanguage,
-          loaderOptions: i18nConfigSettings.loaderOptions,
-          loader: i18nConfigSettings.loader,
-          resolvers: i18nConfigSettings.resolvers || [],
-          typesOutputPath: i18nConfigSettings.typesOutputPath,
-        };
+        return { ...i18nConfigSettings };
       },
     }),
   ],

@@ -7,7 +7,7 @@ export const I18N_CONFIG_KEY = 'i18n';
 
 const i18nConfig = registerAs(
   I18N_CONFIG_KEY,
-  (): Partial<I18nOptions> => ({
+  (): I18nOptions => ({
     fallbackLanguage: process.env.I18N_FALLBACK_LANG || 'en',
     loaderOptions: {
       path: path.resolve(process.cwd(), 'i18n'),
