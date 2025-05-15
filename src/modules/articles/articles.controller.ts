@@ -14,17 +14,12 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { CreateArticleDto, CreateSyncArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto, UpdateSyncArticleDto } from './dto/update-article.dto';
-import { QueryArticleDto } from './dto/query-article.dto';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { UpdateArticleDto } from './dto/update-article.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { imageUploadRules, requiredImageUploadRules } from 'src/modules/files/config/file-upload.config';
-import { UpdateProductDto } from 'src/modules/products/dto/update-product.dto';
-import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
-import { Order } from 'src/modules/orders/entities/order.entity';
-import { Article } from 'src/modules/articles/entities/article.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ArticleFilterDto } from 'src/modules/articles/config/article-filter.dto';
 

@@ -17,10 +17,6 @@ import * as path from 'path';
         },
         AcceptLanguageResolver,
       ],
-      /* typesOutputPath: path.join(
-         __dirname,
-         '../../src/generated/i18n.generated',
-       ),*/
       typesOutputPath: path.join(process.cwd(), 'src', 'startup', 'i18n', 'generated', 'i18n.generated.ts'),
     }),
   ],

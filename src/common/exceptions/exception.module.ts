@@ -8,13 +8,25 @@ import { InputValidationFilter } from 'src/common/exceptions/filters/input-valid
 import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
 import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-exception.filter';
 import { ForbiddenExceptionFilter } from 'src/common/exceptions/filters/forbidden-exception/forbidden-exception.filter';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
+import {
+  I18nValidationExceptionFilter
+} from 'src/common/exceptions/filters/bad-request-exception/i18n-validation-exception.filter';
 
 @Module({
   providers: [
     { provide: APP_FILTER, useClass: ServerExceptionFilter },
     { provide: APP_FILTER, useClass: QueryFailedExceptionFilter },
     { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
-    { provide: APP_FILTER, useClass: BadRequestExceptionFilter },
+    //{ provide: APP_FILTER, useClass: BadRequestExceptionFilter },
+    {
+      provide: APP_FILTER,
+      useFactory: (i18nService: I18nService<I18nTranslations>) => {
+        return new I18nValidationExceptionFilter(i18nService);
+      },
+      inject: [I18nService],
+    },
     { provide: APP_FILTER, useClass: InputValidationFilter },
     { provide: APP_FILTER, useClass: FileValidationFilter },
     { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },//

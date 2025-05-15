@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticlesModule } from './articles/articles.module';
 import { AuthModule } from './auth/auth.module';
@@ -59,12 +59,12 @@ import { I18nModule } from 'src/startup/i18n/i18n.module';
     AuthModule,
     FilesModule,
     SystemEntitiesModule,
-    ExceptionModule
+    ExceptionModule,
   ],
 
   providers: [
-/*    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
-    { provide: APP_FILTER, useClass: NotFoundExceptionFilter },*/
+    /*    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+        { provide: APP_FILTER, useClass: NotFoundExceptionFilter },*/
     { provide: APP_GUARD, useClass: AuthGuard },
     {
       provide: APP_GUARD,
