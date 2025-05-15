@@ -110,14 +110,28 @@ export class QueryUtils<T> {
   }
 
   applyInFilters<T extends object>(inFilters?: ExtractInFilterParams<T>): this {
-    console.log('inFilters' , inFilters);
     if (!inFilters) return this;
 
     Object.entries(inFilters).forEach(([field, values]) => {
       if (Array.isArray(values) && values.length > 0) {
-        this.queryBuilder.andWhere(`${this.alias}.${field} IN (:...${field})`, {
-          [field]: values,
-        });
+        const notNullValues = values.filter((v) => v !== null);
+        const hasNull = values.includes(null);
+
+        const conditions: string[] = [];
+        const parameters: Record<string, any> = {};
+
+        if (notNullValues.length > 0) {
+          conditions.push(`${this.alias}.${field} IN (:...${field})`);
+          parameters[field] = notNullValues;
+        }
+
+        if (hasNull) {
+          conditions.push(`${this.alias}.${field} IS NULL`);
+        }
+
+        if (conditions.length > 0) {
+          this.queryBuilder.andWhere(conditions.join(' OR '), parameters);
+        }
       }
     });
 

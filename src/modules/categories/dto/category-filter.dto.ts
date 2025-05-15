@@ -41,7 +41,6 @@ class InFiltersValidator {
   @Transform(({ value }) => {
     return Array.isArray(value) ? value.map(transformToNumberOrNull) : [transformToNumberOrNull(value)];
   })
-  @IsArray()
   @IsNullablePositiveIntArray()
   parentId?: number[];
 
