@@ -26,23 +26,15 @@ import { ExceptionModule } from 'src/common/exceptions/exception.module';
 import { I18nModule } from 'src/startup/i18n/i18n.module';
 import i18nConfig from 'src/core/config/i18n.config';
 import { AppConfigModule } from 'src/startup/config.module';
+import { DatabaseModule } from 'src/startup/database.module';
 
 @Module({
   imports: [
+    //setup modules
     AppConfigModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: process.env.DB_PASSWORD ?? '',
-      database: process.env.DB_NAME ?? 'new_ecommerce_db',
-      autoLoadEntities: true,
-      synchronize: true,
-      dropSchema: false,
-      logging: false,
-    }),
+    DatabaseModule,
     I18nModule,
+    ////main modules
     UsersModule,
     CategoriesModule,
     BrandsModule,
@@ -65,8 +57,6 @@ import { AppConfigModule } from 'src/startup/config.module';
   ],
 
   providers: [
-    /*    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
-        { provide: APP_FILTER, useClass: NotFoundExceptionFilter },*/
     { provide: APP_GUARD, useClass: AuthGuard },
     {
       provide: APP_GUARD,
