@@ -24,10 +24,12 @@ import { FilesModule } from './files/files.module';
 import { SystemEntitiesModule } from './system-entities/system-entities.module';
 import { ExceptionModule } from 'src/common/exceptions/exception.module';
 import { I18nModule } from 'src/startup/i18n/i18n.module';
+import i18nConfig from 'src/core/config/i18n.config';
+import { AppConfigModule } from 'src/startup/config.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    AppConfigModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
