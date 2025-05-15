@@ -23,6 +23,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FilesModule } from './files/files.module';
 import { SystemEntitiesModule } from './system-entities/system-entities.module';
 import { ExceptionModule } from 'src/common/exceptions/exception.module';
+import { I18nModule } from 'src/startup/i18n/i18n.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ExceptionModule } from 'src/common/exceptions/exception.module';
       dropSchema: false,
       logging: false,
     }),
+    I18nModule,
     UsersModule,
     CategoriesModule,
     BrandsModule,
