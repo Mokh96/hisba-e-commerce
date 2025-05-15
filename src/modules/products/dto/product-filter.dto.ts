@@ -99,7 +99,7 @@ class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @Type(() => Number)
-  @IsString({ each: true })
+  @IsInt({ each: true })
   @ArrayMaxSize(100)
   brandId?: number[];
 

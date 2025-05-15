@@ -74,6 +74,8 @@ export class CategoriesService {
   async findMany(paginationDto: PaginationDto, filterDto: CategoryFilterDto) {
     const queryBuilder = this.categoryRepository.createQueryBuilder(this.categoryRepository.metadata.tableName);
 
+    console.log(filterDto);
+
     QueryUtils.use(queryBuilder)
       .applySearch(filterDto.search)
       .applyFilters(filterDto.filters)

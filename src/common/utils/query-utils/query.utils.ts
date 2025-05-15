@@ -74,7 +74,10 @@ export class QueryUtils<T> {
 
     Object.entries(filters).forEach(([field, value]) => {
       if (value !== undefined) {
-        if (typeof value === 'string' && value.trim() === '') {
+        if (value === null) {
+          // Handle null specifically
+          this.queryBuilder.andWhere(`${this.alias}.${field} IS NULL`);
+        } else if (typeof value === 'string' && value.trim() === '') {
           // Empty string: check for NULL or empty string
           this.queryBuilder.andWhere(`(${this.alias}.${field} IS NULL OR ${this.alias}.${field} = '')`);
         } else {
@@ -82,6 +85,7 @@ export class QueryUtils<T> {
         }
       }
     });
+
     return this;
   }
 
@@ -106,6 +110,7 @@ export class QueryUtils<T> {
   }
 
   applyInFilters<T extends object>(inFilters?: ExtractInFilterParams<T>): this {
+    console.log('inFilters' , inFilters);
     if (!inFilters) return this;
 
     Object.entries(inFilters).forEach(([field, values]) => {

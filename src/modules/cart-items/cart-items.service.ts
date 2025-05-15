@@ -32,6 +32,7 @@ export class CartItemsService {
           label: true,
           imgPath: true,
           price: true,
+          tvaPercentage: true,
         },
       },
     });

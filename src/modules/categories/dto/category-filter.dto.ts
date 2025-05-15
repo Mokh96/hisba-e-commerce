@@ -8,6 +8,9 @@ import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { Category } from 'src/modules/categories/entities/category.entity';
+import { Transform } from 'class-transformer';
+import { rethrow } from '@nestjs/core/helpers/rethrow';
+import IsNullablePositiveIntArray from 'src/common/decorators/validators/is-nullable-positive-int-array.dto';
 
 class FiltersValidator {
   @IsOptional()
@@ -16,8 +19,13 @@ class FiltersValidator {
   syncId?: number;
 
   @IsOptional()
+  @IsArray()
+  @Transform(({  key , obj }) => {
+    if (obj[key] === 'null') return null;
+    const parsed = Number(obj[key]);
+    return isNaN(parsed) ? obj[key] : parsed;
+  })
   @IsInt()
-  @IsNumber()
   parentId?: number | null;
 }
 
@@ -30,9 +38,11 @@ class SearchValidator {
 
 class InFiltersValidator {
   @IsOptional()
+  @Transform(({ value }) => {
+    return Array.isArray(value) ? value.map(transformToNumberOrNull) : [transformToNumberOrNull(value)];
+  })
   @IsArray()
-  @IsNumber({}, { each: true })
-  @IsPositive({ each: true })
+  @IsNullablePositiveIntArray()
   parentId?: number[];
 
   @IsOptional()
@@ -40,6 +50,12 @@ class InFiltersValidator {
   @IsNumber({}, { each: true })
   @IsPositive({ each: true })
   syncId?: number[];
+}
+
+function transformToNumberOrNull(value: string) {
+  if (value === 'null') return null;
+  const parsed = Number(value);
+  return isNaN(parsed) ? value : parsed;
 }
 
 export class CategoryFilterDto extends IntersectionType(
