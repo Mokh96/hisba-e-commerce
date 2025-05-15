@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
+  ParseIntPipe, HttpStatus, HttpCode,
 } from '@nestjs/common';
 import { OptionsValuesService } from './options-values.service';
 import { CreateOptionsValueDto } from './dto/create-options-value.dto';
@@ -40,7 +40,8 @@ export class OptionsValuesController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.optionsValuesService.remove(+id);
+    return this.optionsValuesService.remove(id);
   }
 }

@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  BulkResponseType } from 'src/common/types/bulk-response.type';
+import { BulkResponseType } from 'src/common/types/bulk-response.type';
 import { checkChildrenRecursive } from 'src/helpers/function.global';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto, CreateSyncCategoryDto } from './dto/create-category.dto';
@@ -73,8 +73,6 @@ export class CategoriesService {
 
   async findMany(paginationDto: PaginationDto, filterDto: CategoryFilterDto) {
     const queryBuilder = this.categoryRepository.createQueryBuilder(this.categoryRepository.metadata.tableName);
-
-    console.log(filterDto);
 
     QueryUtils.use(queryBuilder)
       .applySearch(filterDto.search)

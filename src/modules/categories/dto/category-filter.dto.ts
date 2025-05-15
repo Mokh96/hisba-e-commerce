@@ -11,20 +11,16 @@ import { Category } from 'src/modules/categories/entities/category.entity';
 import { Transform } from 'class-transformer';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
 import IsNullablePositiveIntArray from 'src/common/decorators/validators/is-nullable-positive-int-array.dto';
+import { parseNumberOrNull } from 'src/common/utils/transforms/transforms';
 
 class FiltersValidator {
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
+  @Transform(({ obj, key }) => parseNumberOrNull(obj[key]))
+  @IsInt()
   syncId?: number;
 
   @IsOptional()
-  @IsArray()
-  @Transform(({  key , obj }) => {
-    if (obj[key] === 'null') return null;
-    const parsed = Number(obj[key]);
-    return isNaN(parsed) ? obj[key] : parsed;
-  })
+  @Transform(({ obj, key }) => parseNumberOrNull(obj[key]))
   @IsInt()
   parentId?: number | null;
 }
@@ -38,23 +34,14 @@ class SearchValidator {
 
 class InFiltersValidator {
   @IsOptional()
-  @Transform(({ value }) => {
-    return Array.isArray(value) ? value.map(transformToNumberOrNull) : [transformToNumberOrNull(value)];
-  })
+  @Transform((params) => params.value.map(parseNumberOrNull))
   @IsNullablePositiveIntArray()
   parentId?: number[];
 
   @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  @IsPositive({ each: true })
+  @Transform((params) => params.value.map(parseNumberOrNull))
+  @IsNullablePositiveIntArray()
   syncId?: number[];
-}
-
-function transformToNumberOrNull(value: string) {
-  if (value === 'null') return null;
-  const parsed = Number(value);
-  return isNaN(parsed) ? value : parsed;
 }
 
 export class CategoryFilterDto extends IntersectionType(

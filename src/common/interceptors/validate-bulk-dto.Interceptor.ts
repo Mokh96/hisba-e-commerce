@@ -9,7 +9,7 @@ import { Request } from 'express';
  * This is useful for bulk operations where the client sends an array of objects
  * (e.g., creating multiple products in a single request).
  *
- * This interceptor uses `class-transformer` and `class-validator` to:
+ * This interceptor uses `class-transforms` and `class-validator` to:
  * - Transform each item in the array into an instance of the provided DTO class.
  * - Validate each instance.
  * - Collect and throw detailed validation errors with index-based mapping.

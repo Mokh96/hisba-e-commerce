@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsInt, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from 'class-validator';
 import { ARTICLE_FIELD_LENGTHS } from 'src/modules/articles/config/articles.config';
 import { IntersectionType } from '@nestjs/mapped-types';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
@@ -9,17 +9,20 @@ import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-rang
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Brand } from 'src/modules/brands/entities/brand.entity';
+import { Transform } from 'class-transformer';
+import { parseNumberOrNull } from 'src/common/utils/transforms/transforms';
+import IsNullablePositiveIntArray from 'src/common/decorators/validators/is-nullable-positive-int-array.dto';
 
 class FiltersValidator {
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
+  @Transform(({ obj, key }) => parseNumberOrNull(obj[key]))
+  @IsInt()
   syncId?: number;
 
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  parentId?: number;
+  @Transform(({ obj, key }) => parseNumberOrNull(obj[key]))
+  @IsInt()
+  parentId?: number | null;
 }
 
 class SearchValidator {
@@ -31,15 +34,13 @@ class SearchValidator {
 
 class InFiltersValidator {
   @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  @IsPositive({ each: true })
+  @Transform((params) => params.value.map(parseNumberOrNull))
+  @IsNullablePositiveIntArray()
   parentId?: number[];
 
   @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  @IsPositive({ each: true })
+  @Transform((params) => params.value.map(parseNumberOrNull))
+  @IsNullablePositiveIntArray()
   syncId?: number[];
 }
 

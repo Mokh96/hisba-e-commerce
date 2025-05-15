@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  BulkResponseType } from 'src/common/types/bulk-response.type';
+import { BulkResponseType } from 'src/common/types/bulk-response.type';
 import { Repository } from 'typeorm';
 import { CreateOptionsValueDto, CreateOptionValueSyncDto } from './dto/create-options-value.dto';
 import { UpdateOptionsValueDto } from './dto/update-options-value.dto';
@@ -34,11 +34,11 @@ export class OptionsValuesService {
           id: newOption.id,
           syncId: newOption.syncId,
         });
-      } catch (error : unknown) {
+      } catch (error: unknown) {
         const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: option.syncId,
-          error: formattedError
+          error: formattedError,
         });
       }
     }
@@ -65,7 +65,7 @@ export class OptionsValuesService {
   }
 
   async remove(id: number) {
-    const optionsValue = await this.findOne(id);
+    const optionsValue = await this.optionsValueRepository.findOneOrFail({ where: { id } });
     await this.optionsValueRepository.remove(optionsValue);
     return true;
   }

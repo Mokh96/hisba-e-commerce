@@ -41,6 +41,6 @@ export class OptionsController {
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.optionsService.remove(+id);
+    return this.optionsService.remove(id);
   }
 }
