@@ -55,32 +55,24 @@ export class ProductsController {
     return this.productsService.update(id, updateProductDto, files);
   }
 
+  @Get()
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() filterDto: ProductFilterDto,
+  ): Promise<PaginatedResult<DeepPartial<Product>>> {
+    return this.productsService.findAll(paginationDto, filterDto);
+  }
+
   /*  @Get()
-    findAll(
-      @I18n() i18n: I18nContext<I18nTranslations>,
-      @Query() paginationDto: PaginationDto,
-      @Query() filterDto: ProductFilterDto,
-    ): Promise<PaginatedResult<DeepPartial<Product>>> {
-      //const res = translate('common.greeting', { args: { name: 'test' } });
+    findAll(@I18n() i18n: I18nContext<I18nTranslations>) {
+      const res = translate('common.validation.FAILED', { args: { name: 'test' } });
       const res2 = i18n.t('common.greeting', { args: { name: 'test' } });
   
       return {
-        //res: res,
+        res,
         res2: res2,
-      } as any;
-      //return this.productsService.findAll(paginationDto, filterDto);
+      };
     }*/
-
-  @Get()
-  findAll(@I18n() i18n: I18nContext<I18nTranslations>) {
-    const res = translate('common.validation.FAILED', { args: { name: 'test' } });
-    const res2 = i18n.t('common.greeting', { args: { name: 'test' } });
-
-    return {
-      res,
-      res2: res2,
-    };
-  }
 
   @Get('price-range')
   async getPriceRange() {
