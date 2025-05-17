@@ -8,11 +8,11 @@ import * as Joi from 'joi';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [i18nConfig , databaseConfig],
+      load: [i18nConfig, databaseConfig],
       validationSchema: Joi.object({
         //database
         DATABASE_HOST: Joi.required(),
-        DATABASE_PORT: Joi.number().default(3306),
+        DATABASE_PORT: Joi.number(),
         DATABASE_USER: Joi.required(),
         DATABASE_PASSWORD: Joi.required(),
         DATABASE_NAME: Joi.required(),

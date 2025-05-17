@@ -27,6 +27,10 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ProductFilterDto } from 'src/modules/products/dto/product-filter.dto';
 import { DeepPartial } from 'typeorm';
+import { f } from 'src/modules/products/test';
+import { translate } from 'src/startup/i18n/i18n.provider';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller('products')
 export class ProductsController {
@@ -51,17 +55,36 @@ export class ProductsController {
     return this.productsService.update(id, updateProductDto, files);
   }
 
+  /*  @Get()
+    findAll(
+      @I18n() i18n: I18nContext<I18nTranslations>,
+      @Query() paginationDto: PaginationDto,
+      @Query() filterDto: ProductFilterDto,
+    ): Promise<PaginatedResult<DeepPartial<Product>>> {
+      //const res = translate('common.greeting', { args: { name: 'test' } });
+      const res2 = i18n.t('common.greeting', { args: { name: 'test' } });
+  
+      return {
+        //res: res,
+        res2: res2,
+      } as any;
+      //return this.productsService.findAll(paginationDto, filterDto);
+    }*/
+
   @Get()
-  findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query() filterDto: ProductFilterDto,
-  ): Promise<PaginatedResult<DeepPartial<Product>>> {
-    return this.productsService.findAll(paginationDto, filterDto);
+  findAll(@I18n() i18n: I18nContext<I18nTranslations>) {
+    const res = translate('common.validation.FAILED', { args: { name: 'test' } });
+    const res2 = i18n.t('common.greeting', { args: { name: 'test' } });
+
+    return {
+      res,
+      res2: res2,
+    };
   }
 
   @Get('price-range')
   async getPriceRange() {
-    return await this.productsService.getPriceRange()
+    return await this.productsService.getPriceRange();
   }
 
   @Get(':id')
