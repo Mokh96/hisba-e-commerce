@@ -1,0 +1,15 @@
+{
+  "accessForbidden": "Access forbidden",
+  "entityNotFound": "{entity} not found",
+  "entityDoesNotExist": "{entity} does not exist.",
+  "defaultEntity": "Entity",
+  "internalServerError": "Internal server error",
+  "unauthorizedAccess": "Unauthorized access",
+  "unknownColumn": "The request references a non-existent column.",
+  "columnDoesNotExist": "Column '{field}' does not exist.",
+  "invalidSqlSyntax": "Invalid SQL syntax. Please contact the backend team.",
+  "sqlParsingFailed": "SQL parsing failed due to malformed syntax.",
+  "notNullConstraintFailed": "Not-null constraint failed",
+  "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
+  "fileNotFound": "File not found"
+}

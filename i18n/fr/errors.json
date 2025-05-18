@@ -1,0 +1,15 @@
+{
+  "accessForbidden": "Accès interdit",
+  "entityNotFound": "{entity} introuvable",
+  "entityDoesNotExist": "{entity} n'existe pas.",
+  "defaultEntity": "Entité",
+  "internalServerError": "Erreur interne du serveur",
+  "unauthorizedAccess": "Accès non autorisé",
+  "unknownColumn": "La requête fait référence à une colonne inexistante.",
+  "columnDoesNotExist": "La colonne '{field}' n'existe pas.",
+  "invalidSqlSyntax": "Syntaxe SQL invalide. Veuillez contacter l'équipe backend.",
+  "sqlParsingFailed": "L'analyse SQL a échoué en raison d'une syntaxe malformée.",
+  "notNullConstraintFailed": "La contrainte not-null a échoué",
+  "fieldRequiredNotNull": "Le champ '{field}' est requis et ne peut pas être nul.",
+  "fileNotFound": "Fichier non trouvé"
+}

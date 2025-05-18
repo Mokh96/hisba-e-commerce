@@ -1,11 +1,3 @@
 {
-  "greeting": "Bonjour, {name}!",
-  "farewell": "Au revoir, {name}!",
-  "test": {
-    "key": "value",
-    "key2": "value2",
-    "key3": "value3",
-    "key4": "value4",
-    "key5": "value5"
-  }
+  "greeting": "Hello, {name}!"
 }

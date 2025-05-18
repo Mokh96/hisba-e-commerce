@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Public } from 'src/common/decorators/public.decorator';
 import { ImageParamsDto } from './dtos/image-params.dto';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 @Controller() // No prefix here
 export class ImageController {
@@ -21,7 +22,7 @@ export class ImageController {
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {
-      res.json({ error: 'File not found', status: 404 });
+      res.json({ error: translate('errors.fileNotFound'), status: 404 });
     }
   }
 }

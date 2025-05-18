@@ -5,6 +5,7 @@ import createErrorResponse from 'src/common/exceptions/helpers/create-error-resp
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 import { extractUnknownColumnField } from 'src/common/exceptions/helpers/mysql-parser.helper';
 import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 /**
  * Handles MySQL unknown column errors.
@@ -24,10 +25,17 @@ export function handleUnknownColumnError(exception: QueryFailedError, response: 
   return response.status(status).json(
     createErrorResponse({
       statusCode: status,
-      message: 'The request references a non-existent column.',
+      message: translate('errors.unknownColumn') as string,
       path: request.url,
       type: ErrorType.UnknownColumn,
-      errors: field ? [{ field, message: `Column '${field}' does not exist.` }] : [],
+      errors: field
+        ? [
+            {
+              field,
+              message: translate('errors.columnDoesNotExist', { args: { field } }) as string,
+            },
+          ]
+        : [],
     }),
   );
 }
@@ -38,9 +46,9 @@ export function generateUnknownColumnErrorMsg(exception: QueryFailedError): ApiE
 
   return createErrorResponse({
     statusCode: status,
-    message: 'The request references a non-existent column.',
+    message: translate('errors.unknownColumn') as string,
     type: ErrorType.UnknownColumn,
-    errors: field ? [{ field, message: `Column '${field}' does not exist.` }] : [],
+    errors: field ? [{ field, message: translate('errors.columnDoesNotExist', { args: { field } }) as string }] : [],
   });
 }
 

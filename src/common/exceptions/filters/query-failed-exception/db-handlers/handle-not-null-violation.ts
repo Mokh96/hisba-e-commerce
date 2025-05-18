@@ -5,6 +5,7 @@ import createErrorResponse from 'src/common/exceptions/helpers/create-error-resp
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
 import { extractNotNullField } from 'src/common/exceptions/helpers/mysql-parser.helper';
 import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 /**
  * Handles MySQL NOT NULL constraint violations.
@@ -23,13 +24,13 @@ export function handleNotNullViolation(exception: QueryFailedError, response: Re
   return response.status(status).json(
     createErrorResponse({
       statusCode: status,
-      message: 'Not-null constraint failed',
+      message: translate('errors.notNullConstraintFailed') as  string,
       path: request.url,
       type: ErrorType.NonNull,
       errors: [
         {
           field,
-          message: `The field '${field}' is required and cannot be null.`,
+          message: translate('errors.fieldRequiredNotNull', { args: { field } }) as string,
         },
       ],
     }),
@@ -42,12 +43,12 @@ export function generateNotNullViolationErrorMsg(exception: QueryFailedError): A
 
   return createErrorResponse({
     statusCode: status,
-    message: 'Not-null constraint failed',
+    message: translate('errors.notNullConstraintFailed') as string,
     type: ErrorType.NonNull,
     errors: [
       {
         field,
-        message: `The field '${field}' is required and cannot be null.`,
+        message: translate('errors.fileNotFound', { args: { field } }) as string,
       },
     ],
   });
