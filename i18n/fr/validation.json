@@ -49,7 +49,11 @@
   "isEnum": "{property} doit être une valeur énumérée valide",
   "isNumber": "{property} doit être un nombre",
   "arrayUnique": "{property} doit contenir uniquement des valeurs uniques",
-  "files": {
-
+  "files" : {
+    "missingSyncId": "syncId manquant dans {path}",
+    "required": "{fileType} est requis pour {entityPath}",
+    "invalidFileType": "{context} : type de fichier invalide {mimetype}. Types autorisés : {allowedTypes}",
+    "invalidMaxSize": "{context} : la taille du fichier dépasse la limite {maxSize}",
+    "invalidCountRange": "{context} : Attendu entre {minCount} et {maxCount} fichiers, reçu {filesLength}"
   }
 }

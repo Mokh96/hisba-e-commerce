@@ -13,8 +13,13 @@ export function getI18nService(): I18nService<I18nTranslations> {
   return i18nServiceRef;
 }
 
+/**
+ * translate a key into its localized string
+ * @example
+ * translate('common.greeting', { name: 'John Doe' }); // "Hello, John Doe!"
+ * @example
+ * translate('common.greeting', { name: 'John Doe', lang: 'de' }); // "Hallo, John Doe!"
+ */
 export function translate(key: I18nPath, options?: TranslateOptions) {
   return getI18nService().translate(key, options);
 }
-
-

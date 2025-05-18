@@ -51,8 +51,6 @@
   "arrayUnique": "{property} must contain only unique values",
   "requestBodyRequired": "Request body is required",
   "files": {
-    "missingSyncId": "missing syncId in {path}",
-    "required": "{fileType} is required for {entityPath}",
     "invalidFileType": "{context}: invalid file type {mimetype}. Allowed types: {allowedTypes}",
     "invalidMaxSize": "{context}: file size exceeds limit {maxSize}",
     "invalidCountRange": "{context}: Expected between {minCount} and {maxCount} files , got {filesLength}"

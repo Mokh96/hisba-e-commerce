@@ -15,7 +15,8 @@ import { SyncedEntity } from 'src/common/types/global.type';
 import { formatFileSize } from 'src/common/utils/file.util';
 import { FileValidationException } from 'src/common/exceptions/custom-exceptions/file-validation.exception';
 import { ErrorType } from 'src/common/exceptions/enums/error-type.enum';
-import { translate } from 'src/startup/i18n/i18n.provider';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
 
 //export const VALIDATION_RULES = 'VALIDATION_RULES';
 
@@ -26,15 +27,17 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
      console.log('instantiated ...');
    }*/
 
-  constructor(private readonly rules: ValidationRules) {}
+  constructor(private readonly rules: ValidationRules, private readonly i18n: I18nService<I18nTranslations>) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request: Request = context.switchToHttp().getRequest<Request>();
     const files = request.files as Express.Multer.File[];
     const body = request.body;
 
+    console.log(this.i18n.translate('validation.failed'));
+
     if (!body) {
-      throw new BadRequestException(translate('validation.requestBodyRequired'));
+      throw new BadRequestException('Request body is required.');
     }
 
     // Convert the main object to an array if necessary
@@ -55,7 +58,7 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
     path: string,
   ) {
     if (!entity.syncId) {
-      throw new BadRequestException(translate('validation.files.missingSyncId', { args: { path } }));
+      throw new BadRequestException(`Missing syncId in ${path}`);
     }
 
     this.validateEntityFiles(entity, files, rules.files, path);
@@ -96,8 +99,7 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
 
         throw new FileValidationException(
           entityPath,
-          //`${fileType} is required for ${entityPath}`,
-          translate('validation.files.required') as string,
+          `${fileType} is required for ${entityPath}`,
           ErrorType.FileTooFew,
           {
             fileType,
@@ -125,15 +127,7 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
 
       throw new FileValidationException(
         entityPath,
-        //`${context}: Expected between ${rule.minCount || 0} and ${rule.maxCount || '∞'} files, got ${files.length}`,
-        translate('validation.files.invalidCountRange', {
-          args: {
-            context,
-            minCount: rule.minCount || 0,
-            maxCount: rule.maxCount || '∞',
-            filesLength: files.length,
-          },
-        }) as string,
+        `${context}: Expected between ${rule.minCount || 0} and ${rule.maxCount || '∞'} files, got ${files.length}`,
         ErrorType.FileTooFew,
         {
           fileType,
@@ -147,15 +141,10 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
 
     files.forEach((file) => {
       if (!rule.allowedTypes.includes(file.mimetype as FileValidationRules['allowedTypes'][number])) {
+        //throw new InputValidationException(fileType, `${context}: Invalid file type ${file.mimetype}`);
         throw new FileValidationException(
           entityPath,
-          translate('validation.files.invalidFileType', {
-            args: {
-              context,
-              mimetype: file.mimetype,
-              allowedTypes: rule.allowedTypes.join(', '),
-            },
-          }) as string,
+          `${context}: Invalid file type ${file.mimetype}. Allowed types: ${rule.allowedTypes.join(', ')}`,
           ErrorType.FileInvalidType,
           {
             fileType,
@@ -167,15 +156,14 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
       }
 
       if (file.size > rule.maxSize) {
+        /*   throw new InputValidationException(
+             fileType,
+             `${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
+           );*/
+
         throw new FileValidationException(
           entityPath,
-          translate('validation.files.invalidMaxSize', {
-            args: {
-              context,
-              maxSize: formatFileSize(rule.maxSize),
-            },
-          }) as string,
-          //`${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
+          `${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
           ErrorType.FileTooLarge,
           {
             fileType,
@@ -186,7 +174,6 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
         );
       }
     });
-    //`${context}: File size exceeds limit (${formatFileSize(rule.maxSize)}).`,
   }
 
   private getFilesByType(files: Express.Multer.File[], type: string, syncId: SyncedEntity['syncId']) {

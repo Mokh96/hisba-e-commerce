@@ -5,6 +5,8 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
+  NestInterceptor,
   Param,
   ParseIntPipe,
   Patch,
@@ -31,13 +33,19 @@ import { f } from 'src/modules/products/test';
 import { translate } from 'src/startup/i18n/i18n.provider';
 import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { PRODUCT_VALIDATION_INTERCEPTOR } from 'src/common/file-validation/file-validation.tokens';
+import { UseInjectedInterceptor } from 'src/common/decorators/use-injected-interceptor.decorator';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+  ) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor(), productValidationRulesInterceptor)
+  //@UseInterceptors(AnyFilesInterceptor())
+  //@UseInjectedInterceptor(PRODUCT_VALIDATION_INTERCEPTOR)
   async create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
     return await this.productsService.create(createProductDto, files);
   }

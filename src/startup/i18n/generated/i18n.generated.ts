@@ -82,7 +82,14 @@ export type I18nTranslations = {
         "isEnum": string;
         "isNumber": string;
         "arrayUnique": string;
-        "files": {};
+        "requestBodyRequired": string;
+        "files": {
+            "invalidFileType": string;
+            "invalidMaxSize": string;
+            "invalidCountRange": string;
+            "missingSyncId": string;
+            "required": string;
+        };
     };
 };
 /* prettier-ignore */

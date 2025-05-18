@@ -23,7 +23,9 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
     const { acceptLanguageKey, fallbackLanguage } = this.i18nConfiguration;
     const fromHeader = request.headers[acceptLanguageKey] as string;
-    const lang: string = fromHeader.split(',')[0] || fallbackLanguage;
+    console.log("from header",fromHeader);
+    //const lang: string = fromHeader.split(',')[0] || fallbackLanguage;
+    const lang: string = fromHeader || fallbackLanguage;
 
     const error = this.buildErrorResponse(exception, lang, request.url);
     response.status(error.statusCode).json(error);

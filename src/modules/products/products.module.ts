@@ -9,10 +9,18 @@ import { FileTypesEnum } from 'src/modules/files/enums/file-types.enum';
 import { CategoriesModule } from 'src/modules/categories/categories.module';
 import { BrandsModule } from 'src/modules/brands/brands.module';
 import { FiltersController } from 'src/modules/products/filters.controller';
+import { FileValidationInterceptorModule } from 'src/common/file-validation/file-validation.module';
+import { createProductValidationRules } from 'src/modules/products/config/file-validation.config';
+import { PRODUCT_VALIDATION_INTERCEPTOR } from 'src/common/file-validation/file-validation.tokens';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]), CategoriesModule, BrandsModule],
-  controllers: [ProductsSyncController, ProductsController , FiltersController],
+  imports: [
+    TypeOrmModule.forFeature([Product]),
+    CategoriesModule,
+    BrandsModule,
+    FileValidationInterceptorModule.register(createProductValidationRules, PRODUCT_VALIDATION_INTERCEPTOR),
+  ],
+  controllers: [ProductsSyncController, ProductsController, FiltersController],
   providers: [
     ProductsService,
     {
