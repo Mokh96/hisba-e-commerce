@@ -1,4 +1,3 @@
-import { ClientSync } from 'src/common-entities/client.common.entity';
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { ShippingAddress } from 'src/modules/shipping-addresses/entities/shipping-address.entity';

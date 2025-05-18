@@ -25,16 +25,6 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const fromHeader = request.headers[acceptLanguageKey] as string;
     const lang: string = fromHeader.split(',')[0] || fallbackLanguage;
 
-    /*    console.log({
-          //@ts-ignore
-          lang,
-          //h: request.headers['accept-language']?.split(',')[0],
-          //h2: request.headers['accept-language'],
-          fallbackLanguage: this.i18nConfiguration.fallbackLanguage,
-          headers: request.headers,
-    
-        });*/
-
     const error = this.buildErrorResponse(exception, lang, request.url);
     response.status(error.statusCode).json(error);
   }
@@ -85,8 +75,10 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   }
 
   private translateStringMessage(raw: string, field: string, lang: string): string {
-    //todo : return  original message if the selected lag = default lang
-    // already a valid i18n key
+    if (lang === this.i18nConfiguration.fallbackLanguage) {
+      return raw;
+    }
+
     if (raw.startsWith('validation.') || raw.startsWith('validation.')) {
       return this.i18n.translate(raw as keyof I18nTranslations, { lang, args: { property: field } });
     }
