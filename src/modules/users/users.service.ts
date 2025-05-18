@@ -8,12 +8,15 @@ import { FindOptionsWhere, FindOptionsWhereProperty, In, Repository } from 'type
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly i18n: I18nService<I18nTranslations>
   ) {}
 
   async test() {
@@ -119,7 +122,7 @@ export class UsersService {
     //Compare the old password with the password in DB
     const passwordMatch = await bcrypt.compare(oldPassword, user.password);
     if (!passwordMatch) {
-      throw new UnauthorizedException('Old password is incorrect');
+      throw new UnauthorizedException(this.i18n.translate('auth.invalidPassword'));
     }
 
     //Change user's password

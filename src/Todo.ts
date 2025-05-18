@@ -8,3 +8,5 @@
 //security
 //logs
 //filter: auto inject
+//add latitude and longitude to order
+//upload thumbnail image (products)

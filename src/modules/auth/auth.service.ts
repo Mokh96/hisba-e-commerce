@@ -9,15 +9,18 @@ import { ClientsService } from 'src/modules/clients/clients.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from 'src/modules/clients/entities/client.entity';
 import { Repository } from 'typeorm';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(Client)
+    private clientRepository: Repository<Client>,
     private usersService: UsersService,
     private jwtService: JwtService,
     private clientService: ClientsService,
-    @InjectRepository(Client)
-    private clientRepository: Repository<Client>,
+    private readonly i18n: I18nService<I18nTranslations>
   ) {}
 
   async logIn(authDto: AuthDto) {
@@ -31,7 +34,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+      throw new UnauthorizedException(this.i18n.translate('auth.invalidPassword'));
     }
 
     const payload: CurrentUserData = {
@@ -65,7 +68,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, company.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(this.i18n.translate('auth.invalidCredentials'));
     }
 
     const { id, roleId } = company;

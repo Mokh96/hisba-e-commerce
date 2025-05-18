@@ -11,6 +11,7 @@ export type I18nTranslations = {
         "invalidRefreshToken": string;
         "invalidEmail": string;
         "invalidPassword": string;
+        "invalidOldPassword": string;
         "invalidUsername": string;
     };
     "common": {
