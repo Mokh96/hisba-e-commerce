@@ -24,23 +24,14 @@ import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { productValidationRulesInterceptor } from 'src/modules/products/config/file-validation.config';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
-import { Order } from 'src/modules/orders/entities/order.entity';
 import { Product } from 'src/modules/products/entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ProductFilterDto } from 'src/modules/products/dto/product-filter.dto';
 import { DeepPartial } from 'typeorm';
-import { f } from 'src/modules/products/test';
-import { translate } from 'src/startup/i18n/i18n.provider';
-import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
-import { I18n, I18nContext } from 'nestjs-i18n';
-import { PRODUCT_VALIDATION_INTERCEPTOR } from 'src/common/file-validation/file-validation.tokens';
-import { UseInjectedInterceptor } from 'src/common/decorators/use-injected-interceptor.decorator';
 
 @Controller('products')
 export class ProductsController {
-  constructor(
-    private readonly productsService: ProductsService,
-  ) {}
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor(), productValidationRulesInterceptor)
@@ -70,17 +61,6 @@ export class ProductsController {
   ): Promise<PaginatedResult<DeepPartial<Product>>> {
     return this.productsService.findAll(paginationDto, filterDto);
   }
-
-  /*  @Get()
-    findAll(@I18n() i18n: I18nContext<I18nTranslations>) {
-      const res = translate('common.validation.FAILED', { args: { name: 'test' } });
-      const res2 = i18n.t('common.greeting', { args: { name: 'test' } });
-  
-      return {
-        res,
-        res2: res2,
-      };
-    }*/
 
   @Get('price-range')
   async getPriceRange() {

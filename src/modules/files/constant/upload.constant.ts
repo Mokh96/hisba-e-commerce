@@ -18,6 +18,11 @@ export const THUMBNAIL_FOLDER_NAME = 'thumbnails';
 export const IMAGE_MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
 /**
+ * thumbnail max size in bytes
+ * */
+export const THUMBNAIL_MAX_SIZE = 500 * 1024; // 500KB
+
+/**
  * Maximum allowed size for PDF files interceptors bytes.
  */
 export const PDF_MAX_SIZE = 5 * 10 * 1024 * 1024; // 50MB

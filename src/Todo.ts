@@ -9,4 +9,5 @@
 //logs
 //filter: auto inject
 //add latitude and longitude to order
-//upload thumbnail image (products)
+//upload thumbnail image (products and articles)
+//Verify that option values belong to the product

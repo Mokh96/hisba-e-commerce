@@ -41,10 +41,19 @@ export class ProductsService {
     try {
       // Step 1: Upload Product Image
       let defaultImgPath: Product['defaultImgPath'] = null;
+      let thumbnailImg: Product['thumbnail'] = null;
+
       const productFile = getFileBySyncId(files, FileUploadEnum.DefaultImage, createProductDto.syncId);
       if (productFile) {
         const uploaded = await this.uploadManager.uploadFiles({ [FileUploadEnum.DefaultImage]: [productFile] });
         defaultImgPath = uploaded[0].path;
+        allUploadedFiles.push(...uploaded);
+      }
+
+      const thumbnailFile = getFileBySyncId(files, FileUploadEnum.Thumbnail, createProductDto.syncId);
+      if (thumbnailFile) {
+        const uploaded = await this.uploadManager.uploadFiles({ [FileUploadEnum.Thumbnail]: [thumbnailFile] });
+        thumbnailImg = uploaded[0].path;
         allUploadedFiles.push(...uploaded);
       }
 
@@ -79,6 +88,7 @@ export class ProductsService {
       const product = this.productRepository.create({
         ...createProductDto,
         defaultImgPath,
+        thumbnail: thumbnailImg,
         gallery,
         articles,
         minPrice,

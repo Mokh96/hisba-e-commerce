@@ -12,6 +12,7 @@ const createDefaultFileMap = (): Record<FileUploadEnum, number> => ({
   [FileUploadEnum.Image]: 0,
   [FileUploadEnum.Images]: 0,
   [FileUploadEnum.Pdf]: 0,
+  [FileUploadEnum.Thumbnail]: 0,
 });
 
 @Injectable()

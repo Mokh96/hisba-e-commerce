@@ -90,7 +90,9 @@ export class DynamicFileValidationInterceptor implements NestInterceptor {
       const matchingFiles = this.getFilesByType(files, fileType, entity.syncId);
       const isRequired = rule.minCount > 0;
 
+      console.log('rules', this.rules);
       if (isRequired && matchingFiles.length === 0) {
+
         //example :image is required for [categories][1]
         //throw new InputValidationException(fileType, `${fileType} is required for ${entityPath}`);
 
