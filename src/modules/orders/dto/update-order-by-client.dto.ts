@@ -14,3 +14,5 @@ export class UpdateOrderByClientDto extends IntersectionType(PartialType(BaseCre
   @Type(() => ToCreateOrderItemDto)
   newOrderItems?: ToCreateOrderItemDto[];
 }
+
+

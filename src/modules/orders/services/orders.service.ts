@@ -200,7 +200,7 @@ export class OrdersService {
     });
   }
 
-  async updateOrderByClient(id: number, dto: UpdateOrderByClientDto, user: CurrentUserData) {
+  async updateOrderByClient(id: number, updateOrderByClientDto: UpdateOrderByClientDto, user: CurrentUserData) {
     return await this.dataSource.transaction(async (manager) => {
       const orderRepo = manager.withRepository(this.orderRepository);
       const itemRepo = manager.withRepository(this.orderItemRepository);
@@ -213,13 +213,13 @@ export class OrdersService {
 
       // Only allow updates for orders that are still in NEW status
       if (existingOrder.statusId !== OrderStatus.NEW) {
-        throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be updated`);
+        throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be updated`);//todo : i18n
       }
 
       // Step 1: Calculate new order items
       const existingItems = existingOrder.orderItems;
-      const updatedItems = dto.orderItems ?? [];
-      const newItems = dto.newOrderItems ?? [];
+      const updatedItems = updateOrderByClientDto.orderItems ?? [];
+      const newItems = updateOrderByClientDto.newOrderItems ?? [];
 
       const mergedUpdatedItems = mergeOrderItems(existingItems, updatedItems);
       const combinedItems = [...mergedUpdatedItems, ...newItems];
@@ -236,7 +236,7 @@ export class OrdersService {
 
       return await orderRepo.save({
         id,
-        ...dto,
+        ...updateOrderByClientDto,
         amountHt: roundMoney(productTotalHt),
         netAmountTtc: roundMoney(productTotalTtc),
         netToPay: roundMoney(productTotalTtc),
@@ -249,7 +249,7 @@ export class OrdersService {
   async remove(id: number, user: CurrentUserData) {
     const order = await this.orderRepository.findOneByOrFail({ id, clientId: user.client?.id });
     if (order.statusId !== OrderStatus.NEW) {
-      throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be deleted`);
+      throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be deleted`);//todo : i18n
     }
     await this.orderRepository.remove(order);
   }

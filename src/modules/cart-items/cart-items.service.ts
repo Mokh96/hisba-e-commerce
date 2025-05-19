@@ -24,7 +24,9 @@ export class CartItemsService {
     const [data, totalItems] = await this.cartItemRepository.findAndCount({
       where: { clientId: activeUserData.client.id },
       relations: {
-        article: true,
+        article: {
+          optionValues: true,
+        },
       },
       select: {
         article: {
@@ -33,6 +35,10 @@ export class CartItemsService {
           imgPath: true,
           price: true,
           tvaPercentage: true,
+          optionValues: {
+            id: true,
+            value: true,
+          },
         },
       },
     });
