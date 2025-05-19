@@ -13,8 +13,9 @@ import { Town } from 'src/modules/system-entities/entities/town.entity';
 import { OrderStatus as OrderStatusEnum } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod as PaymentMethodEnum } from 'src/modules/payment-methods/enums/payment.method';
 import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
+import { WithGpsCoordinates } from 'src/common/entities/gps-coordinates.entity';
 
-const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
+const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(WithGpsCoordinates(BaseEntity))));
 
 @Entity()
 export class Order extends MixedEntities {

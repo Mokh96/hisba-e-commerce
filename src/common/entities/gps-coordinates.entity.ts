@@ -10,7 +10,7 @@ export function WithGpsCoordinates<TBase extends MixinConstructor>(Base: TBase) 
       scale: 8,
       nullable: true,
     })
-    latitude: number;
+    latitude: number | null;
 
     @Column({
       name: 'longitude',
@@ -19,7 +19,7 @@ export function WithGpsCoordinates<TBase extends MixinConstructor>(Base: TBase) 
       scale: 8,
       nullable: true,
     })
-    longitude: number;
+    longitude: number | null;
   }
 
   return GpsEntity;

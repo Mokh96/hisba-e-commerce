@@ -13,6 +13,7 @@ import {
 import { ORDER_ITEM_FIELD_LENGTHS } from 'src/modules/order-items/config/order-items.config';
 
 export class CreateCartItemDto {
+  @IsNotEmpty()
   @IsInt()
   @IsPositive()
   articleId: number;
@@ -22,8 +23,8 @@ export class CreateCartItemDto {
   @Min(0)
   offset: number;
 
-  @IsNumber()
   @IsNotEmpty()
+  @IsInt()
   @IsPositive()
   quantity: number;
 

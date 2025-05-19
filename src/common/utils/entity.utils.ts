@@ -8,7 +8,7 @@ interface EntityWithId<IdType extends string | number = string | number> {
 
 export async function getEntitiesByIds<T extends EntityWithId>(
   repository: Repository<T>,
-  ids: T['id'][],
+  ids: T['id'][] =[],
   options: FindManyOptions<T> = {},
 ): Promise<T[]> {
   if (ids.length === 0) {

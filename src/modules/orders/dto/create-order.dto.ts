@@ -18,17 +18,18 @@ import { OneOfFields } from 'src/common/decorators/validators/one-of-fields.deco
 import { CartItem } from 'src/modules/cart-items/entities/cart-item.entity';
 import { OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { PaymentMethod } from 'src/modules/payment-methods/enums/payment.method';
+import { gpsCoordinatesDto } from 'src/common/dtos/gps-coordinates/gps-coordinates.dto';
 
-export class BaseCreateOrder {
+export class BaseCreateOrder extends gpsCoordinatesDto {
   @IsOptional()
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.NOTE)
   note?: string;
 
-  @IsOptional()
+/*  @IsOptional()
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.REF)
-  ref?: string;
+  ref?: string;*/
 
   @IsString()
   @IsNotEmpty()
