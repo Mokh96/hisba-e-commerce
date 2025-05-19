@@ -21,8 +21,6 @@ import generateServerErrorMsg from 'src/common/exceptions/filters/server-excepti
 import generateBadRequestErrorMsg from 'src/common/exceptions/filters/bad-request-exception/bad-request-error-msg.generator';
 
 export function formatCaughtException(exception: unknown): ApiErrorResponse {
-  //console.log('formatCaughtException', exception);
-
   if (exception instanceof QueryFailedError) {
     const driverError = exception.driverError;
     const generatorErrorMsg: (exception: QueryFailedError) => ApiErrorResponse =
@@ -31,6 +29,9 @@ export function formatCaughtException(exception: unknown): ApiErrorResponse {
     return generatorErrorMsg(exception);
   }
 
+  if (exception instanceof EntityNotFoundError || exception instanceof NotFoundException) {
+    return generateNotFoundErrorMsg(exception);
+  }
   if (exception instanceof UnauthorizedException) {
     return generateUnauthorizedErrorMsg(exception);
   }

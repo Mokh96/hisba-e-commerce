@@ -13,6 +13,7 @@ export function formatFileSize(bytes: number) {
   return `${size.toFixed(precision)} ${units[i]}`;
 }
 
+// TODO: use i18n for all functions in this file
 export function validateFileCount(params: {
   fieldName: string;
   uploadedFiles: Express.Multer.File[];

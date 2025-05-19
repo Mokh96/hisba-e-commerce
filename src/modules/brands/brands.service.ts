@@ -105,6 +105,7 @@ export class BrandsService {
 
     const brand = await this.brandRepository.findOneByOrFail({ id });
 
+    console.log({brand});
     const initialImgPath = brand.imgPath;
     let uploadedFiles = [];
     let newPath: string | undefined;
@@ -155,6 +156,7 @@ export class BrandsService {
         });
         response.successes.push(brand);
       } catch (error: unknown) {
+        //console.log(error);
         const formattedError = formatCaughtException(error);
 
         response.failures.push({

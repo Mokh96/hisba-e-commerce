@@ -35,8 +35,8 @@ import i18nConfig from 'src/core/config/i18n.config';
     },
     { provide: APP_FILTER, useClass: InputValidationFilter },
     { provide: APP_FILTER, useClass: FileValidationFilter },
-    { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },//
-    { provide: APP_FILTER, useClass: ForbiddenExceptionFilter },//
+    { provide: APP_FILTER, useClass: UnauthorizedExceptionFilter },
+    { provide: APP_FILTER, useClass: ForbiddenExceptionFilter },
   ],
 })
 export class ExceptionModule {}
