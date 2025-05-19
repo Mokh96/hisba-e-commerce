@@ -10,8 +10,9 @@ import { BaseEntity } from 'src/common/entities/base-entity.entity';
 import { ProductGallery } from 'src/modules/product-galleries/entities/product-gallery.entity';
 import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
 import { Filterable, FilterType } from 'src/common/decorators/metadata/filterable.decorator';
+import { WithThumbnail } from 'src/common/entities/thumbnail.entity';
 
-const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
+const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(WithThumbnail(BaseEntity))));
 
 @Entity()
 export class Product extends MixedEntities {
@@ -96,3 +97,5 @@ export class Product extends MixedEntities {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 }
+
+
