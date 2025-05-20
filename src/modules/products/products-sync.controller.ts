@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Patch, Res, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { CreateProductDto, CreateSyncProductDto } from './dto/create-product.dto';
-import { UpdateProductDto, UpdateSyncProductDto } from './dto/update-product.dto';
+import {  CreateSyncProductDto } from './dto/create-product.dto';
+import {  UpdateSyncProductDto } from './dto/update-product.dto';
 import { Response } from 'express';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataArrayPipe } from 'src/common/pipes/parse-form-data-array.pipe';

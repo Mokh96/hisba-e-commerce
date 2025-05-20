@@ -39,11 +39,12 @@ export class ClientCommonDto {
   @IsString()
   note: string;
 
-  @IsPhoneNumber('DZ')
+  @IsOptional()
+  @IsString()
   phone: string;
 
   @IsOptional()
-  @IsMobilePhone('ar-DZ')
+  @IsString()
   mobile: string;
 
   @IsOptional()
@@ -51,7 +52,7 @@ export class ClientCommonDto {
   email: string;
 
   @IsOptional()
-  @IsPhoneNumber()
+  @IsString()
   fax: string;
 
   @IsOptional()

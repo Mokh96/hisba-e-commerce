@@ -114,6 +114,7 @@ export class ProductsService {
         response.successes.push(product);
         //response.successes.push({ id: product.id, syncId: product.syncId });
       } catch (error: unknown) {
+        console.log('error', error);
         const formattedError = formatCaughtException(error);
         response.failures.push({
           syncId: createSyncProductsDto[i].syncId,

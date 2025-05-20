@@ -20,7 +20,7 @@ export const createProductValidationRules: ValidationRules = {
     articles: {
       files: {
         [FileUploadEnum.DefaultImage]: {
-          ...imageUploadRules,
+          ...optionalImageUploadRules,
         },
       },
     },
