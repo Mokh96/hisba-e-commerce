@@ -22,6 +22,8 @@
     "dataTooLongConstraintFailed": "Data too long for column",
     "dataTooLongConstraintError": "The value for '{field}' is too long and exceeds the allowed limit.",
     "notNullConstraintFailed": "Not-null constraint failed",
-    "fieldRequiredNotNull": "The field '{field}' is required and cannot be null."
+    "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
+    "invalidValueForField": "Invalid value for field",
+    "invalidValueForFieldWithField": "The provided value for '{field}' is invalid or of incorrect type."
   }
 }

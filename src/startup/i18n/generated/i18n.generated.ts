@@ -42,6 +42,8 @@ export type I18nTranslations = {
             "dataTooLongConstraintError": string;
             "notNullConstraintFailed": string;
             "fieldRequiredNotNull": string;
+            "invalidValueForField": string;
+            "invalidValueForFieldWithField": string;
             "": string;
         };
         "notNullConstraintFailed": string;
