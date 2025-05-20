@@ -16,6 +16,7 @@ export type I18nTranslations = {
     };
     "common": {
         "greeting": string;
+        "unknown": string;
     };
     "errors": {
         "accessForbidden": string;
@@ -24,10 +25,6 @@ export type I18nTranslations = {
         "defaultEntity": string;
         "internalServerError": string;
         "unauthorizedAccess": string;
-        "unknownColumn": string;
-        "columnDoesNotExist": string;
-        "invalidSqlSyntax": string;
-        "sqlParsingFailed": string;
         "fieldRequiredNotNull": string;
         "fileNotFound": string;
         "db": {
@@ -46,8 +43,19 @@ export type I18nTranslations = {
             "invalidValueForFieldWithField": string;
             "dataOutOfRangeConstraint": string;
             "dataOutOfRangeConstraintError": string;
+            "invalidSqlSyntax": string;
+            "sqlParsingFailed": string;
+            "deadlockDetected": string;
+            "deadlockDetectedError": string;
+            "lockTimeOutError": string;
+            "columnDoesNotExist": string;
+            "unknownColumn": string;
             "": string;
         };
+        "unknownColumn": string;
+        "columnDoesNotExist": string;
+        "invalidSqlSyntax": string;
+        "sqlParsingFailed": string;
         "notNullConstraintFailed": string;
     };
     "validation": {

@@ -1,6 +1,3 @@
-import {
-  handleUnknownColumnError
-} from 'src/common/exceptions/filters/query-failed-exception/db-handlers/handle-unknown-column-error';
 
 /**
  * For example, if you try to create a new user with a username that already exists,

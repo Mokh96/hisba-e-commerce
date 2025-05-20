@@ -17,6 +17,23 @@ import { translate } from 'src/startup/i18n/i18n.provider';
 export function generateDataOutOfRangeErrorMsg(exception: QueryFailedError): ApiErrorResponse {
   const status = HttpStatus.BAD_REQUEST;
 
+  const driverError = exception.driverError;
+  let field = 'unknown';
+  let value = 'unknown';
+
+  if (driverError && typeof driverError.message === 'string') {
+    // Match "Data too long for column 'column_name' at row ..."
+    const match = driverError.message.match(/Data too long for column '(.+?)'/);
+    if (match) {
+      field = match[1];
+    }
+  }
+
+  // If available, you might find the value inside parameters
+  if (Array.isArray(driverError.parameters) && driverError.parameters.length > 0) {
+    value = driverError.parameters[0];
+  }
+
   return createErrorResponse({
     statusCode: status,
     message: translate('errors.db.dataOutOfRangeConstraint'),
@@ -24,7 +41,7 @@ export function generateDataOutOfRangeErrorMsg(exception: QueryFailedError): Api
     errors: [
       {
         field: 'value',
-        message: translate('errors.db.dataOutOfRangeConstraintError'),
+        message: translate('errors.db.dataOutOfRangeConstraintError' ,{ args: { field, value } }),
       },
     ],
   });

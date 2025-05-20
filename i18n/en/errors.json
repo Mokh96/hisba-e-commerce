@@ -5,10 +5,6 @@
   "defaultEntity": "Entity",
   "internalServerError": "Internal server error",
   "unauthorizedAccess": "Unauthorized access",
-  "unknownColumn": "The request references a non-existent column.",
-  "columnDoesNotExist": "Column '{field}' does not exist.",
-  "invalidSqlSyntax": "Invalid SQL syntax. Please contact the backend team.",
-  "sqlParsingFailed": "SQL parsing failed due to malformed syntax.",
   "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
   "fileNotFound": "File not found",
   "db": {
@@ -26,6 +22,13 @@
     "invalidValueForField": "Invalid value for field",
     "invalidValueForFieldWithField": "The provided value for '{field}' is invalid or of incorrect type.",
     "dataOutOfRangeConstraint": "Provided data exceeds the allowed range.",
-    "dataOutOfRangeConstraintError": "A value is too large or too small for its column type."
+    "dataOutOfRangeConstraintError": "The value {value} for '{field}' is too large or too small for its column type.",
+    "invalidSqlSyntax": "Invalid SQL syntax. Please contact the backend team.",
+    "sqlParsingFailed": "SQL parsing failed due to malformed syntax.",
+    "deadlockDetected": "A database deadlock occurred. Please retry the operation.",
+    "deadlockDetectedError": "Deadlock detected. Please retry the operation.",
+    "lockTimeOutError": "The database operation timed out while waiting for a lock.",
+    "columnDoesNotExist": "Column '{field}' does not exist.",
+    "unknownColumn": "The request references a non-existent column."
   }
 }
