@@ -49,7 +49,6 @@ export function generateForeignKeyViolationMessage(exception: QueryFailedError):
   return createErrorResponse({
     statusCode: status,
     message: 'Foreign key constraint failed',
-    //path: request.url,
     type: ErrorType.ForeignKey,
     errors: [
       {

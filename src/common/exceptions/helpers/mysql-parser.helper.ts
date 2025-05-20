@@ -59,6 +59,19 @@ export function extractDuplicateEntryValue(message: string): string | undefined 
   return match ? match[1] : undefined;
 }
 
+
+/**
+ * Extracts the table name from a MySQL error message.
+ * Example: "Duplicate entry 'test' for key 'users.username'"
+ *
+ * @param errorMessage - The error message string to parse.
+ * @returns The extracted table name, or `null` if not found.
+ */
+export function extractTableName(errorMessage: string): string | null {
+  const match = errorMessage.match(/key\s+'(\w+)\.(\w+)'/);
+  return match ? match[1] : null;
+}
+
 export function extractForeignKeyInfo(message: string) {
   const match = message.match(/FOREIGN KEY \(`(.+?)`\)/);
   const field = match ? match[1] : 'unknown';
