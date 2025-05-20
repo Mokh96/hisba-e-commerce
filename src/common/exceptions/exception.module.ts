@@ -3,7 +3,6 @@ import { APP_FILTER } from '@nestjs/core';
 import { QueryFailedExceptionFilter } from './filters/query-failed-exception/query-failed-exception.filter';
 import { ServerExceptionFilter } from 'src/common/exceptions/filters/server-exception/server-exception';
 import { NotFoundExceptionFilter } from 'src/common/exceptions/filters/not-found-exception/not-found-exception.filter';
-import { BadRequestExceptionFilter } from 'src/common/exceptions/filters/bad-request-exception/bad-request-exception-filter';
 import { InputValidationFilter } from 'src/common/exceptions/filters/input-validation.exception.filter';
 import { FileValidationFilter } from 'src/common/exceptions/filters/file-validation.filter';
 import { UnauthorizedExceptionFilter } from 'src/common/exceptions/filters/unauthorized-exception/unauthorized-exception.filter';
