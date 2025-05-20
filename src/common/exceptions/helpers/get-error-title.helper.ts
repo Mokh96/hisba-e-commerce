@@ -1,19 +1,20 @@
 import { HttpStatus } from '@nestjs/common';
+import { translate } from 'src/startup/i18n/i18n.provider';
+import { I18nMsgType } from 'src/startup/i18n/i18n.types';
 
-function getErrorTitle(status: HttpStatus): string {
-  const titles: Record<number, string> = {
-    [HttpStatus.BAD_REQUEST]: 'Bad Request',
-    [HttpStatus.REQUEST_TIMEOUT]: 'Request Timeout',
-    [HttpStatus.UNAUTHORIZED]: 'Unauthorized',
-    [HttpStatus.FORBIDDEN]: 'Forbidden',
-    [HttpStatus.NOT_FOUND]: 'Not Found',
-    [HttpStatus.CONFLICT]: 'Conflict',
-    [HttpStatus.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
-    [HttpStatus.TOO_MANY_REQUESTS]: 'Too Many Requests',
-    [HttpStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
+function getErrorTitle(status: HttpStatus): I18nMsgType {
+  const titles: Record<number, I18nMsgType> = {
+    [HttpStatus.BAD_REQUEST]: translate('errors.badRequest'),
+    [HttpStatus.REQUEST_TIMEOUT]: translate('errors.requestTimeout'),
+    [HttpStatus.UNAUTHORIZED]: translate('errors.unauthorizedAccess'),
+    [HttpStatus.FORBIDDEN]: translate('errors.forbiddenAccess'),
+    [HttpStatus.NOT_FOUND]: translate('errors.notFound'),
+    [HttpStatus.CONFLICT]: translate('errors.conflict'),
+    [HttpStatus.UNPROCESSABLE_ENTITY]: translate('errors.unprocessableEntity'),
+    [HttpStatus.TOO_MANY_REQUESTS]: translate('errors.tooManyRequests'),
+    [HttpStatus.INTERNAL_SERVER_ERROR]: translate('errors.internalServerError'),
   };
-  return titles[status] ?? 'Error';
+  return titles[status] ?? translate('errors.error');
 }
-
 
 export default getErrorTitle;

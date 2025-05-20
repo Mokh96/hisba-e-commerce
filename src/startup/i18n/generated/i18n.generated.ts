@@ -19,13 +19,19 @@ export type I18nTranslations = {
         "unknown": string;
     };
     "errors": {
-        "accessForbidden": string;
+        "error": string;
+        "badRequest": string;
+        "requestTimeout": string;
+        "unauthorizedAccess": string;
+        "forbiddenAccess": string;
+        "notFound": string;
+        "conflict": string;
+        "unprocessableEntity": string;
+        "tooManyRequests": string;
+        "internalServerError": string;
         "entityNotFound": string;
         "entityDoesNotExist": string;
         "defaultEntity": string;
-        "internalServerError": string;
-        "unauthorizedAccess": string;
-        "fieldRequiredNotNull": string;
         "fileNotFound": string;
         "db": {
             "uniqueConstraintFailed": string;
@@ -52,11 +58,13 @@ export type I18nTranslations = {
             "unknownColumn": string;
             "": string;
         };
+        "accessForbidden": string;
         "unknownColumn": string;
         "columnDoesNotExist": string;
         "invalidSqlSyntax": string;
         "sqlParsingFailed": string;
         "notNullConstraintFailed": string;
+        "fieldRequiredNotNull": string;
     };
     "validation": {
         "invalidBoolean": string;

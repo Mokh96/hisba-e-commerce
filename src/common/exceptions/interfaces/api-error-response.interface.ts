@@ -8,7 +8,7 @@ export interface FieldError {
 
 export interface ApiErrorResponse {
   statusCode: number;
-  error: string;
+  error: string | I18nMsgType;//use string if no i18n;
   message: string | I18nMsgType;//use string if no i18n
   timestamp: string;
   path: string;

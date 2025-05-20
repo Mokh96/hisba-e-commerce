@@ -7,7 +7,7 @@ import { translate } from 'src/startup/i18n/i18n.provider';
 function generateServerErrorMsg<E extends unknown>(exception: E): ApiErrorResponse {
   return createErrorResponse({
     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    message: translate('errors.internalServerError') as string,
+    message: translate('errors.internalServerError') ,
     type: ErrorType.Internal,
   });
 }

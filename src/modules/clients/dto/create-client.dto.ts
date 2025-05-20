@@ -18,9 +18,9 @@ export class CreateClientBaseDto extends ClientCommonDto {
   @IsString()
   ref: string;
 
-  @IsOptional()
+/*  @IsOptional()
   @IsString()
-  imgPath: string;
+  imgPath: string;*/
 
   @IsOptional()
   @IsString()
