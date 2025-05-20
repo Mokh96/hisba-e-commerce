@@ -16,7 +16,7 @@ import generateUniqueViolationErrorMsg from 'src/common/exceptions/filters/query
 
 const dbErrorHandlers: Record<string, (exception: QueryFailedError) => ApiErrorResponse> = {
   ER_DUP_ENTRY: generateUniqueViolationErrorMsg, //unique constraint
-  ER_NO_REFERENCED_ROW_2: generateForeignKeyViolationMessage,
+  ER_NO_REFERENCED_ROW_2: generateForeignKeyViolationMessage,//foreign key
   ER_ROW_IS_REFERENCED_2: generateForeignKeyDeletionErrorMessage,
   ER_DATA_TOO_LONG: generateDataTooLongErrorMsg,
   ER_BAD_NULL_ERROR: generateNotNullViolationErrorMsg,

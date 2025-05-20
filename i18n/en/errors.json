@@ -18,8 +18,7 @@
     "uniqueConstraintErrorWithValue": "The ${label} '${value}' is already taken in ${tableName} table",
     "foreignKeyConstraintFailed": "Foreign key constraint failed",
     "foreignKeyConstraintError": "The provided value for '${field}' does not reference an existing record.",
-    "notNullConstraintFailed": "Not-null constraint failed",
-    "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
-    "fileNotFound": "File not found"
+    "foreignKeyDeletionConstraintFailed": "Foreign key deletion constraint failed",
+    "foreignKeyDeletionConstraintError": "Cannot delete or update '${field}' because it is still referenced by other records."
   }
 }
