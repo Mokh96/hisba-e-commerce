@@ -95,8 +95,7 @@ export class OrdersService {
     //Step 4: Create and save the complete order with items in one go
     return await this.orderRepository.save({
       clientId: user.client?.id,
-      clientFirstName: createOrderDto.clientFirstName,
-      clientLastName: createOrderDto.clientLastName,
+      clientFullName: createOrderDto.clientFullName,
       clientPhone: createOrderDto.clientPhone,
       clientMobile: createOrderDto.clientMobile,
       clientFax: createOrderDto.clientFax,

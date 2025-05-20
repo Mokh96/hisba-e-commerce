@@ -26,11 +26,6 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
   @MaxLength(ORDER_FIELD_LENGTHS.NOTE)
   note?: string;
 
-/*  @IsOptional()
-  @IsString()
-  @MaxLength(ORDER_FIELD_LENGTHS.REF)
-  ref?: string;*/
-
   @IsString()
   @IsNotEmpty()
   @MaxLength(ORDER_FIELD_LENGTHS.DELIVERY_ADDRESS)
@@ -47,13 +42,8 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FIRST_NAME)
-  clientFirstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_LAST_NAME)
-  clientLastName: string;
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FULL_NAME)
+  clientFullName: string;
 
   @IsNotEmpty()
   @IsString()
@@ -72,7 +62,7 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
 }
 
 @OneOfFields(['cartItemsIds', 'orderItems'], {
-  message: 'You must provide at least one of cartItemsIds or orderItems.',
+  message: 'You must provide at least one of cartItemsIds or orderItems.',//todo: use i18n
 })
 export class CreateOrderDto extends BaseCreateOrder {
   @ValidateIf((o: CreateOrderDto) => o.orderItems?.length === 0 || o.cartItemsIds?.length > 0)

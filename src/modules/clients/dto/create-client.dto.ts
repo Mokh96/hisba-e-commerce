@@ -1,26 +1,112 @@
 import { IntersectionType, OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsArray, IsDefined, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ClientCommonDto } from 'src/common-dtos/tier.common.dto';
+import {
+  IsAlphanumeric,
+  IsArray,
+  IsDate,
+  IsDefined,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
 import {
   BaseCreateShippingAddressDto,
   CreateSyncShippingAddressDto,
 } from 'src/modules/shipping-addresses/dto/create-shipping-address.dto';
 import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
 import { SyncIdDto } from 'src/common/dtos/sync-id.dto';
+import { CLIENT_FIELD_LENGTHS } from 'src/modules/clients/config/client.config';
 
-export class CreateClientBaseDto extends ClientCommonDto {
+export class CreateClientBaseDto {
+  @IsNotEmpty()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.FULL_NAME)
+  fullName: string;
+
   @IsOptional()
   @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.ADDRESS)
+  address: string;
+
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  townId: number;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.CODE)
   code: string;
 
   @IsOptional()
   @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.REF)
   ref: string;
 
-/*  @IsOptional()
+  @IsOptional()
+  //@Type(() => Date)
+  @IsDate()
+  birthDate: Date;
+
+  @IsOptional()
   @IsString()
-  imgPath: string;*/
+  @Length(2, CLIENT_FIELD_LENGTHS.NOTE)
+  note: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.PHONE)
+  phone: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.MOBILE)
+  mobile: string;
+
+  @IsOptional()
+  @IsEmail()
+  @Length(5, CLIENT_FIELD_LENGTHS.EMAIL)
+  email: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.FAX)
+  fax: string;
+
+  @IsOptional()
+  @IsAlphanumeric()
+  @Length(2, CLIENT_FIELD_LENGTHS.RC)
+  rc: string;
+
+  @IsOptional()
+  @IsAlphanumeric()
+  @Length(2, CLIENT_FIELD_LENGTHS.AGR)
+  agr: string;
+
+  @IsOptional()
+  @IsAlphanumeric()
+  @Length(2, CLIENT_FIELD_LENGTHS.AI)
+  ai: string;
+
+  @IsOptional()
+  @IsAlphanumeric()
+  @Length(2, CLIENT_FIELD_LENGTHS.ID_FISCAL)
+  idFiscal: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.ACTIVITY)
+  activity: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.LEGAL_FORM)
+  legalForm: string;
 
   @IsOptional()
   @IsString()

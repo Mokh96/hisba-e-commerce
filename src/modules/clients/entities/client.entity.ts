@@ -8,67 +8,65 @@ import { WithTimestamp } from 'src/common/entities/timestamp.entity';
 import { WithSyncId } from 'src/common/entities/sync.entity';
 import { WithEntityAttributeUtils } from 'src/common/entities/entity-attribute.entity';
 import { BaseEntity } from 'src/common/entities/base-entity.entity';
+import { CLIENT_FIELD_LENGTHS } from 'src/modules/clients/config/client.config';
 
 const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEntity)));
 
 @Entity()
 export class Client extends MixedEntities {
-  @Column({ name: 'first_name' })
-  firstName: string;
+  @Column({ name: 'full_name', length: CLIENT_FIELD_LENGTHS.FULL_NAME })
+  fullName: string;
 
-  @Column({ name: 'last_name' })
-  lastName: string;
-
-  @Column()
+  @Column({ length: CLIENT_FIELD_LENGTHS.ADDRESS })
   address: string;
 
   @Column({ name: 'birth_date', nullable: true })
-  birthDate: Date;
+  birthDate: Date | null;
 
-  @Column({ nullable: true })
-  note: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.NOTE })
+  note: string | null;
 
-  @Column({ length: 13 })
-  phone: string;
+  @Column({ length: CLIENT_FIELD_LENGTHS.PHONE, nullable: true })
+  phone: string | null;
 
-  @Column({ length: 13, nullable: true })
-  mobile: string;
+  @Column({ length: CLIENT_FIELD_LENGTHS.MOBILE, nullable: true })
+  mobile: string | null;
 
-  @Column({ nullable: true })
-  email: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.EMAIL })
+  email: string | null;
 
-  @Column({ nullable: true })
-  fax: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.FAX })
+  fax: string | null;
 
-  @Column({ nullable: true })
-  rc: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.RC })
+  rc: string | null;
 
-  @Column({ nullable: true })
-  agr: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.AGR })
+  agr: string | null;
 
-  @Column({ nullable: true })
-  ai: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.AI })
+  ai: string | null;
 
-  @Column({ nullable: true })
-  activity: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.ACTIVITY })
+  activity: string | null;
 
-  @Column({ name: 'legal_form', nullable: true })
-  legalForm: string;
+  @Column({ name: 'legal_form', nullable: true, length: CLIENT_FIELD_LENGTHS.LEGAL_FORM })
+  legalForm: string | null;
 
-  @Column({ name: 'id_fiscal', nullable: true })
-  idFiscal: string;
+  @Column({ name: 'id_fiscal', nullable: true, length: CLIENT_FIELD_LENGTHS.ID_FISCAL })
+  idFiscal: string | null;
 
-  @Column({ nullable: true })
-  code: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.CODE })
+  code: string | null;
 
-  @Column({ nullable: true })
-  ref: string;
+  @Column({ nullable: true, length: CLIENT_FIELD_LENGTHS.REF })
+  ref: string | null;
 
-  @Column({ name: 'web_page', nullable: true })
-  webPage: string;
+  @Column({ name: 'web_page', nullable: true, length: CLIENT_FIELD_LENGTHS.WEB_PAGE })
+  webPage: string | null;
 
   @Column({ name: 'img_path', nullable: true })
-  imgPath: string;
+  imgPath: string | null;
 
   @OneToMany(() => Order, (order: Order) => order.client)
   orders: Order[];

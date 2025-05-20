@@ -41,17 +41,13 @@ class FiltersValidator {
 
 class SearchValidator {
   @IsOptional()
-  @MaxLength(CLIENT_FIELD_LENGTHS.FIRST_NAME)
+  @MaxLength(CLIENT_FIELD_LENGTHS.FULL_NAME)
   @IsString()
   firstName?: string;
 
-  @IsOptional()
-  @MaxLength(CLIENT_FIELD_LENGTHS.LAST_NAME)
-  @IsString()
-  lastName?: string;
 
   @IsOptional()
-  @MaxLength(CLIENT_FIELD_LENGTHS.LAST_NAME)
+  @MaxLength(CLIENT_FIELD_LENGTHS.ADDRESS)
   @IsString()
   address?: string;
 

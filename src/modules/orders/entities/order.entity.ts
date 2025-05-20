@@ -49,11 +49,11 @@ export class Order extends MixedEntities {
   stampDuty: number;
 
   //client info properties
-  @Column({ name: 'client_first_name', length: ORDER_FIELD_LENGTHS.CLIENT_FIRST_NAME })
-  clientFirstName: string;
+  @Column({ name: 'client_full_name', length: ORDER_FIELD_LENGTHS.CLIENT_FULL_NAME })
+  clientFullName: string;
 
-  @Column({ name: 'client_last_name', length: ORDER_FIELD_LENGTHS.CLIENT_LAST_NAME })
-  clientLastName: string;
+/*  @Column({ name: 'client_last_name', length: ORDER_FIELD_LENGTHS.CLIENT_LAST_NAME })
+  clientLastName: string;*/
 
   @Column({ name: 'client_mobile', length: ORDER_FIELD_LENGTHS.CLIENT_PHONE })
   clientMobile: string;
