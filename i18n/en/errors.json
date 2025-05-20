@@ -9,7 +9,6 @@
   "columnDoesNotExist": "Column '{field}' does not exist.",
   "invalidSqlSyntax": "Invalid SQL syntax. Please contact the backend team.",
   "sqlParsingFailed": "SQL parsing failed due to malformed syntax.",
-  "notNullConstraintFailed": "Not-null constraint failed",
   "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
   "fileNotFound": "File not found",
   "db": {
@@ -21,6 +20,8 @@
     "foreignKeyDeletionConstraintFailed": "Foreign key deletion constraint failed",
     "foreignKeyDeletionConstraintError": "Cannot delete or update '{field}' because it is still referenced by other records.",
     "dataTooLongConstraintFailed": "Data too long for column",
-    "dataTooLongConstraintError": "The value for '{field}' is too long and exceeds the allowed limit."
+    "dataTooLongConstraintError": "The value for '{field}' is too long and exceeds the allowed limit.",
+    "notNullConstraintFailed": "Not-null constraint failed",
+    "fieldRequiredNotNull": "The field '{field}' is required and cannot be null."
   }
 }

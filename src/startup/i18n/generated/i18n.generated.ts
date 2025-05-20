@@ -28,7 +28,6 @@ export type I18nTranslations = {
         "columnDoesNotExist": string;
         "invalidSqlSyntax": string;
         "sqlParsingFailed": string;
-        "notNullConstraintFailed": string;
         "fieldRequiredNotNull": string;
         "fileNotFound": string;
         "db": {
@@ -41,10 +40,11 @@ export type I18nTranslations = {
             "foreignKeyDeletionConstraintError": string;
             "dataTooLongConstraintFailed": string;
             "dataTooLongConstraintError": string;
-            "": string;
             "notNullConstraintFailed": string;
             "fieldRequiredNotNull": string;
+            "": string;
         };
+        "notNullConstraintFailed": string;
     };
     "validation": {
         "invalidBoolean": string;
