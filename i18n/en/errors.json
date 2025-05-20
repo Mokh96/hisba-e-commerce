@@ -24,6 +24,8 @@
     "notNullConstraintFailed": "Not-null constraint failed",
     "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
     "invalidValueForField": "Invalid value for field",
-    "invalidValueForFieldWithField": "The provided value for '{field}' is invalid or of incorrect type."
+    "invalidValueForFieldWithField": "The provided value for '{field}' is invalid or of incorrect type.",
+    "dataOutOfRangeConstraint": "Provided data exceeds the allowed range.",
+    "dataOutOfRangeConstraintError": "A value is too large or too small for its column type."
   }
 }

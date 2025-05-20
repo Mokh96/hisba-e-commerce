@@ -44,6 +44,8 @@ export type I18nTranslations = {
             "fieldRequiredNotNull": string;
             "invalidValueForField": string;
             "invalidValueForFieldWithField": string;
+            "dataOutOfRangeConstraint": string;
+            "dataOutOfRangeConstraintError": string;
             "": string;
         };
         "notNullConstraintFailed": string;
