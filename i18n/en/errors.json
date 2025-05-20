@@ -15,10 +15,12 @@
   "db": {
     "uniqueConstraintFailed": "Unique constraint failed",
     "uniqueConstraintError": "This {label} is already taken in {tableName} table",
-    "uniqueConstraintErrorWithValue": "The ${label} '${value}' is already taken in ${tableName} table",
+    "uniqueConstraintErrorWithValue": "The {label} '{value}' is already taken in {tableName} table",
     "foreignKeyConstraintFailed": "Foreign key constraint failed",
-    "foreignKeyConstraintError": "The provided value for '${field}' does not reference an existing record.",
+    "foreignKeyConstraintError": "The provided value for '{field}' does not reference an existing record.",
     "foreignKeyDeletionConstraintFailed": "Foreign key deletion constraint failed",
-    "foreignKeyDeletionConstraintError": "Cannot delete or update '${field}' because it is still referenced by other records."
+    "foreignKeyDeletionConstraintError": "Cannot delete or update '{field}' because it is still referenced by other records.",
+    "dataTooLongConstraintFailed": "Data too long for column",
+    "dataTooLongConstraintError": "The value for '{field}' is too long and exceeds the allowed limit."
   }
 }

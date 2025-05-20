@@ -39,6 +39,8 @@ export type I18nTranslations = {
             "foreignKeyConstraintError": string;
             "foreignKeyDeletionConstraintFailed": string;
             "foreignKeyDeletionConstraintError": string;
+            "dataTooLongConstraintFailed": string;
+            "dataTooLongConstraintError": string;
             "": string;
             "notNullConstraintFailed": string;
             "fieldRequiredNotNull": string;
