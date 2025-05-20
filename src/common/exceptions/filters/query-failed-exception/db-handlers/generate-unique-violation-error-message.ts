@@ -9,6 +9,7 @@ import {
   extractUniqueField,
 } from 'src/common/exceptions/helpers/mysql-parser.helper';
 import { ApiErrorResponse } from 'src/common/exceptions/interfaces/api-error-response.interface';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 interface UniqueConstraintErrorParams {
   field: string;
@@ -23,11 +24,16 @@ interface UniqueConstraintErrorParams {
 function generateUniqueConstraintError({ field, value, safeLabel, tableName }: UniqueConstraintErrorParams) {
   const isSensitive = SENSITIVE_FIELDS.includes(field);
   const label = safeLabel ?? field;
+  /*
+    const message =
+      isSensitive || !value
+        ? `This ${label} is already taken in ${tableName} table`
+        : `The ${label} '${value}' is already taken in ${tableName} table`;*/
 
   const message =
     isSensitive || !value
-      ? `This ${label} is already taken in ${tableName} table`
-      : `The ${label} '${value}' is already taken in ${tableName} table`;
+      ? translate('errors.db.uniqueConstraintError', { args: { label, tableName } })
+      : translate('errors.db.uniqueConstraintError', { args: { label, tableName, value } });
 
   return {
     field,
@@ -51,12 +57,9 @@ function generateUniqueViolationErrorMsg(exception: QueryFailedError): ApiErrorR
   const tableName = extractTableName(driverError.sqlMessage);
   const status = HttpStatus.CONFLICT;
 
-  console.log('tableName', tableName);
-  console.log('driverError.sqlMessage ', driverError.sqlMessage);
-
   return createErrorResponse({
     statusCode: status,
-    message: 'Unique constraint failed',
+    message: translate('errors.db.uniqueConstraintFailed'),
     type: ErrorType.DuplicateKey,
     errors: [generateUniqueConstraintError({ field, value, tableName })],
   });

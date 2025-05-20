@@ -11,5 +11,13 @@
   "sqlParsingFailed": "SQL parsing failed due to malformed syntax.",
   "notNullConstraintFailed": "Not-null constraint failed",
   "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
-  "fileNotFound": "File not found"
+  "fileNotFound": "File not found",
+  "db":{
+    "uniqueConstraintFailed": "Unique constraint failed",
+    "uniqueConstraintError": "This {label} is already taken in {tableName} table",
+      "uniqueConstraintErrorWithValue": "The ${label} '${value}' is already taken in ${tableName} table",
+    "notNullConstraintFailed": "Not-null constraint failed",
+    "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
+    "fileNotFound": "File not found"
+  }
 }

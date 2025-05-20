@@ -11,5 +11,12 @@
   "sqlParsingFailed": "L'analyse SQL a échoué en raison d'une syntaxe malformée.",
   "notNullConstraintFailed": "La contrainte not-null a échoué",
   "fieldRequiredNotNull": "Le champ '{field}' est requis et ne peut pas être nul.",
-  "fileNotFound": "Fichier non trouvé"
+  "fileNotFound": "Fichier non trouvé",
+  "db": {
+    "uniqueConstraintFailed": "Contrainte unique échouée",
+    "uniqueConstraintError": "Ce {label} est déjà pris dans la table {tableName}",
+    "uniqueConstraintErrorWithValue": "Le ${label} '${value}' est déjà pris dans la table ${tableName}",
+    "notNullConstraintFailed": "Contrainte not-null échouée",
+    "fieldRequiredNotNull": "Le champ '{field}' est requis et ne peut pas être nul."
+  }
 }
