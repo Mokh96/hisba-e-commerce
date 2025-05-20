@@ -35,9 +35,12 @@ export type I18nTranslations = {
             "uniqueConstraintFailed": string;
             "uniqueConstraintError": string;
             "uniqueConstraintErrorWithValue": string;
+            "foreignKeyConstraintFailed": string;
+            "foreignKeyConstraintError": string;
             "notNullConstraintFailed": string;
             "fieldRequiredNotNull": string;
             "fileNotFound": string;
+            "": string;
         };
     };
     "validation": {

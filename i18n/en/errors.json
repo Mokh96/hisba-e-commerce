@@ -12,10 +12,12 @@
   "notNullConstraintFailed": "Not-null constraint failed",
   "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
   "fileNotFound": "File not found",
-  "db":{
+  "db": {
     "uniqueConstraintFailed": "Unique constraint failed",
     "uniqueConstraintError": "This {label} is already taken in {tableName} table",
-      "uniqueConstraintErrorWithValue": "The ${label} '${value}' is already taken in ${tableName} table",
+    "uniqueConstraintErrorWithValue": "The ${label} '${value}' is already taken in ${tableName} table",
+    "foreignKeyConstraintFailed": "Foreign key constraint failed",
+    "foreignKeyConstraintError": "The provided value for '${field}' does not reference an existing record.",
     "notNullConstraintFailed": "Not-null constraint failed",
     "fieldRequiredNotNull": "The field '{field}' is required and cannot be null.",
     "fileNotFound": "File not found"
