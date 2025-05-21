@@ -2,8 +2,8 @@ import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsPositive } from 'class-validator';
 
 export class SyncIdDto {
-  @Type(() => Number)
   @IsNotEmpty()
+  @Type(() => Number)
   @IsPositive()
   @IsInt()
   syncId: number;

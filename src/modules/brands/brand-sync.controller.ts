@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Res,
-  UploadedFiles,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, Put, Res, UploadedFiles } from '@nestjs/common';
 import { BrandsService } from './brands.service';
 import { UpdateSyncBrandsDto } from './dto/update-brand.dto';
 import { CreateSyncBrandDto } from './dto/create-brand.dto';
@@ -46,10 +36,9 @@ export class SyncBrandController {
     const status = getBulkStatus({ failures: response.failures.length, success: response.successes.length });
 
     res.status(status).json(response);
-    //res.status(207).json(response);
   }
 
-  @Patch('/bulk')
+  @Put('/bulk')
   @UseBulkUpload(UpdateSyncBrandsDto, updateBrandsValidation)
   async updateBulk(
     @Res() res: Response,

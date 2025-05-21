@@ -12,6 +12,4 @@ import { UpdateBrandDto } from 'src/modules/brands/dto/update-brand.dto';
 
 export class UpdateCategoryDto extends IntersectionType(PartialType(CreateCategoryDto), RemoveImageDto) {}
 
-
-
 export class UpdateSyncCategoryDto extends IntersectionType(UpdateCategoryDto, SyncIdDto, IdCommonDto) {}

@@ -5,7 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
+  Post, Put,
   Res,
   UploadedFiles,
 } from '@nestjs/common';
@@ -52,7 +52,7 @@ export class SyncCategoryController {
     res.status(status).json(response);
   }
 
-  @Patch()
+  @Put('/bulk')
   @UseBulkUpload(UpdateSyncCategoryDto, updateCategoriesValidation)
   updateSync(
     @Body() updateBrandDto: UpdateSyncCategoryDto [],
