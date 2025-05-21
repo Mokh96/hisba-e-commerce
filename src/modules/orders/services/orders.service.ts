@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { Order } from 'src/modules/orders/entities/order.entity';
 import { OrderItem } from 'src/modules/order-items/entities/order-item.entity';
-import { OrderStatus, orderStatusesString } from 'src/modules/orders/enums/order-status.enum';
+import { getOrderStatusesString, OrderStatus } from 'src/modules/orders/enums/order-status.enum';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { CurrentUserData } from 'src/common/decorators';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
@@ -18,6 +18,8 @@ import { mergeOrderItems } from 'src/modules/orders/helpers/order.helpers';
 import { roundMoney } from 'src/common/utils/pricing-utils.util';
 import { findDeletedEntityIds } from 'src/common/utils/find-deleted-entity-ids.util';
 import { Role } from 'src/common/enums/roles.enum';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from 'src/startup/i18n/generated/i18n.generated';
 
 @Injectable()
 export class OrdersService {
@@ -28,7 +30,8 @@ export class OrdersService {
     private readonly orderItemRepository: Repository<OrderItem>,
     private readonly cartItemsService: CartItemsService,
     private readonly orderCalculationService: OrderCalculationService,
-    private dataSource: DataSource,
+    private readonly dataSource: DataSource,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
   async findOne(id: number) {
@@ -131,7 +134,10 @@ export class OrdersService {
 
       // Only allow updates for orders that are still in NEW status
       if (existingOrder.statusId !== OrderStatus.NEW) {
-        throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be updated`);
+        throw new BadRequestException(
+          this.i18n.translate('orders.actions.update.statusRestriction')
+          //`Only orders in ${getOrderStatusesString(OrderStatus.NEW)} status can be updated`,
+        );
       }
 
       const existingItems = existingOrder.orderItems;
@@ -214,7 +220,7 @@ export class OrdersService {
 
       // Only allow updates for orders that are still in NEW status
       if (existingOrder.statusId !== OrderStatus.NEW) {
-        throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be updated`);//todo : i18n
+        throw new BadRequestException(this.i18n.translate('orders.actions.update.statusRestriction'));
       }
 
       // Step 1: Calculate new order items
@@ -250,7 +256,7 @@ export class OrdersService {
   async remove(id: number, user: CurrentUserData) {
     const order = await this.orderRepository.findOneByOrFail({ id, clientId: user.client?.id });
     if (order.statusId !== OrderStatus.NEW) {
-      throw new BadRequestException(`Only orders in ${orderStatusesString[OrderStatus.NEW]} status can be deleted`);//todo : i18n
+      throw new BadRequestException(this.i18n.translate('orders.actions.delete.statusRestriction'));
     }
     await this.orderRepository.remove(order);
   }

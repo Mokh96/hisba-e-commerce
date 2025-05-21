@@ -1,0 +1,19 @@
+{
+  "status": {
+    "new": "new",
+    "confirmed": "confirmed",
+    "completed": "completed",
+    "canceled": "cancelled"
+  },
+  "actions": {
+    "delete": {
+      "statusRestriction": "Only orders in new status can be deleted"
+    },
+    "update": {
+      "statusRestriction": "Only orders in new status can be updated"
+    },
+    "changeStatus": {
+      "transitionNotAllowed": "You are not allowed to transition order from {currentStatus} to {newStatus}"
+    }
+  }
+}

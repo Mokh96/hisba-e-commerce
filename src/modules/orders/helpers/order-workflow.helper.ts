@@ -1,13 +1,14 @@
-import { OrderStatus, orderStatusesString } from 'src/modules/orders/enums/order-status.enum';
+import { OrderStatus, getOrderStatusesString } from 'src/modules/orders/enums/order-status.enum';
 import { Role, RoleString } from 'src/common/enums/roles.enum';
 import { ConflictException } from '@nestjs/common';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 type RoleType = Role.COMPANY | Role.CLIENT;
 
 // Workflow for the company
 const companyWorkFlow: Map<OrderStatus, OrderStatus[]> = new Map([
   [OrderStatus.NEW, [OrderStatus.CONFIRMED, OrderStatus.CANCELED]],
-  [OrderStatus.CONFIRMED, [OrderStatus.COMPLETED , OrderStatus.CANCELED]],
+  [OrderStatus.CONFIRMED, [OrderStatus.COMPLETED, OrderStatus.CANCELED]],
   [OrderStatus.COMPLETED, []],
   [OrderStatus.CANCELED, []],
 ]);
@@ -46,10 +47,13 @@ export const isTransitionAllowed = (role: Role, from: OrderStatus, to: OrderStat
 export const changeOrderStatus = (role: Role, currentStatus: OrderStatus, newStatus: OrderStatus): void => {
   if (!isTransitionAllowed(role, currentStatus, newStatus)) {
     throw new ConflictException(
-      `Transition from ${orderStatusesString[currentStatus]} to ${orderStatusesString[newStatus]} is not allowed for role: ${RoleString[role]}`,
+      translate('orders.actions.changeStatus.transitionNotAllowed', {
+        args: {
+          currentStatus: getOrderStatusesString(currentStatus),
+          newStatus: getOrderStatusesString(newStatus),
+          role: RoleString[role],
+        },
+      }),
     );
   }
-
-  // Proceed with the status update
-  console.log(`Status changed from ${currentStatus} to ${newStatus} for role: ${role}`);
 };

@@ -1,0 +1,19 @@
+{
+  "status": {
+    "new": "nouveau",
+    "confirmed": "confirmé",
+    "completed": "terminé",
+    "canceled": "annulé"
+  },
+  "actions": {
+    "delete": {
+      "statusRestriction": "Seules les commandes au statut nouveau peuvent être supprimées"
+    },
+    "update": {
+      "statusRestriction": "Seules les commandes au statut nouveau peuvent être mises à jour"
+    },
+    "changeStatus": {
+      "transitionNotAllowed": "Vous n'êtes pas autorisé à changer le statut de {currentStatus} à {newStatus}"
+    }
+  }
+}

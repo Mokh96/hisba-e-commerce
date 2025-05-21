@@ -1,3 +1,5 @@
+import { translate } from 'src/startup/i18n/i18n.provider';
+
 export enum OrderStatus {
   /**
    * The Order is new and has not been confirmed yet.
@@ -18,12 +20,27 @@ export enum OrderStatus {
   CANCELED = 4,
 }
 
-export const orderStatusesString = {
+/*export const orderStatusesString = {
   [OrderStatus.NEW]: 'new',
   [OrderStatus.CONFIRMED]: 'Confirmed',
   [OrderStatus.COMPLETED]: 'completed',
   [OrderStatus.CANCELED]: 'canceled',
-};
+};*/
+
+export function getOrderStatusesString(status: OrderStatus) {
+  switch (status) {
+    case OrderStatus.NEW:
+      return translate('orders.status.new');
+    case OrderStatus.CONFIRMED:
+      return translate('orders.status.confirmed');
+    case OrderStatus.COMPLETED:
+      return translate('orders.status.completed');
+    case OrderStatus.CANCELED:
+      return translate('orders.status.canceled');
+    default:
+      return translate('common.unknown');
+  }
+}
 
 /**
  * Converts the OrderStatus enum to a normal object.

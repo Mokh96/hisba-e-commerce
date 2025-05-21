@@ -14,12 +14,14 @@ import {
 } from 'src/common/exceptions/filters/bad-request-exception/i18n-validation-exception.filter';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import i18nConfig from 'src/core/config/i18n.config';
+import { ConflictExceptionFilter } from 'src/common/exceptions/filters/conflict-exception/conflict-exception.filter';
 
 @Module({
   providers: [
     { provide: APP_FILTER, useClass: ServerExceptionFilter },
     { provide: APP_FILTER, useClass: QueryFailedExceptionFilter },
     { provide: APP_FILTER, useClass: NotFoundExceptionFilter },
+    { provide: APP_FILTER, useClass: ConflictExceptionFilter },
     //{ provide: APP_FILTER, useClass: BadRequestExceptionFilter },
     {
       provide: APP_FILTER,

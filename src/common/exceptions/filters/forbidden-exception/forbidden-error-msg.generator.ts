@@ -6,7 +6,7 @@ import { translate } from 'src/startup/i18n/i18n.provider';
 
 function generateForbiddenErrorMsg(exception: ForbiddenException): ApiErrorResponse {
   const raw = exception.getResponse() as any;
-  const message = typeof raw === 'string' ? raw : raw?.message || translate('errors.accessForbidden');
+  const message = typeof raw === 'string' ? raw : raw?.message || translate('errors.forbiddenAccess');
 
   return createErrorResponse({
     statusCode: HttpStatus.FORBIDDEN,

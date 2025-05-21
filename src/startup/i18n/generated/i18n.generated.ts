@@ -56,15 +56,26 @@ export type I18nTranslations = {
             "lockTimeOutError": string;
             "columnDoesNotExist": string;
             "unknownColumn": string;
-            "": string;
         };
-        "accessForbidden": string;
-        "unknownColumn": string;
-        "columnDoesNotExist": string;
-        "invalidSqlSyntax": string;
-        "sqlParsingFailed": string;
-        "notNullConstraintFailed": string;
-        "fieldRequiredNotNull": string;
+    };
+    "orders": {
+        "status": {
+            "new": string;
+            "confirmed": string;
+            "completed": string;
+            "canceled": string;
+        };
+        "actions": {
+            "delete": {
+                "statusRestriction": string;
+            };
+            "update": {
+                "statusRestriction": string;
+            };
+            "changeStatus": {
+                "transitionNotAllowed": string;
+            };
+        };
     };
     "validation": {
         "invalidBoolean": string;
