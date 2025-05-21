@@ -130,12 +130,15 @@ export type I18nTranslations = {
         "arrayUnique": string;
         "requestBodyRequired": string;
         "files": {
+            "missingSyncId": string;
+            "required": string;
             "invalidFileType": string;
             "invalidMaxSize": string;
             "invalidCountRange": string;
-            "missingSyncId": string;
-            "required": string;
         };
+        "isDateString": string;
+        "mismatch": string;
+        "oneOfFields": string;
     };
 };
 /* prettier-ignore */

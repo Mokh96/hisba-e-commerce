@@ -37,7 +37,7 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
 
   @IsInt()
   @IsPositive()
-  @IsEnum(OrderStatus, { message: 'paymentMethodId must be a valid paymentMethodId value.' })
+  @IsEnum(OrderStatus, { message: 'validation.isEnum' })
   paymentMethodId: PaymentMethod;
 
   @IsNotEmpty()
@@ -72,7 +72,7 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
 }
 
 @OneOfFields(['cartItemsIds', 'orderItems'], {
-  message: 'You must provide at least one of cartItemsIds or orderItems.', //todo: use i18n
+  message: 'validation.oneOfFields', // Using i18n key
 })
 export class CreateOrderDto extends BaseCreateOrder {
   @ValidateIf((o: CreateOrderDto) => o.orderItems?.length === 0 || o.cartItemsIds?.length > 0)

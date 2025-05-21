@@ -12,6 +12,6 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsEnum(Role, { message: 'roleId must be a valid role' })
+  @IsEnum(Role, { message: 'validation.isEnum' })
   roleId?: Role;
 }

@@ -18,6 +18,6 @@ export class UpdateMeDto {
   @IsDefined()
   @IsString()
   @IsStrongPassword()
-  @Mismatch('oldPassword', { message: 'Old password and new password must be different' })
+  @Mismatch('oldPassword', { message: 'validation.mismatch' })
   newPassword?: string;
 }

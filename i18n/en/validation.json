@@ -56,5 +56,8 @@
     "invalidFileType": "{context}: invalid file type {mimetype}. Allowed types: {allowedTypes}",
     "invalidMaxSize": "{context}: file size exceeds limit {maxSize}",
     "invalidCountRange": "{context}: Expected between {minCount} and {maxCount} files , got {filesLength}"
-  }
+  },
+  "isDateString": "{property} must be a valid ISO 8601 date string",
+  "mismatch": "{property} and {otherProperty} must be different",
+  "oneOfFields": "You must provide at least one of {fields}"
 }
