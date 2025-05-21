@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/common/enums/roles.enum';
 import { DeepPartial, Repository } from 'typeorm';
-import { BasePaginationDto } from 'src/common/dtos/base-pagination.dto';
-import { fromDtoToQuery } from 'src/helpers/function.global';
 import { ClientFilterDto } from './dto/client-filter.dto';
 import { CreateClientDto, CreateClientSyncDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';

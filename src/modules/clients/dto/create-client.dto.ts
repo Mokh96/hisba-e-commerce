@@ -25,8 +25,18 @@ import { CLIENT_FIELD_LENGTHS } from 'src/modules/clients/config/client.config';
 export class CreateClientBaseDto {
   @IsNotEmpty()
   @IsString()
-  @Length(2, CLIENT_FIELD_LENGTHS.FULL_NAME)
-  fullName: string;
+  @Length(2, CLIENT_FIELD_LENGTHS.TRADE_NAME)
+  tradeName: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.FIRST_NAME)
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, CLIENT_FIELD_LENGTHS.LAST_NAME)
+  lastName: string;
 
   @IsOptional()
   @IsString()

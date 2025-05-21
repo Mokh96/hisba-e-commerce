@@ -13,7 +13,6 @@ import { validate } from 'class-validator';
  */
 export async function validateBulkDto<TDto extends object>(data: TDto[], dto: new () => TDto) {
   const valFailures = [];
-
   const valSuccess = [];
 
   for (let index = 0; index < data.length; index++) {

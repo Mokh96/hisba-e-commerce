@@ -25,9 +25,9 @@ class CommonSearchAndFiltersValidator {
   ref?: string;
 
   @IsOptional()
-  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FULL_NAME)
+  @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_TRADE_NAME)
   @IsString()
-  clientFullName?: string;
+  clientTradeName?: string;
 
   @IsOptional()
   @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_PHONE)

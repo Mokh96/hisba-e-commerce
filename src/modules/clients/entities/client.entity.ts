@@ -14,8 +14,14 @@ const MixedEntities = WithTimestamp(WithSyncId(WithEntityAttributeUtils(BaseEnti
 
 @Entity()
 export class Client extends MixedEntities {
-  @Column({ name: 'full_name', length: CLIENT_FIELD_LENGTHS.FULL_NAME })
-  fullName: string;
+  @Column({ name: 'trade_name', length: CLIENT_FIELD_LENGTHS.TRADE_NAME })
+  tradeName: string;
+
+  @Column({ name: 'first_name', length: CLIENT_FIELD_LENGTHS.FIRST_NAME, nullable: true })
+  firstName: string | null;
+
+  @Column({ name: 'last_name', length: CLIENT_FIELD_LENGTHS.LAST_NAME, nullable: true })
+  lastName: string | null;
 
   @Column({ length: CLIENT_FIELD_LENGTHS.ADDRESS })
   address: string;

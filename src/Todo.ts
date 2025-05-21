@@ -4,7 +4,7 @@
 
 //i18 with full typesafe
 //apply mixin
-//add more functionality to query utils (sw,ew)
+//add more functionality to query utils (sw,ew), improve sorting logic
 //security
 //logs
 //filter: auto inject
