@@ -146,7 +146,8 @@ export class ProductsService {
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
       .applyDateFilters(filterDto.date)
-      .applyPagination(paginationDto);
+      //.applyPagination(paginationDto)
+      .applyPagination2({ sort: filterDto.sort, offset: filterDto.offset, limit: filterDto.limit });
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
 

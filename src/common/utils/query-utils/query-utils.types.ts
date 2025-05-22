@@ -1,5 +1,3 @@
-export type DateFields = 'createdAt' | 'updatedAt';
-
 export type ExtractFilterParams<T> = {
   [K in keyof T]?: string | number | boolean;
 };

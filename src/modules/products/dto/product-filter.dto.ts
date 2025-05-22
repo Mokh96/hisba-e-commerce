@@ -27,10 +27,9 @@ import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
-import { DEFAULT_PAGINATION_SETTINGS, sortDirection } from 'src/common/dtos/filters/pagination-query.dto';
-import { BaseEntity } from 'typeorm';
-import { createPaginationDto } from './temp';
-import { createPaginationDto2 } from 'src/common/dtos/base/create-pagination.dto';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
+
+
 
 class SearchAndFiltersValidator {
   @IsOptional()
@@ -123,7 +122,6 @@ class InFiltersValidator {
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
   createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
-  //createPaginationDto2<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),

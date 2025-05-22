@@ -1,11 +1,14 @@
 import { IsIn, IsOptional, ValidateNested, IsDefined, IsInt, Min, IsPositive, Max } from 'class-validator';
 import { plainToInstance, Transform, Type } from 'class-transformer';
-import { DEFAULT_PAGINATION_SETTINGS } from 'src/modules/products/dto/temp2';
+import { SortDirection } from 'src/common/dtos/base/create-pagination/create-pagination.types';
+import {
+  DEFAULT_PAGINATION_SETTINGS,
+  SORT_DIRECTIONS,
+} from 'src/common/dtos/base/create-pagination/pagination.constants';
 
-export const SORT_DIRECTIONS = ['ASC', 'DESC'] as const;
-export type SortDirection = (typeof SORT_DIRECTIONS)[number];
 
-export function createSortDto<T extends Record<string, any>>(validFields: (keyof T)[]) {
+
+function createSortDto<T extends Record<string, any>>(validFields: (keyof T)[]) {
   class SortDtoItem {
     @IsDefined()
     @IsIn(validFields)
@@ -45,7 +48,7 @@ export function createPaginationDto<T extends Record<string, any>>(validFields: 
     @IsOptional()
     @IsInt()
     @Min(0)
-    @Transform(({ value }) => value ?? DEFAULT_PAGINATION_SETTINGS.offset)
+    @Transform(({ value }) => value ?? DEFAULT_PAGINATION_SETTINGS.OFFSET)
     offset?: number;
 
     /**
@@ -54,20 +57,8 @@ export function createPaginationDto<T extends Record<string, any>>(validFields: 
     @IsOptional()
     @IsInt()
     @IsPositive()
-    @Max(DEFAULT_PAGINATION_SETTINGS.limit)
+    @Max(DEFAULT_PAGINATION_SETTINGS.LIMIT)
     limit?: number;
-  }
-
-  class PaginationWrapperDto {
-    @IsOptional()
-    @ValidateNested()
-    @Transform(({ value }) => {
-      console.log(value);
-      if (!value || typeof value !== 'object') return {};
-      return value;
-    })
-    @Type(() => PaginationDto)
-    pagination?: PaginationDto;
   }
 
   return PaginationDto;

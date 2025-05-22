@@ -1,16 +1,19 @@
 import { SelectQueryBuilder } from 'typeorm';
-import { DEFAULT_PAGINATION_SETTINGS, PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
+import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
 import { SEARCH_CONFIG } from 'src/common/config/search.config';
 import {
   BaseSelectFields,
-  DateFields,
   ExtractFilterParams,
   ExtractInFilterParams,
   ExtractNumberFilters,
   ExtractSearchParams,
 } from 'src/common/utils/query-utils/query-utils.types';
-import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
+import { PaginationInterface } from 'src/common/dtos/base/create-pagination/create-pagination.types';
+import {
+  DEFAULT_PAGINATION_SETTINGS,
+  SORT_DIRECTIONS,
+} from 'src/common/dtos/base/create-pagination/pagination.constants';
 
 export class QueryUtils<T> {
   constructor(private readonly queryBuilder: SelectQueryBuilder<T>, private readonly alias: string) {}
@@ -161,28 +164,6 @@ export class QueryUtils<T> {
    * Applies date range filters to the query builder
    * @param dateFilters - Object containing date filters (e.g., createdAt, updatedAt)
    */
-/*  applyDateFilters3(dateFilters: Partial<Record<DateFields, DateRangeDto | undefined>>): this {
-    if (!dateFilters) return this;
-
-    Object.entries(dateFilters).forEach(([field, value]) => {
-      if (value) {
-        const { from, to } = value;
-
-        if (from) {
-          this.queryBuilder.andWhere(`${this.alias}.${field} >= :${field}From`, {
-            [`${field}From`]: new Date(from),
-          });
-        }
-        if (to) {
-          this.queryBuilder.andWhere(`${this.alias}.${field} <= :${field}To`, {
-            [`${field}To`]: new Date(to),
-          });
-        }
-      }
-    });
-
-    return this;
-  }*/
 
   applyDateFilters(dateFilters: Record<string, DateRangeDto | undefined> | object) {
     if (!dateFilters) return this;
@@ -219,8 +200,8 @@ export class QueryUtils<T> {
     const {
       limit,
       offset = 0,
-      sortBy = DEFAULT_PAGINATION_SETTINGS.sortBy,
-      sortDirection = DEFAULT_PAGINATION_SETTINGS.sortDirection,
+      sortBy = DEFAULT_PAGINATION_SETTINGS.SORT_BY,
+      sortDirection = DEFAULT_PAGINATION_SETTINGS.SORT_DIRECTION,
     } = paginationDto || {};
 
     console.log(paginationDto);
@@ -233,6 +214,31 @@ export class QueryUtils<T> {
     if (limit) {
       this.queryBuilder.take(limit);
     }
+
+    return this;
+  }
+
+  applyPagination2(paginationDto?: PaginationInterface): this {
+    const {
+      limit = DEFAULT_PAGINATION_SETTINGS.LIMIT,
+      offset = DEFAULT_PAGINATION_SETTINGS.OFFSET,
+      sort,
+    } = paginationDto || {};
+
+    if (sort.length > 0) {
+      sort.forEach(({ field, direction }, index) => {
+        const sortDir = SORT_DIRECTIONS.includes(direction) ? direction : DEFAULT_PAGINATION_SETTINGS.SORT_DIRECTION;
+        if (index === 0) {
+          this.queryBuilder.orderBy(`${this.alias}.${field}`, sortDir);
+        } else {
+          this.queryBuilder.addOrderBy(`${this.alias}.${field}`, sortDir);
+        }
+      });
+    }
+
+    this.queryBuilder.skip(offset);
+
+    this.queryBuilder.take(limit);
 
     return this;
   }
