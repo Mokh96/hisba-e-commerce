@@ -45,7 +45,7 @@ export class QueryUtils<T> {
     });
   }
 
-  applySearch<T extends object>(search?: ExtractSearchParams<T>): this {
+  /*applySearch<T extends object>(search?: ExtractSearchParams<T>): this {
     if (!search) return this;
 
     Object.entries(search).forEach(([field, value]) => {
@@ -70,6 +70,89 @@ export class QueryUtils<T> {
     });
 
     return this;
+  }
+
+  applySwFilter<T extends object>(sw?: T): this {
+    if (!sw) return this;
+
+    Object.entries(sw).forEach(([field, value]) => {
+      if (typeof value === 'string' && value.trim()) {
+        const cleanedValue = value
+          .trim()
+          .replace(/\p{C}+/gu, '')
+          .replace(/\s+/g, ' ');
+
+        const param = `${field}_sw`; // Ensure unique param keys
+        this.queryBuilder.andWhere(`LOWER(${this.alias}.${field}) LIKE LOWER(:${param})`, {
+          [param]: `${cleanedValue}%`,
+        });
+      }
+    });
+
+    return this;
+  }
+
+  applyEwFilter<T extends object>(ew?: T): this {
+    if (!ew) return this;
+
+    Object.entries(ew).forEach(([field, value]) => {
+      if (typeof value === 'string' && value.trim()) {
+        const cleanedValue = value
+          .trim()
+          .replace(/\p{C}+/gu, '')
+          .replace(/\s+/g, ' ');
+
+        const param = `${field}_ew`;
+        this.queryBuilder.andWhere(`LOWER(${this.alias}.${field}) LIKE LOWER(:${param})`, {
+          [param]: `%${cleanedValue}`,
+        });
+      }
+    });
+
+    return this;
+  }*/
+
+  private applyLikeFilter<T extends object>(data: T | undefined, mode: 'sw' | 'ew' | 'contains', minLength = 1): this {
+    if (!data) return this;
+
+    Object.entries(data).forEach(([field, value]) => {
+      if (typeof value === 'string') {
+        const cleanedValue = value
+          .trim()
+          .replace(/\p{C}+/gu, '')// Remove non-visible Unicode characters (e.g., if you deal with Arabic or RTL languages)
+          .replace(/\s+/g, ' ');// Replace multiple spaces with a single space
+
+        if (cleanedValue.length < minLength) return;
+
+        let pattern = '';
+        if (mode === 'contains') {
+          pattern = `%${cleanedValue}%`;
+        } else if (mode === 'sw') {
+          pattern = `${cleanedValue}%`;
+        } else if (mode === 'ew') {
+          pattern = `%${cleanedValue}`;
+        }
+
+        const param = `${field}_${mode}`;
+        this.queryBuilder.andWhere(`LOWER(${this.alias}.${field}) LIKE LOWER(:${param})`, {
+          [param]: pattern,
+        });
+      }
+    });
+
+    return this;
+  }
+
+  applySearch<T extends object>(search?: T): this {
+    return this.applyLikeFilter(search, 'contains', SEARCH_CONFIG.MIN_SEARCH_LENGTH);
+  }
+
+  applySwFilter<T extends object>(sw?: T): this {
+    return this.applyLikeFilter(sw, 'sw');
+  }
+
+  applyEwFilter<T extends object>(ew?: T): this {
+    return this.applyLikeFilter(ew, 'ew');
   }
 
   applyFilters<T extends object>(filters?: ExtractFilterParams<T>): this {
@@ -222,7 +305,7 @@ export class QueryUtils<T> {
     const {
       limit = DEFAULT_PAGINATION_SETTINGS.LIMIT,
       offset = DEFAULT_PAGINATION_SETTINGS.OFFSET,
-      sort,
+      sort =[],
     } = paginationDto || {};
 
     if (sort.length > 0) {

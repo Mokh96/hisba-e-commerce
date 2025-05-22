@@ -10,7 +10,7 @@ import { Article } from 'src/modules/articles/entities/article.entity';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 import { createFiltersDto } from 'src/common/dtos/base/create-filters.dto';
 import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
-import { createGtDto } from 'src/common/dtos/base/create-filter.dto';
+import { createGtDto } from 'src/common/dtos/base/create-gt-filter.dto';
 import { createGteDto } from 'src/common/dtos/base/create-gte-filter.dto';
 import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
 import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';

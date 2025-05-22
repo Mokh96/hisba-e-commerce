@@ -19,7 +19,7 @@ import { Product } from 'src/modules/products/entities/product.entity';
 import { IntersectionType } from '@nestjs/mapped-types';
 import { createFiltersDto } from 'src/common/dtos/base/create-filters.dto';
 import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
-import { createGtDto } from 'src/common/dtos/base/create-filter.dto';
+import { createGtDto } from 'src/common/dtos/base/create-gt-filter.dto';
 import { createGteDto } from 'src/common/dtos/base/create-gte-filter.dto';
 import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
 import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
@@ -28,8 +28,8 @@ import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
 import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
-
-
+import { createSwFilterDto } from 'src/common/dtos/base/create-sw-filter.dto';
+import { createEwFilterDto } from 'src/common/dtos/base/create-ew-filter.dto';
 
 class SearchAndFiltersValidator {
   @IsOptional()
@@ -101,6 +101,10 @@ class SearchValidator extends SearchAndFiltersValidator {
   description?: string;
 }
 
+class StartsWithValidator extends SearchAndFiltersValidator {}
+
+class EndsWithValidator extends SearchAndFiltersValidator {}
+
 class InFiltersValidator {
   @IsOptional()
   @IsArray()
@@ -122,6 +126,8 @@ class InFiltersValidator {
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
   createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
+  createSwFilterDto(StartsWithValidator),
+  createEwFilterDto(EndsWithValidator),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),

@@ -139,6 +139,8 @@ export class ProductsService {
     QueryUtils.use(queryBuilder)
       .applyFilters(filterDto.filters)
       .applySearch(filterDto.search)
+      .applySwFilter(filterDto.sw)
+      .applyEwFilter(filterDto.ew)
       .applyGtFilters(filterDto.gt)
       .applyLtFilters(filterDto.lt)
       .applyGteFilters(filterDto.gte)
