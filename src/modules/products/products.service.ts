@@ -131,6 +131,8 @@ export class ProductsService {
   ): Promise<PaginatedResult<DeepPartial<Product>>> {
     const queryBuilder = this.productRepository.createQueryBuilder(this.productRepository.metadata.tableName);
 
+    console.log(JSON.stringify(filterDto));
+    console.log(JSON.stringify(paginationDto));
     filterDto.in.categoryId = await this.categoriesService.getCategoryDescendants(filterDto.in.categoryId);
     filterDto.in.brandId = await this.brandsService.getBrandDescendants(filterDto.in.brandId);
 

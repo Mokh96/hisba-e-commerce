@@ -14,7 +14,7 @@ import { createGtDto } from 'src/common/dtos/base/create-filter.dto';
 import { createGteDto } from 'src/common/dtos/base/create-gte-filter.dto';
 import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
 import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
-import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
+import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 
 class NumberFilterValidator {

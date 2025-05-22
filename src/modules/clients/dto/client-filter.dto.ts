@@ -19,7 +19,7 @@ import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
 import { createFiltersDto } from 'src/common/dtos/base/create-filters.dto';
 import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
 import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
-import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
+import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 
 class FiltersValidator {

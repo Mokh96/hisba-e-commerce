@@ -2,7 +2,7 @@ import { IsIn, IsInt, IsOptional, IsPositive, IsString, Max, Min } from 'class-v
 import { Transform } from 'class-transformer';
 
 const sortBy = ['id', 'createdAt', 'updatedAt'] as const;
-const sortDirection = ['ASC', 'DESC'] as const;
+export const sortDirection = ['ASC', 'DESC'] as const;
 
 export const DEFAULT_PAGINATION_SETTINGS = {
   offset: 0,

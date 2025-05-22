@@ -8,6 +8,9 @@ import {
   Min,
   IsInt,
   ArrayMaxSize,
+  IsObject,
+  ValidateNested,
+  IsIn,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
@@ -23,7 +26,11 @@ import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { createFieldsDto } from 'src/common/dtos/base/create-fields.dto';
 import { createSearchDto } from 'src/common/dtos/base/create-search.dto';
-import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters-dto';
+import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
+import { DEFAULT_PAGINATION_SETTINGS, sortDirection } from 'src/common/dtos/filters/pagination-query.dto';
+import { BaseEntity } from 'typeorm';
+import { createPaginationDto } from './temp';
+import { createPaginationDto2 } from 'src/common/dtos/base/create-pagination.dto';
 
 class SearchAndFiltersValidator {
   @IsOptional()
@@ -111,8 +118,12 @@ class InFiltersValidator {
   categoryId?: number[];
 }
 
+//const paginationDto = createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']);
+
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
+  createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
+  //createPaginationDto2<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),

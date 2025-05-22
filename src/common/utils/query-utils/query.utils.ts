@@ -161,7 +161,7 @@ export class QueryUtils<T> {
    * Applies date range filters to the query builder
    * @param dateFilters - Object containing date filters (e.g., createdAt, updatedAt)
    */
-  applyDateFilters3(dateFilters: Partial<Record<DateFields, DateRangeDto | undefined>>): this {
+/*  applyDateFilters3(dateFilters: Partial<Record<DateFields, DateRangeDto | undefined>>): this {
     if (!dateFilters) return this;
 
     Object.entries(dateFilters).forEach(([field, value]) => {
@@ -182,27 +182,7 @@ export class QueryUtils<T> {
     });
 
     return this;
-  }
-
-  /*  applyDateFilters2(dateFilters: Partial<Record<string, DateRangeDto | undefined>>) {
-      console.log('dateFilters' , dateFilters);
-      if (!dateFilters) return this;
-  
-      for (const [field, range] of Object.entries(dateFilters)) {
-        console.log(field, range);
-  
-        if (range.from) {
-          this.queryBuilder.andWhere(`${this.alias}.${field} >= :${field}From`, {
-            [`${field}From`]: range.from,
-          });
-        }
-        if (range.to) {
-          this.queryBuilder.andWhere(`${this.alias}.${field} <= :${field}To`, {
-            [`${field}To`]: range.to,
-          });
-        }
-      }
-    }*/
+  }*/
 
   applyDateFilters(dateFilters: Record<string, DateRangeDto | undefined> | object) {
     if (!dateFilters) return this;
