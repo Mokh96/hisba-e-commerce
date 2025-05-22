@@ -121,8 +121,6 @@ class InFiltersValidator {
   categoryId?: number[];
 }
 
-//const paginationDto = createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']);
-
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
   createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
