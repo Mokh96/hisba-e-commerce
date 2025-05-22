@@ -60,12 +60,12 @@ export class BaseCreateOrder extends gpsCoordinatesDto {
   @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_PHONE)
   clientPhone: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_MOBILE)
   clientMobile: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(ORDER_FIELD_LENGTHS.CLIENT_FAX)
   clientFax: string;
