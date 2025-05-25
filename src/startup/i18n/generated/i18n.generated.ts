@@ -129,6 +129,7 @@ export type I18nTranslations = {
         "isNumber": string;
         "arrayUnique": string;
         "requestBodyRequired": string;
+        "isNullablePositiveIntArray": string;
         "files": {
             "missingSyncId": string;
             "required": string;

@@ -50,6 +50,7 @@
   "isNumber": "{property} must be a number",
   "arrayUnique": "{property} must contain only unique values",
   "requestBodyRequired": "Request body is required",
+  "isNullablePositiveIntArray": "{propertyName} must be an array of positive integers or nulls",
   "files": {
     "missingSyncId": "missing syncId in {path}",
     "required": "{fileType} is required for {entityPath}",

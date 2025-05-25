@@ -49,6 +49,8 @@
   "isEnum": "{property} doit être une valeur énumérée valide",
   "isNumber": "{property} doit être un nombre",
   "arrayUnique": "{property} doit contenir uniquement des valeurs uniques",
+  "requestBodyRequired": "Le corps de la requête est requis",
+  "isNullablePositiveIntArray": "{propertyName} doit être un tableau de nombres entiers positifs ou de valeurs nulles",
   "files" : {
     "missingSyncId": "syncId manquant dans {path}",
     "required": "{fileType} est requis pour {entityPath}",

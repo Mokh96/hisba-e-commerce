@@ -1,4 +1,5 @@
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import { translate } from 'src/startup/i18n/i18n.provider';
 
 function IsNullablePositiveIntArray(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
@@ -13,7 +14,7 @@ function IsNullablePositiveIntArray(validationOptions?: ValidationOptions) {
           return value.every((v) => v === null || (Number.isInteger(v) && v > 0));
         },
         defaultMessage() {
-          return `${propertyName} must be an array of positive integers or nulls`;
+          return translate('validation.isNullablePositiveIntArray', { args: { propertyName } }) as string;
         },
       },
     });
