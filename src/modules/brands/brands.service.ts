@@ -71,7 +71,7 @@ export class BrandsService {
     return await this.brandRepository.find();
   }
 
-  async findMany(paginationDto: PaginationDto, filterDto: BrandFilterDto) {
+  async findMany(filterDto: BrandFilterDto) {
     const queryBuilder = this.brandRepository.createQueryBuilder(this.brandRepository.metadata.tableName);
 
     QueryUtils.use(queryBuilder)
@@ -80,7 +80,7 @@ export class BrandsService {
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
       .applyDateFilters(filterDto.date)
-      .applyPagination(paginationDto);
+      .applyPagination2({ sort: filterDto.sort, offset: filterDto.offset, limit: filterDto.limit });
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
     return { totalItems, data };
@@ -105,7 +105,6 @@ export class BrandsService {
 
     const brand = await this.brandRepository.findOneByOrFail({ id });
 
-    console.log({brand});
     const initialImgPath = brand.imgPath;
     let uploadedFiles = [];
     let newPath: string | undefined;

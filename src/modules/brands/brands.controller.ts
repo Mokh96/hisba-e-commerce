@@ -39,11 +39,8 @@ export class BrandsController {
   }
 
   @Get()
-  findMany(
-    @Query() paginationDto: PaginationDto,
-    @Query() filterDto: BrandFilterDto,
-  ) {
-    return this.brandsService.findMany(paginationDto ,filterDto);
+  findMany(@Query() filterDto: BrandFilterDto) {
+    return this.brandsService.findMany(filterDto);
   }
 
   @Get(':id')

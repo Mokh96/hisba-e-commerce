@@ -12,6 +12,8 @@ import { Brand } from 'src/modules/brands/entities/brand.entity';
 import { Transform } from 'class-transformer';
 import { parseNumberOrNull } from 'src/common/utils/transforms/transforms';
 import IsNullablePositiveIntArray from 'src/common/decorators/validators/is-nullable-positive-int-array.dto';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 class FiltersValidator {
   @IsOptional()
@@ -46,6 +48,7 @@ class InFiltersValidator {
 
 export class BrandFilterDto extends IntersectionType(
   createFieldsDto(Brand),
+  createPaginationDto<Pick<Brand, 'id'>>({ sortFields: ['id'] }),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),
