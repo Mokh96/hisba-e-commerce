@@ -79,7 +79,7 @@ export class ClientsService {
     });
   }
 
-  async findMany(filterDto: ClientFilterDto, paginationDto: PaginationDto): Promise<DeepPartial<PaginatedResult>> {
+  async findMany(filterDto: ClientFilterDto): Promise<DeepPartial<PaginatedResult>> {
     const alias = this.clientRepository.metadata.tableName;
     const queryBuilder = this.clientRepository.createQueryBuilder(alias);
 
@@ -90,7 +90,7 @@ export class ClientsService {
       .applyFilters(filterDto.filters)
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
-      .applyPagination(paginationDto)
+      .applyPagination2({ sort: filterDto.sort, offset: filterDto.offset, limit: filterDto.limit })
       .applyDateFilters(filterDto.date);
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();

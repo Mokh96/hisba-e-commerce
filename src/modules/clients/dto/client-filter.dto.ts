@@ -21,6 +21,8 @@ import { createInFiltersDto } from 'src/common/dtos/base/create-in-filters.dto';
 import { DateRangeDto } from 'src/common/dtos/filters/date-rang.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 class FiltersValidator {
   @IsBoolean()
@@ -147,7 +149,7 @@ class InFiltersValidator {
   townId?: number[];
 }
 
-class DateFieldsValidator extends DateRangeFiltersDto{
+class DateFieldsValidator extends DateRangeFiltersDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => DateRangeDto)
@@ -166,6 +168,7 @@ class DateFieldsValidator extends DateRangeFiltersDto{
 
 export class ClientFilterDto extends IntersectionType(
   createFieldsDto(Client),
+  createPaginationDto<Pick<Client, 'id'>>({ sortFields: ['id'] }),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),

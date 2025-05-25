@@ -23,8 +23,8 @@ export class ClientsController {
   }
 
   @Get()
-  findMany(@Query() paginationDto: PaginationDto, @Query() filterDto: ClientFilterDto) {
-    return this.clientsService.findMany(filterDto, paginationDto);
+  findMany(@Query() filterDto: ClientFilterDto) {
+    return this.clientsService.findMany(filterDto);
   }
 
   @Get(':id')
