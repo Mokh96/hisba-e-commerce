@@ -1,4 +1,4 @@
-import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
+import { LabelCommonDto } from 'src/common/dtos/label.common.dto';
 import { Type } from 'class-transformer';
 import { IsInt, IsPositive } from 'class-validator';
 

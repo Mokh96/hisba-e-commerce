@@ -20,7 +20,6 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { FileValidationInterceptor } from 'src/modules/files/interceptors/file-validation-interceptor';
 import { imageUploadRules, requiredImageUploadRules } from 'src/modules/files/config/file-upload.config';
-import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ArticleFilterDto } from 'src/modules/articles/config/article-filter.dto';
 
 @Controller('articles')

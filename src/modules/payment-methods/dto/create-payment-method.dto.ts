@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsOptional, IsPositive } from 'class-validator';
-import { LabelCommonDto } from 'src/common-dtos/label.common.dto';
+import { LabelCommonDto } from 'src/common/dtos/label.common.dto';
 
 export class CreatePaymentMethodDto extends LabelCommonDto {
   @IsOptional()

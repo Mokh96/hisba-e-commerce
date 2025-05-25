@@ -11,8 +11,10 @@ import {
   IsObject,
   ValidateNested,
   IsIn,
+  getMetadataStorage,
+  MetadataStorage,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { plainToInstance, Transform, Type } from 'class-transformer';
 import { PRODUCT_FIELD_LENGTHS } from 'src/modules/products/config/products.config';
 import { TransformStringToBoolean } from 'src/common/decorators';
 import { Product } from 'src/modules/products/entities/product.entity';
@@ -136,3 +138,43 @@ export class ProductFilterDto extends IntersectionType(
   //createNotInDto(InFiltersValidator),//no need for now
   createDateRangeFiltersDto(DateRangeFiltersDto),
 ) {}
+
+function extractKeys(instance: object): string[] {
+  return Object.keys(instance);
+}
+
+type FilterType = 'search' | 'filters' | 'in' | 'notIn' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'ew' | 'date';
+
+export function getFilterMap(): Record<string, FilterType[]> {
+  const result: Record<string, FilterType[]> = {};
+
+  const filters: [Function, FilterType][] = [
+    [SearchValidator, 'search'],
+    [FiltersValidator, 'filters'],
+    [InFiltersValidator, 'in'],
+    [StartsWithValidator, 'sw'],
+    [EndsWithValidator, 'ew'],
+    [NumberFilterValidator, 'gt'],
+    [NumberFilterValidator, 'gte'],
+    [NumberFilterValidator, 'lt'],
+    [NumberFilterValidator, 'lte'],
+    [DateRangeFiltersDto, 'date'],
+  ];
+
+  const metadataStorage = getMetadataStorage() as MetadataStorage;
+
+  for (const [cls, type] of filters) {
+    const props = metadataStorage.getTargetValidationMetadatas(cls, '', false, false).map((meta) => meta.propertyName);
+
+    for (const prop of props) {
+      if (!result[prop]) {
+        result[prop] = [];
+      }
+      if (!result[prop].includes(type)) {
+        result[prop].push(type);
+      }
+    }
+  }
+
+  return result;
+}
