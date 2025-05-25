@@ -16,6 +16,8 @@ import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
 import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 class NumberFilterValidator {
   @IsOptional()
@@ -87,6 +89,7 @@ class InFiltersValidator {
 export class ArticleFilterDto extends IntersectionType(
   createFieldsDto(Article),
   createSearchDto(SearchValidator),
+  createPaginationDto<Pick<Article, 'id' | 'price'>>({ sortFields: ['id', 'price'] }),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),
   createGtDto(NumberFilterValidator),

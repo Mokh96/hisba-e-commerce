@@ -40,8 +40,8 @@ export class ArticlesController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto, @Query() articleFilterDto: ArticleFilterDto) {
-    return this.articlesService.findAll(paginationDto, articleFilterDto);
+  findAll(@Query() articleFilterDto: ArticleFilterDto) {
+    return this.articlesService.findAll(articleFilterDto);
   }
 
   @Get(':id')

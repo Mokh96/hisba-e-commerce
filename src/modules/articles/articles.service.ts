@@ -16,6 +16,7 @@ import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { ArticleFilterDto } from './config/article-filter.dto';
 import { QueryUtils } from 'src/common/utils/query-utils/query.utils';
 import { formatCaughtException } from 'src/common/exceptions/helpers/format-caught-exception.helper';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 
 type TProduct = Pick<Product, 'id' | 'maxPrice' | 'minPrice'>;
 
@@ -86,10 +87,7 @@ export class ArticlesService {
     return response;
   }
 
-  async findAll(
-    paginationDto: PaginationDto,
-    articleFilterDto: ArticleFilterDto,
-  ): Promise<PaginatedResult<DeepPartial<Article>>> {
+  async findAll(articleFilterDto: ArticleFilterDto): Promise<PaginatedResult<DeepPartial<Article>>> {
     const queryBuilder = this.articleRepository.createQueryBuilder(this.articleRepository.metadata.tableName);
 
     QueryUtils.use(queryBuilder)
@@ -101,8 +99,11 @@ export class ArticlesService {
       .applyLteFilters(articleFilterDto.lte)
       .applyInFilters(articleFilterDto.in)
       .applySelectFields(articleFilterDto.fields)
-      .applyDateFilters(articleFilterDto.date)
-      .applyPagination(paginationDto);
+      .applyPagination2({
+        sort: articleFilterDto.sort,
+        offset: articleFilterDto.offset,
+        limit: articleFilterDto.limit,
+      });
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
     return { totalItems, data };
