@@ -123,7 +123,7 @@ class InFiltersValidator {
 
 export class ProductFilterDto extends IntersectionType(
   createFieldsDto(Product),
-  createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>(['id', 'maxPrice']),
+  createPaginationDto<Pick<Product, 'id' | 'maxPrice'>>({ sortFields: ['id', 'maxPrice'] }),
   createSwFilterDto(StartsWithValidator),
   createEwFilterDto(EndsWithValidator),
   createSearchDto(SearchValidator),

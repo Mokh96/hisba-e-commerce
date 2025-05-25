@@ -5,8 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Inject,
-  NestInterceptor,
   Param,
   ParseIntPipe,
   Patch,
@@ -56,10 +54,9 @@ export class ProductsController {
 
   @Get()
   findAll(
-    @Query() paginationDto: PaginationDto,
     @Query() filterDto: ProductFilterDto,
   ): Promise<PaginatedResult<DeepPartial<Product>>> {
-    return this.productsService.findAll(paginationDto, filterDto);
+    return this.productsService.findAll(filterDto);
   }
 
   @Get('price-range')

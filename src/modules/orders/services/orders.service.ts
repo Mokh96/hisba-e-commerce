@@ -55,11 +55,7 @@ export class OrdersService {
     });
   }
 
-  async findAll(
-    paginationDto: PaginationDto,
-    filterDto: OrderFilterDto,
-    user: CurrentUserData,
-  ): Promise<PaginatedResult<DeepPartial<Order>>> {
+  async findAll(filterDto: OrderFilterDto, user: CurrentUserData): Promise<PaginatedResult<DeepPartial<Order>>> {
     const queryBuilder = this.orderRepository.createQueryBuilder(this.orderRepository.metadata.tableName);
 
     if (user.roleId === Role.CLIENT) {
@@ -77,7 +73,7 @@ export class OrdersService {
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
       .applyDateFilters(filterDto.date)
-      .applyPagination(paginationDto);
+      .applyPagination2({ sort: filterDto.sort, offset: filterDto.offset, limit: filterDto.limit });
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
     return { totalItems, data };
@@ -135,7 +131,7 @@ export class OrdersService {
       // Only allow updates for orders that are still in NEW status
       if (existingOrder.statusId !== OrderStatus.NEW) {
         throw new BadRequestException(
-          this.i18n.translate('orders.actions.update.statusRestriction')
+          this.i18n.translate('orders.actions.update.statusRestriction'),
           //`Only orders in ${getOrderStatusesString(OrderStatus.NEW)} status can be updated`,
         );
       }

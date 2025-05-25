@@ -6,12 +6,14 @@ import {
   SORT_DIRECTIONS,
 } from 'src/common/dtos/base/create-pagination/pagination.constants';
 
+interface PaginationDtoType<T extends Record<string, any>> {
+  sortFields: (keyof T)[];
+}
 
-
-function createSortDto<T extends Record<string, any>>(validFields: (keyof T)[]) {
+function createPaginationSortDto<T extends Record<string, any>>({ sortFields }: PaginationDtoType<T>) {
   class SortDtoItem {
     @IsDefined()
-    @IsIn(validFields)
+    @IsIn(sortFields)
     field: keyof T;
 
     @IsDefined()
@@ -40,8 +42,8 @@ function createSortDto<T extends Record<string, any>>(validFields: (keyof T)[]) 
   return SortDto;
 }
 
-export function createPaginationDto<T extends Record<string, any>>(validFields: (keyof T)[]) {
-  class PaginationDto extends createSortDto<T>(validFields) {
+export function createPaginationDto<T extends Record<string, any>>({ sortFields }: PaginationDtoType<T>) {
+  class PaginationDto extends createPaginationSortDto<T>({ sortFields }) {
     /**
      * Specifies the number of rows to skip in the result set (default is 0).
      * */

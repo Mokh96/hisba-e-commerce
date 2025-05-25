@@ -39,11 +39,10 @@ export class OrdersController {
 
   @Get()
   findAll(
-    @Query() paginationDto: PaginationDto,
     @Query() filterDto: OrderFilterDto,
     @CurrentUser() user: CurrentUserData,
   ) {
-    return this.ordersService.findAll(paginationDto, filterDto , user);
+    return this.ordersService.findAll(filterDto , user);
   }
 
   @Get(':id')

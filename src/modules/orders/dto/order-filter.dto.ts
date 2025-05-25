@@ -17,6 +17,7 @@ import { createLtDto } from 'src/common/dtos/base/create-lt-filter.dto';
 import { createLteDto } from 'src/common/dtos/base/create-lte-filter.dto';
 import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
 import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-range-filters.dto';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 
 class CommonSearchAndFiltersValidator {
   @IsOptional()
@@ -158,6 +159,7 @@ class InFiltersValidator {
 export class OrderFilterDto extends IntersectionType(
   createFieldsDto(Order),
   createSearchDto(SearchValidator),
+  createPaginationDto<Pick<Order, 'id'>>({ sortFields: ['id'] }),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),
   createGtDto(NumberFilterValidator),
