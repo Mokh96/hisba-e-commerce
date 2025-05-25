@@ -12,6 +12,8 @@ import { Transform } from 'class-transformer';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
 import IsNullablePositiveIntArray from 'src/common/decorators/validators/is-nullable-positive-int-array.dto';
 import { parseNumberOrNull } from 'src/common/utils/transforms/transforms';
+import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 class FiltersValidator {
   @IsOptional()
@@ -46,6 +48,7 @@ class InFiltersValidator {
 
 export class CategoryFilterDto extends IntersectionType(
   createFieldsDto(Category),
+  createPaginationDto<Pick<Category, 'id'>>({ sortFields: ['id'] }),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),

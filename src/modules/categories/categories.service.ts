@@ -71,7 +71,7 @@ export class CategoriesService {
     return categories;
   }
 
-  async findMany(paginationDto: PaginationDto, filterDto: CategoryFilterDto) {
+  async findMany(filterDto: CategoryFilterDto) {
     const queryBuilder = this.categoryRepository.createQueryBuilder(this.categoryRepository.metadata.tableName);
 
     QueryUtils.use(queryBuilder)
@@ -80,7 +80,7 @@ export class CategoriesService {
       .applyInFilters(filterDto.in)
       .applySelectFields(filterDto.fields)
       .applyDateFilters(filterDto.date)
-      .applyPagination(paginationDto);
+      .applyPagination2({ sort: filterDto.sort, offset: filterDto.offset, limit: filterDto.limit });
 
     const [data, totalItems] = await queryBuilder.getManyAndCount();
     return { totalItems, data };

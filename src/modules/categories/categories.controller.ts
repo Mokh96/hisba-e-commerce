@@ -5,7 +5,6 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UseRequiredImageUpload } from 'src/common/decorators/files/use-required-image-upload.decorator';
 import { FileUploadEnum } from 'src/modules/files/enums/file-upload.enum';
 import { UseOptionalImageUpload } from 'src/common/decorators/files/use-optional-image-upload.decorator';
-import { PaginationDto } from 'src/common/dtos/filters/pagination-query.dto';
 import { CategoryFilterDto } from 'src/modules/categories/dto/category-filter.dto';
 
 @Controller('categories')
@@ -25,8 +24,8 @@ export class CategoriesController {
   }
 
   @Get()
-  findMany(@Query() paginationDto: PaginationDto, @Query() filterDto: CategoryFilterDto) {
-    return this.categoriesService.findMany(paginationDto, filterDto);
+  findMany(@Query() filterDto: CategoryFilterDto) {
+    return this.categoriesService.findMany(filterDto);
   }
 
   @Get(':id')
