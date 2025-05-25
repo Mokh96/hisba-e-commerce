@@ -32,6 +32,7 @@ import { createDateRangeFiltersDto } from 'src/common/dtos/base/create-date-rang
 import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 import { createSwFilterDto } from 'src/common/dtos/base/create-sw-filter.dto';
 import { createEwFilterDto } from 'src/common/dtos/base/create-ew-filter.dto';
+import { FilterType, getFilterMap } from 'src/common/utils/filter-metadata.utils';
 
 class SearchAndFiltersValidator {
   @IsOptional()
@@ -55,7 +56,7 @@ class SearchAndFiltersValidator {
   label2?: string;
 }
 
-class NumberFilterValidator {
+export class NumberFilterValidator {
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -69,7 +70,7 @@ class NumberFilterValidator {
   minPrice?: number;
 }
 
-class FiltersValidator extends IntersectionType(SearchAndFiltersValidator, NumberFilterValidator) {
+export class FiltersValidator extends IntersectionType(SearchAndFiltersValidator, NumberFilterValidator) {
   @IsBoolean()
   @IsOptional()
   @TransformStringToBoolean({ allowNull: false })
@@ -91,7 +92,7 @@ class FiltersValidator extends IntersectionType(SearchAndFiltersValidator, Numbe
   isMultiArticle?: boolean;
 }
 
-class SearchValidator extends SearchAndFiltersValidator {
+export class SearchValidator extends SearchAndFiltersValidator {
   @IsOptional()
   @MaxLength(PRODUCT_FIELD_LENGTHS.NOTE)
   @IsString()
@@ -103,11 +104,11 @@ class SearchValidator extends SearchAndFiltersValidator {
   description?: string;
 }
 
-class StartsWithValidator extends SearchAndFiltersValidator {}
+export class StartsWithValidator extends SearchAndFiltersValidator {}
 
-class EndsWithValidator extends SearchAndFiltersValidator {}
+export class EndsWithValidator extends SearchAndFiltersValidator {}
 
-class InFiltersValidator {
+export class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @Type(() => Number)
@@ -138,43 +139,3 @@ export class ProductFilterDto extends IntersectionType(
   //createNotInDto(InFiltersValidator),//no need for now
   createDateRangeFiltersDto(DateRangeFiltersDto),
 ) {}
-
-function extractKeys(instance: object): string[] {
-  return Object.keys(instance);
-}
-
-type FilterType = 'search' | 'filters' | 'in' | 'notIn' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'ew' | 'date';
-
-export function getFilterMap(): Record<string, FilterType[]> {
-  const result: Record<string, FilterType[]> = {};
-
-  const filters: [Function, FilterType][] = [
-    [SearchValidator, 'search'],
-    [FiltersValidator, 'filters'],
-    [InFiltersValidator, 'in'],
-    [StartsWithValidator, 'sw'],
-    [EndsWithValidator, 'ew'],
-    [NumberFilterValidator, 'gt'],
-    [NumberFilterValidator, 'gte'],
-    [NumberFilterValidator, 'lt'],
-    [NumberFilterValidator, 'lte'],
-    [DateRangeFiltersDto, 'date'],
-  ];
-
-  const metadataStorage = getMetadataStorage() as MetadataStorage;
-
-  for (const [cls, type] of filters) {
-    const props = metadataStorage.getTargetValidationMetadatas(cls, '', false, false).map((meta) => meta.propertyName);
-
-    for (const prop of props) {
-      if (!result[prop]) {
-        result[prop] = [];
-      }
-      if (!result[prop].includes(type)) {
-        result[prop].push(type);
-      }
-    }
-  }
-
-  return result;
-}
