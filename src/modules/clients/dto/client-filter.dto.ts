@@ -24,7 +24,7 @@ import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto
 import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
 
-class FiltersValidator {
+export class FiltersValidator {
   @IsBoolean()
   @IsPositive()
   @Transform(({ value }) => Number(value) || undefined)
@@ -41,7 +41,7 @@ class FiltersValidator {
   userId?: boolean;
 }
 
-class SearchValidator {
+export class SearchValidator {
   @IsOptional()
   @MaxLength(CLIENT_FIELD_LENGTHS.TRADE_NAME)
   @IsString()
@@ -133,7 +133,7 @@ class SearchValidator {
   webPage?: string;
 }
 
-class InFiltersValidator {
+export class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @Type(() => Number)
@@ -149,28 +149,11 @@ class InFiltersValidator {
   townId?: number[];
 }
 
-class DateFieldsValidator extends DateRangeFiltersDto {
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => DateRangeDto)
-  birthDate?: DateRangeDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => DateRangeDto)
-  createdAt?: DateRangeDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => DateRangeDto)
-  updatedAt?: DateRangeDto;
-}
-
 export class ClientFilterDto extends IntersectionType(
   createFieldsDto(Client),
   createPaginationDto<Pick<Client, 'id'>>({ sortFields: ['id'] }),
   createSearchDto(SearchValidator),
   createFiltersDto(FiltersValidator),
   createInFiltersDto(InFiltersValidator),
-  createDateRangeFiltersDto(DateFieldsValidator),
+  createDateRangeFiltersDto(DateRangeFiltersDto),
 ) {}

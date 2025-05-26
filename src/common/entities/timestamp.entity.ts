@@ -1,6 +1,5 @@
 import { Column } from 'typeorm';
 import { MixinConstructor } from '../types/entities.types';
-import { Filterable, FilterType } from 'src/common/decorators/metadata/filterable.decorator';
 
 interface TimeStampProperties {
   createdAt: Date;
@@ -9,7 +8,6 @@ interface TimeStampProperties {
 
 export function WithTimestamp<TBase extends MixinConstructor>(Base: TBase) {
   class TimeStampEntity extends Base implements TimeStampProperties {
-    @Filterable(FilterType.DATE_FROM , FilterType.DATE_TO)
     @Column({
       name: 'created_at',
       type: 'timestamp',
@@ -17,7 +15,6 @@ export function WithTimestamp<TBase extends MixinConstructor>(Base: TBase) {
     })
     createdAt: Date;
 
-    @Filterable(FilterType.DATE_FROM , FilterType.DATE_TO)
     @Column({
       name: 'updated_at',
       type: 'timestamp',
