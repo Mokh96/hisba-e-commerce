@@ -15,7 +15,7 @@ import { parseNumberOrNull } from 'src/common/utils/transforms/transforms';
 import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
 
-class FiltersValidator {
+export class FiltersValidator {
   @IsOptional()
   @Transform(({ obj, key }) => parseNumberOrNull(obj[key]))
   @IsInt()
@@ -27,14 +27,14 @@ class FiltersValidator {
   parentId?: number | null;
 }
 
-class SearchValidator {
+export class SearchValidator {
   @IsOptional()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)
   @IsString()
   label?: string;
 }
 
-class InFiltersValidator {
+export class InFiltersValidator {
   @IsOptional()
   @Transform((params) => params.value.map(parseNumberOrNull))
   @IsNullablePositiveIntArray()
