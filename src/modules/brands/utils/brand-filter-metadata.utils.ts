@@ -1,0 +1,15 @@
+import { FilterType, getFilterMap } from 'src/common/utils/filter-metadata.utils';
+import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto';
+import { FiltersValidator , InFiltersValidator , SearchValidator } from 'src/modules/brands/dto/brand-filter.dto';
+
+
+export function getFilterBrandMetadata(): Record<string, FilterType[]> {
+  const filters: [Function, FilterType][] = [
+    [SearchValidator, 'search'],
+    [FiltersValidator , 'filters'],
+    [InFiltersValidator, 'in'],
+    [DateRangeFiltersDto, 'date'],
+  ];
+
+  return getFilterMap(filters);
+}
