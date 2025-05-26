@@ -1,5 +1,4 @@
-
-# Filtering System Documentation(v1.1.0)
+# Filtering System Documentation(v1.2.0)
 
 ## 🔍 Supported Filters
 
@@ -131,6 +130,7 @@ GET /v1/products?limit=10&offset=20
 
 ---
 
+
 ## 🛠 Advanced Notes
 
 - All filters can be combined:
@@ -139,3 +139,50 @@ GET /v1/products?search=hat&in[categoryId][]=3&gt[price]=20&lt[price]=100&sw[nam
 ```
 - All inputs are automatically validated and parsed based on their expected types.
 - Pagination parameters (`limit` and `offset`) can be used with any filter combination.
+
+
+## 🧠 Metadata Filters
+The backend provides a metadata-driven map that defines which filter types apply to which fields
+for each resource (e.g., products, orders, clients).
+This allows the frontend to dynamically generate filters without hardcoding
+field names or filter types.
+
+### 🔎 What are metadataFilters?
+The metadataFilters object maps field names to the filter types that can be applied to them. This metadata is automatically generated based on backend validation logic.
+
+### Example Response: Product Filters Metadata
+
+```json
+{
+  "label": ["search", "filters", "sw", "ew"],
+  "label2": ["search", "filters", "sw", "ew"],
+  "ref": ["search", "filters", "sw", "ew"],
+  "code": ["search", "filters", "sw", "ew"],
+  "description": ["search"],
+  "note": ["search"],
+  "isActive": ["filters"],
+  "isOutStock": ["filters"],
+  "isExpired": ["filters"],
+  "isMultiArticle": ["filters"],
+  "minPrice": ["filters", "gt", "gte", "lt", "lte"],
+  "maxPrice": ["filters", "gt", "gte", "lt", "lte"],
+  "brandId": ["in"],
+  "categoryId": ["in"],
+  "createdAt": ["date"],
+  "updatedAt": ["date"]
+}
+```
+
+### How to Use This
+* Dynamically render filter UIs based on field capabilities.
+* Group fields by filter type (e.g., show all in filters in a dropdown).
+* Disable or hide unsupported filter operations for certain fields.
+* Use it to drive advanced filtering UIs like faceted search or range sliders.
+
+### Benefits
+* Dynamic: No need for hardcode filters per resource.
+* Accurate: Keeps UI in sync with backend validation rules.
+
+
+
+

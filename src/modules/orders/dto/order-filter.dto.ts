@@ -51,7 +51,7 @@ class CommonSearchAndFiltersValidator {
   deliveryAddress?: string;
 }
 
-class NumberFilterValidator {
+export class NumberFilterValidator {
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -96,7 +96,7 @@ class NumberFilterValidator {
   stampDuty?: number;
 }
 
-class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator, NumberFilterValidator) {
+export class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator, NumberFilterValidator) {
   @IsOptional()
   @IsIn(Object.values(OrderStatus))
   statusId?: number;
@@ -121,14 +121,14 @@ class FiltersValidator extends IntersectionType(CommonSearchAndFiltersValidator,
   deliveryTownId?: number;
 }
 
-class SearchValidator extends CommonSearchAndFiltersValidator {
+export class SearchValidator extends CommonSearchAndFiltersValidator {
   @IsOptional()
   @MaxLength(ORDER_FIELD_LENGTHS.NOTE)
   @IsString()
   note?: string;
 }
 
-class InFiltersValidator {
+export class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @IsString()
