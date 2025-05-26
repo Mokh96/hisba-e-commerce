@@ -4,12 +4,18 @@ import { getFilterOrderMetadata } from 'src/modules/orders/utils/order-filter-me
 import { getFilterClientMetadata } from 'src/modules/clients/utils/client-filter-metadata.utils';
 import { getFilterCategoryMetadata } from 'src/modules/categories/utils/category-filter-metadata.utils';
 import { getFilterBrandMetadata } from 'src/modules/brands/utils/brand-filter-metadata.utils';
+import { getFilterArticleMetadata } from 'src/modules/articles/utils/article-filter-metadata.utils';
 
 @Controller('filters')
 export class FiltersController {
   @Get('products')
   getProductFilterMetadata() {
     return getFilterProductMetadata();
+  }
+
+  @Get('articles')
+  getArticleFilterMetadata() {
+    return getFilterArticleMetadata();
   }
 
   @Get('orders')

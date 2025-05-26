@@ -19,7 +19,7 @@ import { DateRangeFiltersDto } from 'src/common/dtos/base/date-range-filters.dto
 import { createPaginationDto } from 'src/common/dtos/base/create-pagination/create-pagination.dto';
 import { Product } from 'src/modules/products/entities/product.entity';
 
-class NumberFilterValidator {
+export class NumberFilterValidator {
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -33,7 +33,7 @@ class NumberFilterValidator {
   totalTva?: number;
 }
 
-class FiltersValidator {
+export class FiltersValidator {
   @IsOptional()
   @IsNumber()
   @IsPositive()
@@ -50,7 +50,7 @@ class FiltersValidator {
   isActive?: boolean;
 }
 
-class SearchValidator {
+export class SearchValidator {
   @IsOptional()
   @MaxLength(ARTICLE_FIELD_LENGTHS.LABEL)
   @IsString()
@@ -72,7 +72,7 @@ class SearchValidator {
   description?: string;
 }
 
-class InFiltersValidator {
+export class InFiltersValidator {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
